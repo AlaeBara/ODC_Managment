@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./Config/config.js');
 const Auth = require('./Routes/auth.js')
+const Formation = require('./Routes/Formation.js')
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -30,6 +31,7 @@ connectDB();
 
 
 app.use('/api/auth', Auth);
+app.use('/api/courses', Formation);
 
 
 //insert line for test:
