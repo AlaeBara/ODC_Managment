@@ -42,7 +42,7 @@ const GetFormations = async (req, res) => {
 const GetOneFormations = async (req, res) => {
   const { id } = req.params;
   try {
-    const course = await Course.findById(id).populate('mentors');
+    const course = await Course.findById(id).populate('mentors'); // Use Course model
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
