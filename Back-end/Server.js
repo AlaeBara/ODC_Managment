@@ -2,15 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./Config/config.js');
-
-
 const Auth = require('./Routes/auth.js')
-
-
-
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 
 
 dotenv.config();
@@ -21,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -32,10 +29,7 @@ app.use(
 connectDB();
 
 
-
 app.use('/api/auth', Auth);
-
-
 
 
 //insert line for test:
