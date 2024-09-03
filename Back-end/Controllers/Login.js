@@ -31,7 +31,7 @@ const Login = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true, // Cookie is not accessible via JavaScript
             sameSite: 'strict', // Prevent CSRF attacks
-            maxAge: 3000 // Cookie expiration time in milliseconds (1 hour)
+            maxAge: 300000 // Cookie expiration time in milliseconds (1 hour)
         });
 
         res.status(200).json({ 
