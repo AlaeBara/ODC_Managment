@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+// useer model
 const userSchema = new mongoose.Schema({
     firstName: { type: String },  // Not required
     lastName: { type: String },   // Not required
