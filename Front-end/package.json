@@ -30,6 +30,7 @@
     "react-feather": "^2.0.10",
     "react-hook-form": "^7.53.0",
     "react-router-dom": "^6.26.1",
+    "react-tag-input": "^6.10.3",
     "react-toastify": "^10.0.5",
     "shadcn-ui": "^0.8.0",
     "tailwind-merge": "^2.5.2",
