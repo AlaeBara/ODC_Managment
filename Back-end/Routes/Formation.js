@@ -1,10 +1,11 @@
 const express = require('express');
-//const authenticated = require('../Middlewares/Authmiddleware')
+const authenticated = require('../Middlewares/Authmiddleware')
 const {AddFormation, GetOneFormations, UpdateFormations, GetFormations, DeleteFormations} = require('../Controllers/Formation');
 const router = express.Router();
 
 
-router.post('/Addformation', AddFormation);
+
+router.post('/Addformation',authenticated, AddFormation);
 
 router.get('/GetFormations', GetFormations);
 

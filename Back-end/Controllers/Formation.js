@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const Course = require('../Models/courseModel');  // Correctly import the Course model
+const Course = require('../Models/courseModel');  
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 const AddFormation = async (req, res) => {
-  const { title, description, startDate, endDate, type, mentors, tags} = req.body;
+  const { title, description, startDate, endDate, type, tags} = req.body;
 
+  const mentors = req.user.userId
   try {
-    const newCourse = new Course({  // Use the Course model, not CourseSchema
+    const newCourse = new Course({ 
       title,
       description,
       startDate,
       endDate,
       type,
       mentors,
-      tags,
+      tags
     });
 
     await newCourse.save();

@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -60,25 +61,50 @@ const Forum = () => {
 
   const onSubmit = async (data) => {
     const formattedData = {
-      fullName: data.fullName,
+      title: data.fullName,
       type: data.type,
       description: data.description,
       dateRange: {
-        from: format(data.dateRange.from, "yyyy-MM-dd"),
-        to: format(data.dateRange.to, "yyyy-MM-dd"),
+        startDate: format(data.dateRange.from, "yyyy-MM-dd"),
+        endDate: format(data.dateRange.to, "yyyy-MM-dd"),
       },
     };
-  
-    // Log data to console
-    console.log(formattedData);
-  
-    // Show data in an alert
     alert(
-      `Full Name: ${formattedData.fullName}\nType: ${formattedData.type}\nDescription: ${formattedData.description}\nDate Range: ${formattedData.dateRange.from} to ${formattedData.dateRange.to}`
+      `Full Name: ${formattedData.title}\nType: ${formattedData.type}\nDescription: ${formattedData.description}\nDate Range: ${formattedData.dateRange.startDate} to ${formattedData.dateRange.endDate}`
     );
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_LINK}/api/courses/Addformation`,
+        {
+          title: formattedData.title,
+          description: data.password,
+          startDate: formattedData.dateRange.startDate,
+          endDate: formattedData.dateRange.endDate,
+          type: formattedData.type,
+          tags: ['Python' , 'Java'],
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Formation added successfully!");
+      }
+      else{
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.response.data.error);
+        console.error(error);
+      }
+    }
   
-    // Show success toast notification
-    toast.success("Formation data submitted successfully!");
+    
   };
   
 
