@@ -5,7 +5,7 @@ const Course = require('../Models/courseModel');  // Correctly import the Course
 ///////////////////////////////////////////////////////////////////////////////////////
 
 const AddFormation = async (req, res) => {
-  const { title, description, startDate, endDate, mentors, tags, schedule } = req.body;
+  const { title, description, startDate, endDate, type, mentors, tags} = req.body;
 
   try {
     const newCourse = new Course({  // Use the Course model, not CourseSchema
@@ -13,9 +13,9 @@ const AddFormation = async (req, res) => {
       description,
       startDate,
       endDate,
+      type,
       mentors,
       tags,
-      schedule,
     });
 
     await newCourse.save();
@@ -56,12 +56,12 @@ const GetOneFormations = async (req, res) => {
 
 const UpdateFormations = async (req, res) => {
   const { id } = req.params;
-  const { title, description, startDate, endDate, mentors, tags, schedule } = req.body;
+  const { title, description, startDate, endDate, type, mentors, tags } = req.body;
 
   try {
     const updatedCourse = await Course.findByIdAndUpdate(
       id,
-      { title, description, startDate, endDate, mentors, tags, schedule },
+      { title, description, startDate, endDate, type, mentors, tags },
       { new: true } // Return the updated document
     );
 
