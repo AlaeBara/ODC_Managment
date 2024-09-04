@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./Config/config.js');
 const Auth = require('./Routes/auth.js')
 const Formation = require('./Routes/Formation.js')
+const Profile = require('./Routes/Profile.js')
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -32,6 +33,7 @@ connectDB();
 
 app.use('/api/auth', Auth);
 app.use('/api/courses', Formation);
+app.use('/api/profile', Profile);
 
 
 //insert line for test:

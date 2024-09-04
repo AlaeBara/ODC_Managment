@@ -7,6 +7,7 @@ import MainLayout from './MainLayout';
 const Login = lazy(() => import('./Pages/Login/Login'));
 const Home = lazy(() => import('./Pages/Homepage/home'));
 const Formation = lazy(() => import('./Pages/FormationPage/Formation'));
+const UserProfile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 
 function App() {
   return (
@@ -30,6 +31,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <Formation/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <UserProfile/>
                 </MainLayout>
               </ProtectedRoute>
             }
