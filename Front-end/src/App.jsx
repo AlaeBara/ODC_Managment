@@ -1,23 +1,41 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Pages/Login/Login';
-import Home from './Pages/Homepage/home';
 import ProtectedRoute from './Security/ProtectedRoutes.jsx';
+import MainLayout from './MainLayout';
+
+// Lazy load components
+const Login = lazy(() => import('./Pages/Login/Login'));
+const Home = lazy(() => import('./Pages/Homepage/home'));
+const Formation = lazy(() => import('./Pages/FormationPage/Formation'));
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <Suspense fallback={<div></div>}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/Home"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Home />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Formation/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

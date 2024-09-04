@@ -10,7 +10,7 @@ const Login = async (req, res) => {
 
         // If user is not found, return an error
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Invalid email or password' });
         }
 
         // Compare the provided password with the hashed password
