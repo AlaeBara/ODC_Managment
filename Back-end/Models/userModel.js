@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
+// useer model
 const userSchema = new mongoose.Schema({
-    username: { type: String},
-    email: { type: String, required: true, unique: true }, // Add this line
+    firstName: { type: String },  // Not required
+    lastName: { type: String },   // Not required
+    email: { type: String, required: true, unique: true },
+    phoneNumber: { type: String },  // Optional
     password: { type: String, required: true },
     role: { type: String, enum: ['Admin', 'Mentor'], required: true },
-    assignedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }] // Only for mentors
+    assignedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
+    profilePic: { type: String }  // Optional
 });
 
 const User = mongoose.model('User', userSchema);

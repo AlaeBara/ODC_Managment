@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./Config/config.js');
 const Auth = require('./Routes/auth.js')
+const Formation = require('./Routes/Formation.js')
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -30,6 +31,7 @@ connectDB();
 
 
 app.use('/api/auth', Auth);
+app.use('/api/courses', Formation);
 
 
 //insert line for test:
@@ -38,7 +40,6 @@ const insertTestUser = async () => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
-      username: 'testuser', 
       email: 'test@example.com',
       password: hashedPassword,
       role: 'Mentor', 
@@ -55,7 +56,7 @@ const insertTestUser = async () => {
   }
 };
 
-// insertTestUser();
+  //insertTestUser();
 
 
 // Start server
