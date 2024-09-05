@@ -21,7 +21,7 @@ const AddFormation = async (req, res) => {
 
     await newCourse.save();
 
-    res.status(201).json({ message: 'Course created successfully', course: newCourse });
+    res.status(200).json({ message: 'Course created successfully', course: newCourse });
   } catch (error) {
     res.status(500).json({ message: 'Error creating course', error: error.message });
   }

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -36,6 +35,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+
+
+//for validation of inputs of form 
 const formationSchema = z.object({
   fullName: z.string().min(1, { message: "Full name is required." }),
   type: z.string().min(1, { message: "Type is required." }),
@@ -47,6 +49,12 @@ const formationSchema = z.object({
   tags: z.array(z.string()).optional(),
 });
 
+
+
+
+
+
+//for input of tag input
 const TagInput = ({ tags, setTags }) => {
   const [inputValue, setInputValue] = useState("");
 
@@ -61,16 +69,24 @@ const TagInput = ({ tags, setTags }) => {
     setTags(tags.filter((_, i) => i !== index));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag(); // Add the tag
+    }
+  };
+
   return (
     <div>
       <div className="flex space-x-2">
         <Input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Add a tag"
           className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
         />
-        <Button type="button" onClick={handleAddTag }>Add</Button>
+        {/* <Button type="button" onClick={handleAddTag } className="bg-orange-500 text-white hover:bg-orange-500  transition-colors duration-500">Add</Button> */}
       </div>
       <div className="flex flex-wrap mt-2 gap-2 max-w-full">
         {tags.map((tag, index) => (
@@ -94,7 +110,10 @@ const TagInput = ({ tags, setTags }) => {
   );
 };
 
-const Forum = () => {
+
+
+//form for add new formation 
+const Forum = ({onSubmit}) => {
   const form = useForm({
     resolver: zodResolver(formationSchema),
     defaultValues: {
@@ -111,60 +130,12 @@ const Forum = () => {
 
   const [tags, setTags] = useState([]);
 
-  const onSubmit = async (data) => {
-    const formattedData = {
-      title: data.fullName,
-      type: data.type,
-      description: data.description,
-      dateRange: {
-        startDate: format(data.dateRange.from, "yyyy-MM-dd"),
-        endDate: format(data.dateRange.to, "yyyy-MM-dd"),
-      },
-    };
-    alert(
-      `Full Name: ${formattedData.title}\nType: ${formattedData.type}\nDescription: ${formattedData.description}\nDate Range: ${formattedData.dateRange.startDate} to ${formattedData.dateRange.endDate}`
-    );
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_LINK}/api/courses/Addformation`,
-        {
-          title: formattedData.title,
-          description: data.password,
-          startDate: formattedData.dateRange.startDate,
-          endDate: formattedData.dateRange.endDate,
-          type: formattedData.type,
-          tags: tags,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      if (response.status === 200) {
-        toast.success("Formation added successfully!");
-      }
-      else{
-        toast.success(response.data.message);
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 400) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error(error.response.data.error);
-        console.error(error);
-      }
-    }
-  
-    
-  };
-
   return (
     <div className="z-1 flex flex-col w-50 items-center min-h-screen">
       <ToastContainer />
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+         onSubmit={form.handleSubmit((data) => {onSubmit(data, tags); form.reset() ;setTags([]) })}
           className="w-full max-w-lg space-y-6 bg-white p-8 "
         >
           <FormField
@@ -190,7 +161,7 @@ const Forum = () => {
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type</FormLabel>
+                <FormLabel className="text-black">Type</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
@@ -291,7 +262,7 @@ const Forum = () => {
             )}
           />
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full bg-orange-500 text-black hover:bg-orange-500 hover:text-white transition-colors duration-500 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
             Submit
           </Button>
         </form>
