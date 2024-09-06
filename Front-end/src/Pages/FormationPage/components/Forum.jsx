@@ -50,13 +50,8 @@ const formationSchema = z.object({
 });
 
 
-
-
-
-
 //for input of tag input
-const TagInput = ({ tags, setTags }) => {
-  const [inputValue, setInputValue] = useState("");
+const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
 
   const handleAddTag = () => {
     if (inputValue && !tags.includes(inputValue)) {
@@ -129,13 +124,14 @@ const Forum = ({onSubmit}) => {
   });
 
   const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
   return (
     <div className="z-1 flex flex-col w-50 items-center min-h-screen">
       <ToastContainer />
       <Form {...form}>
         <form
-         onSubmit={form.handleSubmit((data) => {onSubmit(data, tags); form.reset() ;setTags([]) })}
+         onSubmit={form.handleSubmit((data) => {onSubmit(data, tags); form.reset() ;setTags([]) ; setInputValue("");})}
           className="w-full max-w-lg space-y-6 bg-white p-8 "
         >
           <FormField
@@ -162,7 +158,7 @@ const Forum = ({onSubmit}) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-black">Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
                       <SelectValue placeholder="Select type" />
@@ -255,14 +251,14 @@ const Forum = ({onSubmit}) => {
               <FormItem>
                 <FormLabel  className="text-black">Tags</FormLabel>
                 <FormControl>
-                  <TagInput tags={tags} setTags={setTags} />
+                  <TagInput tags={tags} setTags={setTags} inputValue={inputValue} setInputValue={setInputValue}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit" className="w-full bg-orange-500 text-black hover:bg-orange-500 hover:text-white transition-colors duration-500 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
+          <Button type="submit" className="w-full bg-orange-500 text-white hover:bg-orange-500 hover:text-white transition-colors duration-500 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
             Submit
           </Button>
         </form>
