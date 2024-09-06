@@ -58,7 +58,7 @@ const insertTestUser = async () => {
   }
 };
 
-  //insertTestUser();
+//insertTestUser();
 
 
 // Start server

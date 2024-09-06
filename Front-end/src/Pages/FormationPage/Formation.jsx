@@ -1,11 +1,11 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from './components/Forum';
 import { PlusCircle, Edit, Trash2, Activity } from 'lucide-react';
-import CourseCard from './components/CourseCard';
-import axios from 'axios'
+import EventDisplay from './components/EventDisplay';
+import axios from 'axios';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 
 const Formation = () => {
   const [showForm, setShowForm] = useState(false);
@@ -32,10 +32,6 @@ const Formation = () => {
     { id: 6, title: 'Updated Profile', date: '2023-09-06' },
   ];
 
-  
-  
- 
-  //for Get all Courses-Formation
   const getFormations = async () => {
     try {
       const response = await axios.get(
@@ -57,8 +53,6 @@ const Formation = () => {
     getFormations();
   }, []);
 
-
-  //for add foramtion ---> send this to component of form using props
   const onSubmit = async (data, tags) => {
     const formattedData = {
       title: data.fullName,
@@ -87,9 +81,7 @@ const Formation = () => {
       );
       if (response.status === 200) {
         toast.success("Formation added successfully!");
-        // Fetch the updated list of formations
         getFormations();
-
       } else {
         toast.success(response.data.message);
       }
@@ -103,15 +95,9 @@ const Formation = () => {
     }
   };
 
-
-
-
-  
-
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
-        <ToastContainer />
-
+      <ToastContainer />
 
       {/* Left Sidebar */}
       <aside className="w-full lg:w-64 bg-white border-r lg:fixed lg:h-full overflow-y-auto">
@@ -140,9 +126,6 @@ const Formation = () => {
         </div>
       </aside>
 
-
-
-
       {/* Main Content */}
       <main className="flex-1 p-4 lg:ml-64 lg:mr-64">
         <div
@@ -153,30 +136,16 @@ const Formation = () => {
           <div className="relative rounded">
             <Form onSubmit={onSubmit} />
           </div>
-
         </div>
 
         <div>
-
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-8">
-            Event Available
+            Events Available
           </h1>
-
-          <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
-            {allFormations.length > 0 ? (
-              allFormations.map((course) => (
-                <CourseCard key={course._id} course={course} />
-              ))
-            ) : (
-              <p>No Event  available</p>
-            )}
-          </div>
-          
+          <EventDisplay allFormations={allFormations} />
         </div>
-
       </main>
 
- 
       {/* Right Side - Activity Grid */}
       <aside className="w-full lg:w-64 bg-white border-l lg:fixed lg:right-0 lg:top-0 lg:h-full overflow-y-auto">
         <div className="p-4">
@@ -193,9 +162,7 @@ const Formation = () => {
             ))}
           </div>
         </div>
-      </aside> 
-
-      
+      </aside>
     </div>
   );
 };
