@@ -1,26 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Form from './components/Forum';
-import { PlusCircle, Edit, Trash2, Activity } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, Activity, ChevronRight } from 'lucide-react';
 import EventDisplay from './components/EventDisplay';
 import axios from 'axios';
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, Toaster } from 'react-hot-toast'; 
 import { format } from "date-fns";
 
 const Formation = () => {
   const [showForm, setShowForm] = useState(false);
   const [allFormations, setAllFormations] = useState([]);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const handleAddFormation = () => {
     setShowForm(!showForm);
+    setShowSidebar(false);
   };
 
   const handleModifyFormation = () => {
     console.log("Modify formation clicked");
+    setShowSidebar(false);
   };
 
   const handleDeleteFormation = () => {
     console.log("Delete formation clicked");
+    setShowSidebar(false);
+  };
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
   };
 
   const activities = [
@@ -96,28 +103,43 @@ const Formation = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen">
-      <ToastContainer />
+    <div className="flex flex-col min-h-screen">
+      <Toaster position="top-right" reverseOrder={false} />
+
+      {/* Toggle button for sidebar on mobile */}
+      <button
+        className={`lg:hidden fixed top-1/2 -translate-y-1/2 left-0 z-40 p-1 bg-white rounded-r-md shadow-md transition-transform duration-300 ${
+          showSidebar ? 'translate-x-64' : 'translate-x-0'
+        }`}
+        onClick={toggleSidebar}
+      >
+        <ChevronRight 
+          size={24} 
+          className={`transition-transform duration-300 ${showSidebar ? 'rotate-180' : ''}`}
+        />
+      </button>
 
       {/* Left Sidebar */}
-      <aside className="w-full lg:w-64 bg-white border-r lg:fixed lg:h-full overflow-y-auto">
+      <aside className={`w-64 bg-white border-r lg:fixed lg:left-0 lg:top-16 lg:bottom-0 overflow-y-auto transition-transform duration-300 ease-in-out ${
+        showSidebar ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0 fixed top-16 bottom-0 z-30`}>
         <div className="p-4 space-y-2">
           <button
-            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent "
+            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 focus:outline-none"
             onClick={handleAddFormation}
           >
             <PlusCircle className="mr-2" size={20} />
             Add Formation
           </button>
           <button
-            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent"
+            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 focus:outline-none"
             onClick={handleModifyFormation}
           >
             <Edit className="mr-2" size={20} />
             Modify Formation
           </button>
           <button
-            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent"
+            className="w-full p-2 text-black rounded flex items-center justify-center lg:justify-start hover:bg-gray-100 focus:outline-none"
             onClick={handleDeleteFormation}
           >
             <Trash2 className="mr-2" size={20} />
@@ -127,7 +149,7 @@ const Formation = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 lg:ml-64 lg:mr-64">
+      <main className="flex-1 p-4 lg:ml-64 lg:mr-64 mt-4">
         <div
           className={`transition-all duration-1000 ease-in-out ${
             showForm ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
@@ -139,7 +161,7 @@ const Formation = () => {
         </div>
 
         <div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-8">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-5">
             Events Available
           </h1>
           <EventDisplay allFormations={allFormations} />
@@ -147,7 +169,7 @@ const Formation = () => {
       </main>
 
       {/* Right Side - Activity Grid */}
-      <aside className="w-full lg:w-64 bg-white border-l lg:fixed lg:right-0 lg:top-0 lg:h-full overflow-y-auto">
+      <aside className="w-full lg:w-64 bg-white border-l lg:fixed lg:right-0 lg:top-16 lg:bottom-0 overflow-y-auto">
         <div className="p-4">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Activity className="mr-2" size={24} />
