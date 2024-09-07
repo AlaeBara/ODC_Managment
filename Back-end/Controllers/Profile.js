@@ -1,7 +1,39 @@
 const express = require('express');
 const router = express.Router();
 const { User } = require('../Models/userModel');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer'); // Import multer
 
+// Configure Cloudinary
+cloudinary.config({ 
+  cloud_name: 'djux9krem', 
+  api_key: '639144162891629', 
+  api_secret: 'cqldqET6lDIs4iM9WAkf5DV4Adg' 
+});
+
+// Configure Multer for memory storage
+const upload = multer({ storage: multer.memoryStorage() });
+
+// Upload Image to Cloudinary
+const Uploadimage = (req, res) => {
+  try {
+    cloudinary.uploader.upload_stream(async (error, result) => {
+      if (error) {
+        return res.status(500).json({ error: 'Failed to upload image' });
+      }
+
+      // Update the user's profilePic with the uploaded image URL
+      const userId = req.user.userId;
+      await User.findByIdAndUpdate(userId, { profilePic: result.secure_url });
+
+      res.status(200).json({ imageUrl: result.secure_url });
+    }).end(req.file.buffer);
+  } catch (error) {
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
+// Get Profile
 const Getprofile = async (req, res) => {
   try {
     const userId = req.user.userId; // Get the authenticated user's ID from the middleware
@@ -25,6 +57,7 @@ const Getprofile = async (req, res) => {
   }
 };
 
+// Update Profile
 const Updateprofile = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -59,4 +92,4 @@ const Updateprofile = async (req, res) => {
   }
 };
 
-module.exports = { Getprofile, Updateprofile};
+module.exports = { Getprofile, Updateprofile, Uploadimage }; // Added Uploadimage export

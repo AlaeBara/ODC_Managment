@@ -43,15 +43,29 @@ const Profile = () => {
     setProfile(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setProfile(prev => ({ ...prev, profileImage: e.target.result }));
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      const formData = new FormData();
+      formData.append('image', e.target.files[0]);
+  
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_LINK}/api/profile/upload-profile-picture`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',  // Include credentials (cookies) for authentication
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to upload image');
+        }
+  
+        const result = await response.json();
+        setProfile((prev) => ({ ...prev, profileImage: result.imageUrl }));
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
-  };
+  };  
 
   const handleSubmit = (e) => {
     e.preventDefault();
