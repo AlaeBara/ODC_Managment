@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Pencil, Save, X } from 'lucide-react'
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Pencil, Save, X } from 'lucide-react';
 
 const Profile = () => {
-  const defaultImage = './images/profile.png';  // Ensure this path is correct if the image is in the same folder
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     firstName: '',
@@ -16,12 +15,11 @@ const Profile = () => {
     profileImage: '',
     currentPassword: '',
     newPassword: '',
-    confirmNewPassword: ''
+    confirmNewPassword: '',
   });
 
   const [originalProfile, setOriginalProfile] = useState({});
 
-  // Fetch profile data from the API when the component mounts
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_LINK}/api/profile/Getprofile`, {
       method: 'GET',
@@ -37,14 +35,14 @@ const Profile = () => {
           profileImage: data.profilePic || '',
         };
         setProfile(fetchedProfile);
-        setOriginalProfile(fetchedProfile); // Store the original profile for cancellation
+        setOriginalProfile(fetchedProfile);
       })
       .catch((error) => console.error('Error fetching profile:', error));
   }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfile(prev => ({ ...prev, [name]: value }));
+    setProfile((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = async (e) => {
@@ -73,8 +71,7 @@ const Profile = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    fetch(`${import.meta.env.VITE_API_LINK}/api/profile/Updateprofile`, {
+    fetch(`${import.meta.env.VITE_API_LINK}/api/profile/UpdateProfile`, {
       method: 'PUT',
       credentials: 'include',
       headers: {
@@ -138,7 +135,7 @@ const Profile = () => {
           <div className="flex flex-col items-center">
             <div className="relative mb-4">
               <img
-                src={profile.profileImage || defaultImage}  // Fallback to default image if no profile image
+                src={profile.profileImage || 'defaultImageURL'}  // Ensure a default image URL or handle missing image
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary"
               />
               {isEditing && (
@@ -216,7 +213,7 @@ const Profile = () => {
                     id="currentPassword"
                     name="currentPassword"
                     type="password"
-                    value={profile.currentPassword}
+                    value={profile.currentPassword || ''}  // Ensure default empty string
                     onChange={handleInputChange}
                     required
                   />
@@ -227,7 +224,7 @@ const Profile = () => {
                     id="newPassword"
                     name="newPassword"
                     type="password"
-                    value={profile.newPassword}
+                    value={profile.newPassword || ''}  // Ensure default empty string
                     onChange={handleInputChange}
                     required
                   />
@@ -238,7 +235,7 @@ const Profile = () => {
                     id="confirmNewPassword"
                     name="confirmNewPassword"
                     type="password"
-                    value={profile.confirmNewPassword}
+                    value={profile.confirmNewPassword || ''}  // Ensure default empty string
                     onChange={handleInputChange}
                     required
                   />
@@ -253,6 +250,6 @@ const Profile = () => {
       </Card>
     </div>
   );
-}
+};
 
 export default Profile;
