@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { User } = require('../Models/userModel');
 const cloudinary = require('cloudinary').v2;
+const bcrypt = require('bcrypt');
 const multer = require('multer'); // Import multer
 
 // Configure Cloudinary
@@ -61,7 +62,7 @@ const Getprofile = async (req, res) => {
 const Updateprofile = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { firstName, lastName, email, phoneNumber, profilePic } = req.body;
+    const { firstName, lastName, email, phoneNumber, profilePic, currentPassword, newPassword, confirmNewPassword } = req.body;
 
     // Build an object to hold only the fields that are provided
     const updateFields = {};
@@ -71,6 +72,28 @@ const Updateprofile = async (req, res) => {
     if (email) updateFields.email = email;
     if (phoneNumber) updateFields.phoneNumber = phoneNumber;
     if (profilePic) updateFields.profilePic = profilePic;
+
+    // Check if passwords are provided and handle password update
+    if (currentPassword && newPassword && confirmNewPassword) {
+      if (newPassword !== confirmNewPassword) {
+        return res.status(400).json({ message: 'New passwords do not match' });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const isMatch = await bcrypt.compare(currentPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ message: 'Current password is incorrect' });
+      }
+
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+      updateFields.password = hashedPassword;  // Update the password field
+    }
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,

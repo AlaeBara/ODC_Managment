@@ -6,13 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Pencil, Save, X } from 'lucide-react'
 
 const Profile = () => {
+  const defaultImage = './images/profile.png';  // Ensure this path is correct if the image is in the same folder
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
-    profileImage: '/placeholder.svg?height=200&width=200',
+    profileImage: '',
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: ''
   });
 
   const [originalProfile, setOriginalProfile] = useState({});
@@ -30,7 +34,7 @@ const Profile = () => {
           lastName: data.lastName || '',
           email: data.email || '',
           phoneNumber: data.phoneNumber || '',
-          profileImage: data.profilePic || '/placeholder.svg?height=200&width=200',
+          profileImage: data.profilePic || '',
         };
         setProfile(fetchedProfile);
         setOriginalProfile(fetchedProfile); // Store the original profile for cancellation
@@ -47,30 +51,30 @@ const Profile = () => {
     if (e.target.files && e.target.files[0]) {
       const formData = new FormData();
       formData.append('image', e.target.files[0]);
-  
+
       try {
         const response = await fetch(`${import.meta.env.VITE_API_LINK}/api/profile/upload-profile-picture`, {
           method: 'POST',
           body: formData,
-          credentials: 'include',  // Include credentials (cookies) for authentication
+          credentials: 'include',
         });
-  
+
         if (!response.ok) {
           throw new Error('Failed to upload image');
         }
-  
+
         const result = await response.json();
         setProfile((prev) => ({ ...prev, profileImage: result.imageUrl }));
       } catch (error) {
         console.error('Error uploading image:', error);
       }
     }
-  };  
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Update the profile data via the API
-    fetch(`${import.meta.env.VITE_API_LINK}/api/profile/UpdateProfile`, {
+
+    fetch(`${import.meta.env.VITE_API_LINK}/api/profile/Updateprofile`, {
       method: 'PUT',
       credentials: 'include',
       headers: {
@@ -80,8 +84,8 @@ const Profile = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        setIsEditing(false);  // Exit edit mode after saving
-        setOriginalProfile(profile); // Update the original profile after saving
+        setIsEditing(false);
+        setOriginalProfile(profile);
       })
       .catch((error) => console.error('Error updating profile:', error));
   };
@@ -89,13 +93,13 @@ const Profile = () => {
   const toggleEdit = () => {
     setIsEditing(!isEditing);
     if (!isEditing) {
-      setOriginalProfile(profile); // Save current profile state before editing
+      setOriginalProfile(profile);
     }
   };
 
   const handleCancel = () => {
-    setProfile(originalProfile); // Revert to the original profile data
-    setIsEditing(false); // Exit edit mode
+    setProfile(originalProfile);
+    setIsEditing(false);
   };
 
   return (
@@ -134,8 +138,7 @@ const Profile = () => {
           <div className="flex flex-col items-center">
             <div className="relative mb-4">
               <img
-                src={profile.profileImage}
-                alt="Profile"
+                src={profile.profileImage || defaultImage}  // Fallback to default image if no profile image
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary"
               />
               {isEditing && (
@@ -205,6 +208,43 @@ const Profile = () => {
                 <p className="text-lg">{profile.phoneNumber}</p>
               )}
             </div>
+            {isEditing && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input
+                    id="currentPassword"
+                    name="currentPassword"
+                    type="password"
+                    value={profile.currentPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    name="newPassword"
+                    type="password"
+                    value={profile.newPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                  <Input
+                    id="confirmNewPassword"
+                    name="confirmNewPassword"
+                    type="password"
+                    value={profile.confirmNewPassword}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </>
+            )}
             {isEditing && (
               <Button type="submit" className="w-full mt-6">Save Profile</Button>
             )}
