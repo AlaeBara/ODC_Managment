@@ -30,7 +30,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
-            path="/Home"
+            path="/home"
             element={
               <ProtectedRoute>
                 <MainLayout>
