@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
@@ -35,17 +35,18 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-    // Validation schema
-    const formationSchema = z.object({
-    fullName: z.string().min(1, { message: "Full name is required." }),
-    type: z.string().min(1, { message: "Type is required." }),
-    description: z.string().min(1, { message: "Description is required." }),
-    dateRange: z.object({
-        from: z.date({ required_error: "Start date is required." }),
-        to: z.date({ required_error: "End date is required." }),
-    }),
-    tags: z.array(z.string()).optional(),
-    });
+// Validation schema
+const formationSchema = z.object({
+  selectedFormation: z.string().min(1, { message: "Formation is required." }),
+  fullName: z.string().min(1, { message: "Full name is required." }),
+  type: z.string().min(1, { message: "Type is required." }),
+  description: z.string().min(1, { message: "Description is required." }),
+  dateRange: z.object({
+    from: z.date({ required_error: "Start date is required." }),
+    to: z.date({ required_error: "End date is required." }),
+  }),
+  tags: z.array(z.string()).optional(),
+});
 
 // Tag input component
 const TagInput = ({ tags, setTags, inputValue, setInputValue }) => {
@@ -100,222 +101,244 @@ const TagInput = ({ tags, setTags, inputValue, setInputValue }) => {
 };
 
 // EditFormation component
-const EditFormation = ({ allFormations, onSubmit }) => {
-    const [selectedFormation, setSelectedFormation] = useState(null);
-    const [tags, setTags] = useState([]);
-    const [inputValue, setInputValue] = useState("");
-  
-    const form = useForm({
-      resolver: zodResolver(formationSchema),
-      defaultValues: {
-        fullName: "",
-        type: "",
-        description: "",
-        dateRange: {
-          from: new Date(),
-          to: addDays(new Date(), 7),
-        },
-        tags: [],
+const EditFormation = ({ allFormations, onSubmit, isShowed }) => {
+  const [selectedFormation, setSelectedFormation] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const form = useForm({
+    resolver: zodResolver(formationSchema),
+    defaultValues: {
+      selectedFormation: "",
+      fullName: "",
+      type: "",
+      description: "",
+      dateRange: {
+        from: new Date(),
+        to: addDays(new Date(), 7),
       },
+      tags: [],
+    },
+  });
+
+  const handleFormationSelect = (formationId) => {
+    const formation = allFormations.find(f => f.title === formationId);
+    if (formation) {
+      setSelectedFormation(formation);
+      form.reset({
+        selectedFormation: formation.title,
+        fullName: formation.title,
+        type: formation.type,
+        description: formation.description,
+        dateRange: {
+          from: new Date(formation.startDate),
+          to: new Date(formation.endDate),
+        },
+      });
+      setTags(formation.tags || []);
+    }
+  };
+
+  const handleFormSubmit = (data) => {
+    onSubmit(data, tags, selectedFormation ? selectedFormation._id : null);
+    form.reset({
+      selectedFormation: "",
+      fullName: "",
+      type: "",
+      description: "",
+      dateRange: {
+        from: new Date(),
+        to: addDays(new Date(), 7),
+      },
+      tags: [],
     });
+    setTags([]);  // Reset tags here
+    setSelectedFormation(null);
+  };
   
-    const handleFormationSelect = (formationId) => {
-      const formation = allFormations.find(f => f.title === formationId);
-      if (formation) {
-        setSelectedFormation(formation);
-        form.reset({
-          fullName: formation.title,
-          type: formation.type,
-          description: formation.description,
-          dateRange: {
-            from: new Date(formation.startDate),
-            to: new Date(formation.endDate),
-          },
-        });
-        setTags(formation.tags || []);
-      }
-    };
-  
-    return (
-      <div className="z-1 flex flex-col w-50 items-center min-h-screen">
-        <ToastContainer />
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((data) => {
-              onSubmit(data, tags, selectedFormation?._id )
-            })}
-            className="w-full max-w-lg space-y-6 bg-white p-8"
-          >
-            <FormField
-              control={form.control} 
-              name="selectedFormation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black">Select Formation</FormLabel>
-                  <Select 
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      handleFormationSelect(value);
-                    }} 
-                    value={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
-                        <SelectValue placeholder="Select formation to edit" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel className="text-black">Formations</SelectLabel>
-                        {allFormations.map((formation) => (
-                          <SelectItem key={formation._id} value={formation.title}>
-                            {formation.title}
-                          </SelectItem>
-                        ))}
+
+  return (
+    <div className="z-1 flex flex-col w-50 items-center min-h-screen">
+      <ToastContainer />
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleFormSubmit)}
+          className="w-full max-w-lg space-y-6 bg-white p-8"
+        >
+          <FormField
+            control={form.control}
+            name="selectedFormation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-black">Select Formation</FormLabel>
+                <Select
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    handleFormationSelect(value);
+                  }}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
+                      <SelectValue placeholder="Select formation to edit" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel className="text-black">Formations</SelectLabel>
+                      {allFormations.map((formation) => (
+                        <SelectItem key={formation._id} value={formation.title}>
+                          {formation.title}
+                        </SelectItem>
+                      ))}
                     </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black">Full Name</FormLabel>
+                  </SelectContent>
+                </Select>
+                <FormMessage>
+                  {form.formState.errors.selectedFormation && (
+                    <span className="text-red-500">
+                      {form.formState.errors.selectedFormation.message}
+                    </span>
+                  )}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="fullName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-black">Full Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Full Name"
+                    {...field}
+                    className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-black">Type</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <Input
-                      placeholder="Full Name"
-                      {...field}
-                      className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
-                    />
+                    <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
-            <FormField
-              control={form.control}
-              name="type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black">Type</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel className="text-black">Types</SelectLabel>
+                      <SelectItem value="type1">Type 1</SelectItem>
+                      <SelectItem value="type2">Type 2</SelectItem>
+                      <SelectItem value="type3">Type 3</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-black">Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Description"
+                    {...field}
+                    className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Controller
+            control={form.control}
+            name="dateRange"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel className="text-black">Date Range</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
                     <FormControl>
-                      <SelectTrigger className="ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel className="text-black">Types</SelectLabel>
-                        <SelectItem value="type1">Type 1</SelectItem>
-                        <SelectItem value="type2">Type 2</SelectItem>
-                        <SelectItem value="type3">Type 3</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black">Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Description"
-                      {...field}
-                      className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
-            <Controller
-              control={form.control}
-              name="dateRange"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel className="text-black">Date Range</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          id="date"
-                          variant={"outline"}
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value?.from ? (
-                            field.value.to ? (
-                              <>
-                                {format(field.value.from, "LLL dd, y")} -{" "}
-                                {format(field.value.to, "LLL dd, y")}
-                              </>
-                            ) : (
-                              format(field.value.from, "LLL dd, y")
-                            )
+                      <Button
+                        id="date"
+                        variant={"outline"}
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value?.from ? (
+                          field.value.to ? (
+                            <>
+                              {format(field.value.from, "LLL dd, y")} -{" "}
+                              {format(field.value.to, "LLL dd, y")}
+                            </>
                           ) : (
-                            <span>Pick a date range</span>
-                          )}
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        initialFocus
-                        mode="range"
-                        defaultMonth={field.value?.from}
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        numberOfMonths={2}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
-            <FormField
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-black">Tags</FormLabel>
-                  <FormControl>
-                    <TagInput
-                      tags={tags}
-                      setTags={setTags}
-                      inputValue={inputValue}
-                      setInputValue={setInputValue}
+                            format(field.value.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>Select date range</span>
+                        )}
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <Calendar
+                      mode="range"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      numberOfMonths={2}
+                      initialFocus
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-  
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="tags"
+            render={() => (
+              <FormItem>
+                <FormLabel className="text-black">Tags</FormLabel>
+                <TagInput
+                  tags={tags}
+                  setTags={setTags}
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
             <Button type="submit" className="w-full bg-orange-500 text-white hover:bg-orange-500 hover:text-white transition-colors duration-500 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
               Update
             </Button>
-          </form>
-        </Form>
-      </div>
-    );
-  };
+        </form>
+      </Form>
+    </div>
+  );
+};
 
 export default EditFormation;
