@@ -51,8 +51,7 @@ const formationSchema = z.object({
 
 
 //for input of tag input
-const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
-
+const TagInput = ({ tags, setTags, inputValue, setInputValue }) => {
   const handleAddTag = () => {
     if (inputValue && !tags.includes(inputValue)) {
       setTags([...tags, inputValue]);
@@ -73,7 +72,7 @@ const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
 
   return (
     <div>
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap space-x-2">
         <Input
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -83,7 +82,7 @@ const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
         />
         {/* <Button type="button" onClick={handleAddTag } className="bg-orange-500 text-white hover:bg-orange-500  transition-colors duration-500">Add</Button> */}
       </div>
-      <div className="flex flex-wrap mt-2 gap-2 max-w-full">
+      <div className="flex flex-wrap mt-2 gap-2 max-w-full overflow-auto">
         {tags.map((tag, index) => (
           <div
             key={index}
@@ -93,10 +92,9 @@ const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
             <button 
               type="button"
               onClick={() => handleRemoveTag(index)}
-              
               className="text-black-500 focus:outline-none"
             >
-              <X  className="w-5"/>
+              <X className="w-5"/>
             </button>
           </div>
         ))}
@@ -104,6 +102,7 @@ const TagInput = ({ tags, setTags ,inputValue, setInputValue }) => {
     </div>
   );
 };
+
 
 
 
