@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Form from './components/Forum';
+import EditeForm from './components/EditFormation'
 import { PlusCircle, Edit, Trash2, Activity, ChevronRight } from 'lucide-react';
 import EventDisplay from './components/EventDisplay';
 import axios from 'axios';
@@ -10,6 +11,7 @@ const Formation = () => {
   const [showForm, setShowForm] = useState(false);
   const [allFormations, setAllFormations] = useState([]);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const handleAddFormation = () => {
     setShowForm(!showForm);
@@ -17,7 +19,7 @@ const Formation = () => {
   };
 
   const handleModifyFormation = () => {
-    console.log("Modify formation clicked");
+    setEditMode(!editMode);
     setShowSidebar(false);
   };
 
@@ -60,6 +62,8 @@ const Formation = () => {
     getFormations();
   }, []);
 
+
+  //for add formation
   const onSubmit = async (data, tags) => {
     const formattedData = {
       title: data.fullName,
@@ -102,8 +106,97 @@ const Formation = () => {
     }
   };
 
+
+  //for edite form
+  const onSubmitEdite = async (data, tags, id) => {
+    const originalFormation = allFormations.find(f => f._id === id);
+
+    if (!originalFormation) {
+      console.error('Formation not found:', id);
+      toast.error('Formation not found.');
+      return;
+    }
+  
+    const formattedData = {
+      title: data.fullName,
+      type: data.type,
+      description: data.description,
+      dateRange: {
+        startDate: format(data.dateRange.from, "yyyy-MM-dd"),
+        endDate: format(data.dateRange.to, "yyyy-MM-dd"),
+      },
+      tags: tags,
+    };
+  
+    const originalData = {
+      title: originalFormation.title,
+      type: originalFormation.type,
+      description: originalFormation.description,
+      dateRange: {
+        startDate: format(new Date(originalFormation.startDate), "yyyy-MM-dd"),
+        endDate: format(new Date(originalFormation.endDate), "yyyy-MM-dd"),
+      },
+      tags: originalFormation.tags || [],
+    };
+  
+    // Function to compare arrays
+    const arraysEqual = (a, b) => {
+      if (a.length !== b.length) return false;
+      for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+      }
+      return true;
+    };
+  
+    // Check if there are any changes
+    const hasChanges = JSON.stringify(formattedData) !== JSON.stringify({
+      ...originalData,
+      tags: formattedData.tags,
+    }) || !arraysEqual(formattedData.tags, originalData.tags);
+  
+
+    if (!hasChanges) {
+      toast('No changes detected.', {
+        icon: '⚠️',
+      });
+      return;
+    }
+  
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_LINK}/api/courses/UpdateFormations/${id}`,
+        {
+          title: formattedData.title,
+          description: formattedData.description,
+          startDate: formattedData.dateRange.startDate,
+          endDate: formattedData.dateRange.endDate,
+          type: formattedData.type,
+          tags: formattedData.tags,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+  
+      if (response.status === 200) {
+        toast.success("Course updated successfully");
+        getFormations();
+      } else {
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.response.data.error);
+        console.error(error);
+      }
+    }
+  };
+  
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen  bg-gray-100">
       <Toaster position="top-right" reverseOrder={false} />
 
       {/* Toggle button for sidebar on mobile */}
@@ -149,18 +242,29 @@ const Formation = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 lg:ml-64 lg:mr-64 mt-4">
-        <div
-          className={`transition-all duration-1000 ease-in-out ${
-            showForm ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-          } overflow-hidden`}
-        >
-          <div className="relative rounded">
-            <Form onSubmit={onSubmit} />
+      <main className="flex-1 p-4 lg:ml-64 lg:mr-64  flex flex-col">
+
+        <div className="flex flex-col space-y-4">
+
+          <div className={`transition-all duration-1000 ease-in-out ${
+            showForm ? 'max-h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          }`}>
+            <div className="relative rounded">
+              <Form onSubmit={onSubmit} />
+            </div>
           </div>
+
+          <div className={`transition-all duration-1000 ease-in-out ${
+            editMode ? 'max-h-full opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          }`}>
+            <div className="relative rounded">
+              <EditeForm allFormations={allFormations} onSubmit={onSubmitEdite} />
+            </div>
+          </div>
+
         </div>
 
-        <div>
+        <div className="mt-4">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-5">
             Events Available
           </h1>
