@@ -100,7 +100,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4" style={{ fontFamily: 'Inter, sans-serif' }}>
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="relative pb-0">
           <div className="absolute top-4 right-4 flex gap-2">

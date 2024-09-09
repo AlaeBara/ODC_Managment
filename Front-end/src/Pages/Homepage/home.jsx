@@ -56,10 +56,10 @@ const Homepage = () => {
               <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                 <CardTitle className="text-2xl">Current Events</CardTitle>
               </CardHeader>
-              <CardContent className="divide-y">
+              <CardContent className="divide-y max-h-80 overflow-y-auto">
                 {currentCourses.map((course) => (
                   <div key={course._id} className="py-4 flex items-start space-x-4">
-                    <div className="bg-blue-100 rounded-full p-2">
+                    <div className="bg-blue-100 rounded-full p-2 flex-shrink-0">
                       <Calendar className="w-6 h-6 text-blue-600" />
                     </div>
                     <div>
@@ -82,14 +82,14 @@ const Homepage = () => {
               <CardHeader className="bg-gradient-to-r from-orange-400 to-red-500 text-white">
                 <CardTitle className="text-2xl">Upcoming Events</CardTitle>
               </CardHeader>
-              <CardContent className="divide-y">
+              <CardContent className="divide-y max-h-80 overflow-y-auto">
                 {upcomingCourses.map((course) => (
                   <div
                     key={course._id}
                     className="py-4 flex items-center justify-between group hover:bg-gray-50 transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="bg-green-100 rounded-full p-2">
+                      <div className="bg-green-100 rounded-full p-2 flex-shrink-0">
                         <Clock className="w-6 h-6 text-green-600" />
                       </div>
                       <div>
@@ -104,7 +104,7 @@ const Homepage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 text-amber-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex items-center space-x-2 text-amber-500">
                       <AlertTriangle className="w-5 h-5" />
                       <span className="text-sm font-medium">Upcoming</span>
                     </div>
