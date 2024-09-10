@@ -263,8 +263,9 @@ export default function Component() {
                 variant="outline"
                 size="icon"
                 onClick={toggleEdit}
+                className="bg-orange-500 hover:bg-orange-700"
               >
-                <Pencil className="h-4 w-4" />
+                <Pencil className="h-4 w-4 text-white" />
               </Button>
             )}
           </div>
