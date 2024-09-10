@@ -4,23 +4,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Pencil, Save, X } from 'lucide-react';
+import { Toaster, toast } from 'react-hot-toast';
 
-const Profile = () => {
+export default function Component() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phoneNumber: '',
-    profileImage: '',
+    profilePic: '',
     currentPassword: '',
     newPassword: '',
     confirmNewPassword: '',
   });
 
   const [originalProfile, setOriginalProfile] = useState({});
+  const [passwordErrors, setPasswordErrors] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  });
 
   useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = () => {
     fetch(`${import.meta.env.VITE_API_LINK}/api/profile/Getprofile`, {
       method: 'GET',
       credentials: 'include',
@@ -32,17 +42,25 @@ const Profile = () => {
           lastName: data.lastName || '',
           email: data.email || '',
           phoneNumber: data.phoneNumber || '',
-          profileImage: data.profilePic || '',
+          profilePic: data.profilePic || '',
         };
         setProfile(fetchedProfile);
         setOriginalProfile(fetchedProfile);
       })
-      .catch((error) => console.error('Error fetching profile:', error));
-  }, []);
+      .catch((error) => {
+        console.error('Error fetching profile:', error);
+        toast.error('Failed to load profile. Please try again.');
+      });
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
+    
+    // Clear password errors when user starts typing
+    if (['currentPassword', 'newPassword', 'confirmNewPassword'].includes(name)) {
+      setPasswordErrors((prev) => ({ ...prev, [name]: '' }));
+    }
   };
 
   const handleImageChange = async (e) => {
@@ -62,45 +80,163 @@ const Profile = () => {
         }
 
         const result = await response.json();
-        setProfile((prev) => ({ ...prev, profileImage: result.imageUrl }));
+        setProfile((prev) => ({ ...prev, profilePic: result.imageUrl }));
+        toast.success('Profile picture updated successfully!');
       } catch (error) {
         console.error('Error uploading image:', error);
+        toast.error('Failed to update profile picture. Please try again.');
       }
     }
   };
 
+  const validatePasswords = () => {
+    const errors = {
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    };
+    let isValid = true;
+
+    if (profile.newPassword || profile.confirmNewPassword) {
+      if (!profile.currentPassword) {
+        errors.currentPassword = 'Current password is required';
+        isValid = false;
+      }
+      if (!profile.newPassword) {
+        errors.newPassword = 'New password is required';
+        isValid = false;
+      }
+      if (!profile.confirmNewPassword) {
+        errors.confirmNewPassword = 'Confirm new password is required';
+        isValid = false;
+      }
+      if (profile.newPassword !== profile.confirmNewPassword) {
+        errors.confirmNewPassword = 'Passwords do not match';
+        isValid = false;
+      }
+      if (profile.newPassword && profile.newPassword.length < 8) {
+        errors.newPassword = 'Password must be at least 8 characters long';
+        isValid = false;
+      }
+    }
+
+    setPasswordErrors(errors);
+    return isValid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+  
+    const payload = {};
+    const changedFields = [];
+  
+    if (profile.firstName !== originalProfile.firstName) {
+      payload.firstName = profile.firstName;
+      changedFields.push('First name');
+    }
+    if (profile.lastName !== originalProfile.lastName) {
+      payload.lastName = profile.lastName;
+      changedFields.push('Last name');
+    }
+    if (profile.email !== originalProfile.email) {
+      payload.email = profile.email;
+      changedFields.push('Email');
+    }
+    if (profile.phoneNumber !== originalProfile.phoneNumber) {
+      payload.phoneNumber = profile.phoneNumber;
+      changedFields.push('Phone number');
+    }
+  
+    const isPasswordValid = validatePasswords();
+    if (profile.currentPassword || profile.newPassword || profile.confirmNewPassword) {
+      if (!isPasswordValid) {
+        return; // Stop submission if passwords are invalid
+      }
+      payload.currentPassword = profile.currentPassword;
+      payload.newPassword = profile.newPassword;
+      payload.confirmNewPassword = profile.confirmNewPassword;
+      changedFields.push('Password');
+    }
+  
     fetch(`${import.meta.env.VITE_API_LINK}/api/profile/UpdateProfile`, {
       method: 'PUT',
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(profile),
+      body: JSON.stringify(payload),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setIsEditing(false);
-        setOriginalProfile(profile);
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to update profile');
+        }
+        return response.json();
       })
-      .catch((error) => console.error('Error updating profile:', error));
+      .then((data) => {
+        setProfile(prevProfile => ({
+          ...prevProfile,
+          ...data.user,
+          currentPassword: '',
+          newPassword: '',
+          confirmNewPassword: '',
+        }));
+        setOriginalProfile(data.user);
+        setIsEditing(false);
+        
+        if (changedFields.length > 0) {
+          toast.success(`Updated: ${changedFields.join(', ')}`, {
+            duration: 3000,
+          });
+        } else {
+          toast.success('Profile updated successfully');
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+        toast.error('Failed to update profile. Please try again.');
+      });
   };
 
   const toggleEdit = () => {
     setIsEditing(!isEditing);
     if (!isEditing) {
       setOriginalProfile(profile);
+    } else {
+      // Reset password fields and errors when exiting edit mode
+      setProfile(prev => ({
+        ...prev,
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      }));
+      setPasswordErrors({
+        currentPassword: '',
+        newPassword: '',
+        confirmNewPassword: '',
+      });
     }
   };
 
   const handleCancel = () => {
     setProfile(originalProfile);
     setIsEditing(false);
+    // Reset password fields and errors
+    setProfile(prev => ({
+      ...prev,
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    }));
+    setPasswordErrors({
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    });
   };
 
   return (
     <div className="container mx-auto p-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+      <Toaster position="top-right" />
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="relative pb-0">
           <div className="absolute top-4 right-4 flex gap-2">
@@ -135,14 +271,15 @@ const Profile = () => {
           <div className="flex flex-col items-center">
             <div className="relative mb-4">
               <img
-                src={profile.profileImage || 'defaultImageURL'}  // Ensure a default image URL or handle missing image
+                src={profile.profilePic || '/placeholder.svg?height=128&width=128'}
+                alt="Profile"
                 className="w-32 h-32 rounded-full object-cover border-4 border-primary"
               />
               {isEditing && (
-                <Label htmlFor="profileImage" className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer">
+                <Label htmlFor="profilePic" className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer">
                   <Pencil className="h-4 w-4" />
                   <Input
-                    id="profileImage"
+                    id="profilePic"
                     type="file"
                     className="hidden"
                     onChange={handleImageChange}
@@ -213,10 +350,12 @@ const Profile = () => {
                     id="currentPassword"
                     name="currentPassword"
                     type="password"
-                    value={profile.currentPassword || ''}  // Ensure default empty string
+                    value={profile.currentPassword || ''}
                     onChange={handleInputChange}
-                    required
                   />
+                  {passwordErrors.currentPassword && (
+                    <p className="text-red-500 text-sm">{passwordErrors.currentPassword}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="newPassword">New Password</Label>
@@ -224,10 +363,12 @@ const Profile = () => {
                     id="newPassword"
                     name="newPassword"
                     type="password"
-                    value={profile.newPassword || ''}  // Ensure default empty string
+                    value={profile.newPassword || ''}
                     onChange={handleInputChange}
-                    required
                   />
+                  {passwordErrors.newPassword && (
+                    <p className="text-red-500 text-sm">{passwordErrors.newPassword}</p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
@@ -235,10 +376,12 @@ const Profile = () => {
                     id="confirmNewPassword"
                     name="confirmNewPassword"
                     type="password"
-                    value={profile.confirmNewPassword || ''}  // Ensure default empty string
+                    value={profile.confirmNewPassword || ''}
                     onChange={handleInputChange}
-                    required
                   />
+                  {passwordErrors.confirmNewPassword && (
+                    <p className="text-red-500 text-sm">{passwordErrors.confirmNewPassword}</p>
+                  )}
                 </div>
               </>
             )}
@@ -250,6 +393,4 @@ const Profile = () => {
       </Card>
     </div>
   );
-};
-
-export default Profile;
+}

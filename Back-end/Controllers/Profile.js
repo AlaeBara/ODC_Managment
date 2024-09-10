@@ -99,7 +99,7 @@ const Updateprofile = async (req, res) => {
       userId,
       { $set: updateFields },  // Use $set to update only specified fields
       { new: true, runValidators: true }  // Return updated document and validate
-    );
+    ).select('-password');  // Exclude password from the returned user object
 
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });

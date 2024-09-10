@@ -9,6 +9,7 @@ const Login = lazy(() => import('./Pages/Login/Login'));
 const Home = lazy(() => import('./Pages/Homepage/home'));
 const Formation = lazy(() => import('./Pages/FormationPage/Formation'));
 const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
+const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -55,6 +56,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <Profile />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Calendar />
                 </MainLayout>
               </ProtectedRoute>
             }

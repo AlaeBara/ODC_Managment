@@ -42,7 +42,7 @@ const insertTestUser = async () => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
-      email: 'test@example.com',
+      email: 'test@test.com',
       password: hashedPassword,
       role: 'Mentor', 
       assignedCourses: [],
@@ -58,7 +58,7 @@ const insertTestUser = async () => {
   }
 };
 
-// insertTestUser();
+//insertTestUser();
 
 
 // Start server

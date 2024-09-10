@@ -1,6 +1,6 @@
 const express = require('express');
 const authenticated = require('../Middlewares/Authmiddleware');
-const { Getprofile, Updateprofile, Uploadimage } = require('../Controllers/profile'); // Ensure path is correct
+const { Getprofile, Updateprofile, Uploadimage } = require('../Controllers/Profile'); // Ensure path is correct
 const router = express.Router();
 const multer = require('multer');
 
