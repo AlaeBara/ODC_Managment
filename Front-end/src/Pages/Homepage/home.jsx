@@ -44,7 +44,7 @@ const Homepage = () => {
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/4">
             <Button
-              className="w-full text-lg font-semibold bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+              className="w-full text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-800 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
               size="lg"
             >
               WorkFlow
@@ -53,7 +53,7 @@ const Homepage = () => {
           <div className="w-full md:w-3/4 space-y-8">
             {/* Current Courses Section */}
             <Card className="overflow-hidden shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-pink-500 text-white">
                 <CardTitle className="text-2xl">Current Events</CardTitle>
               </CardHeader>
               <CardContent className="divide-y max-h-80 overflow-y-auto">
@@ -79,7 +79,7 @@ const Homepage = () => {
             </Card>
             {/* Upcoming Courses Section */}
             <Card className="overflow-hidden shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-orange-400 to-red-500 text-white">
+              <CardHeader className="bg-gradient-to-r from-gray-400 to-gray-500 text-white">
                 <CardTitle className="text-2xl">Upcoming Events</CardTitle>
               </CardHeader>
               <CardContent className="divide-y max-h-80 overflow-y-auto">
