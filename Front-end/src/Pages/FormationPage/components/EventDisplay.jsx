@@ -130,6 +130,10 @@ const EventDisplay = ({ allFormations, deleteMode, selectedForDeletion, onSelect
         </div>
       </div>
 
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-sm text-gray-600">{filteredEvents.length} formations found</span>
+      </div>
+
       <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
         {filteredEvents.slice(0, displayCount).map((course) => (
           <CourseCard 

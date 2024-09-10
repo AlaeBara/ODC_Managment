@@ -16,6 +16,7 @@ const Formation = () => {
   const [editMode, setEditMode] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [selectedForDeletion, setSelectedForDeletion] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleAddFormation = () => {
     setShowForm(!showForm);
@@ -49,8 +50,6 @@ const Formation = () => {
     );
   };
 
-  
-
   const activities = [
     { id: 1, title: 'Completed Task 1', date: '2023-09-01' },
     { id: 2, title: 'Started Project A', date: '2023-09-02' },
@@ -60,6 +59,7 @@ const Formation = () => {
     { id: 6, title: 'Updated Profile', date: '2023-09-06' },
   ];
 
+  //for get All Formations  (API)
   const getFormations = async () => {
     try {
       const response = await axios.get(
@@ -80,7 +80,8 @@ const Formation = () => {
   useEffect(() => {
     getFormations();
   }, []);
-
+ 
+  //for Add a Formation  (API)
   const onSubmit = async (data, tags) => {
     const formattedData = {
       title: data.fullName,
@@ -123,6 +124,7 @@ const Formation = () => {
     }
   };
 
+  //for Edite a Formation  (API)
   const onSubmitEdite = async (data, tags, id) => {
     const originalFormation = allFormations.find(f => f._id === id);
 
@@ -206,9 +208,9 @@ const Formation = () => {
     }
   };
  
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  
 
-
+  //for Delete a Formation or many Formation  (API)
   const handleConfirmDelete = async () => {
     try {
       const response = await axios.post(
@@ -232,6 +234,8 @@ const Formation = () => {
     }
   };
 
+
+  //for Show Alert of Confirmation for Delete Action
   const showmodel = () => {
     if (selectedForDeletion.length === 0) {
       toast.error("No formations selected for deletion.");
@@ -240,10 +244,14 @@ const Formation = () => {
     setShowConfirmModal(true);
   };
 
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
+
       <Toaster position="top-right" reverseOrder={false} />
 
+      
       <button
         className={`lg:hidden fixed top-1/2 -translate-y-1/2 left-0 z-40 p-1 bg-white rounded-r-md shadow-md transition-transform duration-300 ${
           showSidebar ? 'translate-x-64' : 'translate-x-0'
@@ -289,7 +297,7 @@ const Formation = () => {
         {deleteMode && (
           <div className="flex justify-center items-center">
             <Button onClick={showmodel} className="bg-red-500 text-white hover:bg-red-600">
-              Confirm Delete ({selectedForDeletion.length})
+               Delete {selectedForDeletion.length} Formations
             </Button>
           </div>
         )}
@@ -331,6 +339,7 @@ const Formation = () => {
             onSelectForDeletion={handleSelectForDeletion}
           />
         </div>
+        
       </main>
 
       <aside className="w-full lg:w-64 bg-white border-l lg:fixed lg:right-0 lg:top-16 lg:bottom-0 overflow-y-auto">
