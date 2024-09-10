@@ -150,7 +150,6 @@ const EditFormation = ({ allFormations, onSubmit, isShowed }) => {
         from: new Date(),
         to: addDays(new Date(), 7),
       },
-      tags: [],
     });
     setTags([]);  // Reset tags here
     setSelectedFormation(null);

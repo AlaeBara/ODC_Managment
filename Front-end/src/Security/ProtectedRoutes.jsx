@@ -11,13 +11,11 @@ const ProtectedRoute = ({ children }) => {
       try {
         // Call the backend API to validate the token. The cookie will be sent automatically.
         const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/validate-token`, { withCredentials: true });
-
         // If the token is valid, set isAuthenticated to true
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
       } catch (error) {
-        console.error('Token validation failed:', error);
         setIsAuthenticated(false);
       } finally {
         setLoading(false);

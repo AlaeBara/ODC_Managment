@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
-const CourseCard = ({ course }) => {
+const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleDescription = () => setIsExpanded(!isExpanded);
@@ -18,8 +19,17 @@ const CourseCard = ({ course }) => {
   const mentor = course.mentors[0] || {};
 
   return (
-    <Card className="w-64 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col text-sm m-4">
-      <CardHeader className="bg-orange-500 text-white p-2 rounded-t-lg">
+    <Card className={`w-64 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col text-sm m-4 ${deleteMode ? 'relative' : ''}`}>
+      <CardHeader className={`bg-orange-500 text-white p-2 rounded-t-lg relative`}>
+        {deleteMode && (
+          <div className="absolute top-2 right-2 z-10">
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={() => onSelectForDeletion(course._id)}
+              className="text-white border-white"
+            />
+          </div>
+        )}
         <CardTitle className="text-base font-bold truncate">{course.title}</CardTitle>
         <CardDescription className="text-white flex items-center mt-1 text-xs">
           <Calendar className="w-3 h-3 mr-1" />
