@@ -12,6 +12,6 @@ router.get('/GetOneFormations/:id', authenticated, GetOneFormations);
 
 router.put('/UpdateFormations/:id', authenticated, UpdateFormations);
 
-router.delete('/DeleteFormations/:id', authenticated, DeleteFormations);
+router.post('/DeleteFormations',  DeleteFormations);
 
 module.exports = router;
