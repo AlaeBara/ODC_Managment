@@ -290,8 +290,8 @@ export default function EnhancedUserProfile() {
           </Card>
         </div>
         <Card className="w-full md:w-2/3 flex-grow-0 max-h-[500px] overflow-auto">
-          <CardContent className="p-6">
-            <div className="flex justify-end mb-4">
+          <CardContent className="p-6 mt-3">
+            <div className="flex justify-end mb-4"> 
               {isEditing ? (
                 <>
                   <Button variant="outline" onClick={handleCancel} className="mr-2 bg-black hover:bg-gray-800 text-white">
