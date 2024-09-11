@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Pencil, Save, X } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Pencil, Save, X, User, Mail, Phone, Lock } from 'lucide-react'
+import { Toaster, toast } from 'react-hot-toast'
 
-export default function Component() {
+export default function EnhancedUserProfile() {
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [profile, setProfile] = useState({
     firstName: '',
     lastName: '',
@@ -31,6 +33,7 @@ export default function Component() {
   }, []);
 
   const fetchProfile = () => {
+    setIsLoading(true);
     fetch(`${import.meta.env.VITE_API_LINK}/api/profile/Getprofile`, {
       method: 'GET',
       credentials: 'include',
@@ -46,10 +49,12 @@ export default function Component() {
         };
         setProfile(fetchedProfile);
         setOriginalProfile(fetchedProfile);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error('Error fetching profile:', error);
         toast.error('Failed to load profile. Please try again.');
+        setIsLoading(false);
       });
   };
 
@@ -57,7 +62,6 @@ export default function Component() {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
     
-    // Clear password errors when user starts typing
     if (['currentPassword', 'newPassword', 'confirmNewPassword'].includes(name)) {
       setPasswordErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -150,7 +154,7 @@ export default function Component() {
     const isPasswordValid = validatePasswords();
     if (profile.currentPassword || profile.newPassword || profile.confirmNewPassword) {
       if (!isPasswordValid) {
-        return; // Stop submission if passwords are invalid
+        return;
       }
       payload.currentPassword = profile.currentPassword;
       payload.newPassword = profile.newPassword;
@@ -167,6 +171,20 @@ export default function Component() {
       body: JSON.stringify(payload),
     })
       .then((response) => {
+        if (response.status === 400) {
+          return response.json().then((errorData) => {
+            if (errorData.message === "Current password is incorrect") {
+              setPasswordErrors((prev) => ({
+                ...prev,
+                currentPassword: 'Current password is incorrect',
+              }));
+              throw new Error('Current password is incorrect');
+            } else {
+              throw new Error('Failed to update profile');
+            }
+          });
+        }
+  
         if (!response.ok) {
           throw new Error('Failed to update profile');
         }
@@ -184,7 +202,7 @@ export default function Component() {
         setIsEditing(false);
         
         if (changedFields.length > 0) {
-          toast.success(`Updated: ${changedFields.join(', ')}`, {
+          toast.success(`Updated the ${changedFields.join(', ')}`, {
             duration: 3000,
           });
         } else {
@@ -193,7 +211,6 @@ export default function Component() {
       })
       .catch((error) => {
         console.error('Error updating profile:', error);
-        toast.error('Failed to update profile. Please try again.');
       });
   };
 
@@ -202,7 +219,6 @@ export default function Component() {
     if (!isEditing) {
       setOriginalProfile(profile);
     } else {
-      // Reset password fields and errors when exiting edit mode
       setProfile(prev => ({
         ...prev,
         currentPassword: '',
@@ -220,7 +236,6 @@ export default function Component() {
   const handleCancel = () => {
     setProfile(originalProfile);
     setIsEditing(false);
-    // Reset password fields and errors
     setProfile(prev => ({
       ...prev,
       currentPassword: '',
@@ -234,164 +249,198 @@ export default function Component() {
     });
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
+        <div className="text-white text-2xl">Loading...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto p-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="min-h-screen bg-white-400 flex justify-center p-4">
       <Toaster position="top-right" />
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader className="relative pb-0">
-          <div className="absolute top-4 right-4 flex gap-2">
-            {isEditing ? (
-              <>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCancel}
-                  className="text-red-600"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={handleSubmit}
-                >
-                  <Save className="h-4 w-4" />
-                </Button>
-              </>
-            ) : (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={toggleEdit}
-                className="bg-orange-500 hover:bg-orange-700"
-              >
-                <Pencil className="h-4 w-4 text-white" />
-              </Button>
-            )}
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="relative mb-4">
-              <img
-                src={profile.profilePic || '/placeholder.svg?height=128&width=128'}
-                alt="Profile"
-                className="w-32 h-32 rounded-full object-cover border-4 border-primary"
-              />
-              {isEditing && (
-                <Label htmlFor="profilePic" className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer">
-                  <Pencil className="h-4 w-4" />
-                  <Input
-                    id="profilePic"
-                    type="file"
-                    className="hidden"
-                    onChange={handleImageChange}
-                    accept="image/*"
-                  />
-                </Label>
-              )}
-            </div>
-            <CardTitle className="text-2xl font-bold text-center mb-2">
-              {isEditing ? (
-                <div className="flex gap-2">
-                  <Input
-                    name="firstName"
-                    value={profile.firstName}
-                    onChange={handleInputChange}
-                    className="text-center"
-                  />
-                  <Input
-                    name="lastName"
-                    value={profile.lastName}
-                    onChange={handleInputChange}
-                    className="text-center"
-                  />
-                </div>
-              ) : (
-                `${profile.firstName} ${profile.lastName}`
-              )}
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              {isEditing ? (
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={profile.email}
-                  onChange={handleInputChange}
-                  required
+      <div className="w-full max-w-4xl flex flex-col md:flex-row gap-6">
+        <div className="w-full md:w-1/3 flex flex-col gap-6">
+          <Card className="flex-grow-0">
+            <CardContent className="flex flex-col items-center justify-center h-full p-6">
+              <div className="relative mb-4">
+                <img
+                  src={profile.profilePic || '/placeholder.svg?height=128&width=128'}
+                  alt="Profile"
+                  className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
-              ) : (
-                <p className="text-lg">{profile.email}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+                {isEditing && (
+                  <Label htmlFor="profilePic" className="absolute bottom-0 right-0 bg-orange-500 text-white rounded-full p-2 cursor-pointer hover:bg-orange-600 transition-colors">
+                    <Pencil className="h-4 w-4" />
+                    <Input
+                      id="profilePic"
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      accept="image/*"
+                    />
+                  </Label>
+                )}
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-center mb-2">{`${profile.firstName} ${profile.lastName}`}</h2>
+              <p className="text-sm text-gray-600 text-center">{profile.email}</p>
+              <p className="text-sm text-gray-600 text-center">{profile.phoneNumber}</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Card className="w-full md:w-2/3 flex-grow-0 max-h-[500px] overflow-auto">
+          <CardContent className="p-6">
+            <div className="flex justify-end mb-4">
               {isEditing ? (
-                <Input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  value={profile.phoneNumber}
-                  onChange={handleInputChange}
-                  required
-                />
+                <>
+                  <Button variant="outline" onClick={handleCancel} className="mr-2 bg-black hover:bg-gray-800 text-white">
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSubmit} className="bg-green-500 hover:bg-green-700 text-white">
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
+                </>
               ) : (
-                <p className="text-lg">{profile.phoneNumber}</p>
+                <Button onClick={toggleEdit} className="bg-orange-500 hover:bg-orange-700 text-white">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit
+                </Button>
               )}
             </div>
-            {isEditing && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">Current Password</Label>
-                  <Input
-                    id="currentPassword"
-                    name="currentPassword"
-                    type="password"
-                    value={profile.currentPassword || ''}
-                    onChange={handleInputChange}
-                  />
-                  {passwordErrors.currentPassword && (
-                    <p className="text-red-500 text-sm">{passwordErrors.currentPassword}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    name="newPassword"
-                    type="password"
-                    value={profile.newPassword || ''}
-                    onChange={handleInputChange}
-                  />
-                  {passwordErrors.newPassword && (
-                    <p className="text-red-500 text-sm">{passwordErrors.newPassword}</p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
-                  <Input
-                    id="confirmNewPassword"
-                    name="confirmNewPassword"
-                    type="password"
-                    value={profile.confirmNewPassword || ''}
-                    onChange={handleInputChange}
-                  />
-                  {passwordErrors.confirmNewPassword && (
-                    <p className="text-red-500 text-sm">{passwordErrors.confirmNewPassword}</p>
-                  )}
-                </div>
-              </>
-            )}
-            {isEditing && (
-              <Button type="submit" className="w-full mt-6">Save Profile</Button>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+            <Tabs defaultValue="account">
+              <TabsList className="mb-4 bg-orange-100">
+                <TabsTrigger value="account" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">Account Info</TabsTrigger>
+                <TabsTrigger value="password" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white">Change Password</TabsTrigger>
+              </TabsList>
+              <TabsContent value="account">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                        <Input
+                          id="firstName"
+                          name="firstName"
+                          value={profile.firstName}
+                          onChange={handleInputChange}
+                          disabled={!isEditing}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                        <Input
+                          id="lastName"
+                          name="lastName"
+                          value={profile.lastName}
+                          onChange={handleInputChange}
+                          disabled={!isEditing}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={profile.email}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel"
+                        value={profile.phoneNumber}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </TabsContent>
+              <TabsContent value="password">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">Current Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        id="currentPassword"
+                        name="currentPassword"
+                        type="password"
+                        value={profile.currentPassword || ''}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="pl-10"
+                      />
+                    </div>
+                    {passwordErrors.currentPassword && (
+                      <p className="text-red-500 text-sm">{passwordErrors.currentPassword}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">New Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        id="newPassword"
+                        name="newPassword"
+                        type="password"
+                        value={profile.newPassword || ''}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="pl-10"
+                      />
+                    </div>
+                    {passwordErrors.newPassword && (
+                      <p className="text-red-500 text-sm">{passwordErrors.newPassword}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmNewPassword">Confirm New Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                      <Input
+                        id="confirmNewPassword"
+                        name="confirmNewPassword"
+                        type="password"
+                        value={profile.confirmNewPassword || ''}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="pl-10"
+                      />
+                    </div>
+                    {passwordErrors.confirmNewPassword && (
+                      <p className="text-red-500 text-sm">{passwordErrors.confirmNewPassword}</p>
+                    )}
+                  </div>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
