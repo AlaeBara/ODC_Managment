@@ -46,10 +46,10 @@ export default function Homepage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex flex-col md:flex-row gap-20">
           <div className="w-full md:w-1/4 space-y-4">
             <Button
-              className="w-full text-lg font-semibold bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-600 hover:to-orange-600 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+              className="w-full text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-500 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
               size="lg"
             >
               WorkFlow
@@ -67,8 +67,8 @@ export default function Homepage() {
           </div>
           <div className="w-full md:w-3/4 space-y-8">
             {/* Current Courses Section */}
-            <Card className="overflow-hidden shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-orange-500 to-pink-500 text-white py-3">
+            <Card className="overflow-hidden shadow-lg max-w-[800px]">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3">
                 <CardTitle className="text-2xl">Current Events</CardTitle>
               </CardHeader>
               <CardContent className="divide-y max-h-[275px] overflow-y-auto">
@@ -97,8 +97,8 @@ export default function Homepage() {
               </CardContent>
             </Card>
             {/* Upcoming Courses Section */}
-            <Card className="overflow-hidden shadow-lg">
-              <CardHeader className="bg-gradient-to-r from-gray-400 to-gray-500 text-white py-3">
+            <Card className="overflow-hidden shadow-lg max-w-[800px]">
+              <CardHeader className="bg-gradient-to-r from-green-400 to-green-500 text-white py-3">
                 <CardTitle className="text-2xl">Upcoming Events</CardTitle>
               </CardHeader>
               <CardContent className="divide-y max-h-[275px] overflow-y-auto">
