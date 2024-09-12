@@ -24,14 +24,14 @@ const Login = async (req, res) => {
         const token = jwt.sign(
             { userId: user._id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' } // Token expiration time
+            { expiresIn: '1w' } // Token expiration time
         );
 
         // Set the token in a cookie
         res.cookie('token', token, {
             httpOnly: true, // Cookie is not accessible via JavaScript
             sameSite: 'strict', // Prevent CSRF attacks
-            maxAge: 30000000 // Cookie expiration time in milliseconds (1 hour)
+            maxAge: 300000000 // Cookie expiration time in milliseconds (1 hour)
         });
 
         res.status(200).json({ 
