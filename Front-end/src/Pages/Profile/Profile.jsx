@@ -262,7 +262,7 @@ export default function EnhancedUserProfile() {
       <Toaster position="top-right" />
       <div className="w-full max-w-4xl flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-1/3 flex flex-col gap-6">
-          <Card className="flex-grow-0">
+          <Card className="flex-grow-0 border-2">
             <CardContent className="flex flex-col items-center justify-center h-full p-6">
               <div className="relative mb-4">
                 <img
@@ -289,7 +289,7 @@ export default function EnhancedUserProfile() {
             </CardContent>
           </Card>
         </div>
-        <Card className="w-full md:w-2/3 flex-grow-0 max-h-[500px] overflow-auto">
+        <Card className="w-full md:w-2/3 flex-grow-0 max-h-[500px] overflow-auto border-2">
           <CardContent className="p-6 mt-3">
             <div className="flex justify-end mb-4"> 
               {isEditing ? (
