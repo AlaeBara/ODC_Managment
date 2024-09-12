@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, AlertTriangle, Search } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Input } from "@/components/ui/input"
+import { Link } from 'react-router-dom';
 
 export default function Homepage() {
   const [courses, setCourses] = useState([])
@@ -48,12 +49,13 @@ export default function Homepage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-20">
           <div className="w-full md:w-1/4 space-y-4">
-            <Button
-              className="w-full text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-500 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-              size="lg"
-            >
-              WorkFlow
-            </Button>
+            <Link to="/workflow">
+              <Button
+                className="w-full text-lg font-semibold bg-gradient-to-r from-orange-500 to-orange-500 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+                size="lg">
+                WorkFlow
+              </Button>
+            </Link>
             <div className="relative">
               <Input
                 type="text"
