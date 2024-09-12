@@ -31,7 +31,7 @@ export default function Workflow() {
 
     fetchFormations()
   }, [])
-
+  //filter
   const filteredFormations = formations.filter(formation =>
     formation.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
