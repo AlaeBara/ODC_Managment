@@ -12,7 +12,7 @@ const Calendary = () => {
     const fetchFormations = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_LINK}/api/courses/GetFormations`,
+          `${import.meta.env.VITE_API_LINK}/api/courses/GetFormationsOfMentor`,
           { credentials: 'include' }
         );
         const data = await response.json();

@@ -20,7 +20,7 @@ export default function Component() {
       setIsLoading(true)
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_LINK}/api/courses/GetFormations`,
+          `${import.meta.env.VITE_API_LINK}/api/courses/GetFormationsOfMentor`,
           {
             credentials: "include",
           }
@@ -56,11 +56,11 @@ export default function Component() {
     const daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24))
 
     if (daysUntilEnd <= 3 && !formation.workflowCompleted) {
-      return { priority: 1, color: 'red', text: 'Urgent', description: 'Ending soon, workflow incomplete', progress : 30, }
+      return { priority: 1, color: 'red', text: 'Urgent', description: 'Ending soon, workflow incomplete', progress : 70 }
     } else if (daysUntilEnd <= 7 && !formation.workflowCompleted) {
-      return { priority: 2, color: 'amber', text: 'Important', description: 'Approaching deadline' }
+      return { priority: 2, color: 'yellow', text: 'Important', description: 'Approaching deadline', progress : 30}
     } else {
-      return { priority: 3, color: 'green', text: 'Upcoming', description: 'Formation on schedule' }
+      return { priority: 3, color: 'green', text: 'Upcoming', description: 'Formation on schedule', progress : 10, }
     }
   }
 
@@ -136,12 +136,16 @@ export default function Component() {
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
-                    <Badge 
-                      variant="outline" 
-                      className={`bg-${importance.color}-500 text-black-800 border-${importance.color}-300 px-3 py-1 text-sm font-semibold`}
-                    >
-                      {importance.text}
-                    </Badge>
+                  <Badge 
+                    variant="outline" 
+                    className={`${
+                      importance.color === 'yellow' 
+                        ? 'bg-yellow-500 text-white border-yellow-400' 
+                        : `bg-${importance.color}-500 text-white border-${importance.color}-600`
+                    } px-3 py-1 text-sm font-semibold`}
+                  >
+                    {importance.text}
+                  </Badge>
                     <div className="flex items-center space-x-2">
                       <Clock className={`w-4 h-4 text-${importance.color}-600`} />
                       <span className={`text-sm font-medium text-${importance.color}-600`}>{importance.description}</span>

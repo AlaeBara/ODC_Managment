@@ -3,6 +3,7 @@ const router = express.Router();
 const Course = require('../Models/courseModel');  
 
 ///////////////////////////////////////////////////////////////////////////////////////
+//Api For Add a Formation
 
 const AddFormation = async (req, res) => {
   const { title, description, startDate, endDate, type, tags} = req.body;
@@ -28,6 +29,7 @@ const AddFormation = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
+//Api For Get All Formations
 
 const GetFormations = async (req, res) => {
   try {
@@ -39,6 +41,7 @@ const GetFormations = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
+//Api For Get one Formation Specifier Using Id Of Fomation
 
 const GetOneFormations = async (req, res) => {
   const { id } = req.params;
@@ -54,6 +57,7 @@ const GetOneFormations = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
+//Api For Update a Formation
 
 const UpdateFormations = async (req, res) => {
   const { id } = req.params;
@@ -77,22 +81,7 @@ const UpdateFormations = async (req, res) => {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////
-
-// const DeleteFormations = async (req, res) => {
-//   const { id } = req.body;
-
-//   try {
-//     const deletedCourse = await Course.findByIdAndDelete(id);
-
-//     if (!deletedCourse) {
-//       return res.status(404).json({ message: 'Course not found' });
-//     }
-
-//     res.status(200).json({ message: 'Course deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error deleting course', error: error.message });
-//   }
-// };
+//Api For Delete a Formtion or Many Formations
 
 const DeleteFormations = async (req, res) => {
   const { ids } = req.body;
@@ -112,6 +101,18 @@ const DeleteFormations = async (req, res) => {
   }
 };
 
+////////////////////////////////////////////////////////////////////////////////////////
+//Api For Get Foramtions Of a Mentor 
+
+const GetFormationOFmentor = async (req, res) => {
+  try {
+    const mentorId = req.user.userId;
+    const courses = await Course.find({ mentors: mentorId }).populate('mentors');
+    res.status(200).json(courses);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching courses', error: error.message });
+  }
+};
 
 
-module.exports = { AddFormation, GetFormations, GetOneFormations, UpdateFormations, DeleteFormations};
+module.exports = { AddFormation, GetFormations, GetOneFormations, UpdateFormations, DeleteFormations, GetFormationOFmentor };
