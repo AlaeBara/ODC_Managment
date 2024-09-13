@@ -51,19 +51,27 @@ export default function Component() {
   }
 
   const getImportanceLevel = (formation) => {
+    const startDate = new Date(formation.startDate)
     const endDate = new Date(formation.endDate)
     const today = new Date()
     const daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24))
-
-    if (daysUntilEnd <= 3 && !formation.workflowCompleted) {
-      return { priority: 1, color: 'red', text: 'Urgent', description: 'Ending soon, workflow incomplete', progress : 70 }
-    } else if (daysUntilEnd <= 7 && !formation.workflowCompleted) {
-      return { priority: 2, color: 'yellow', text: 'Important', description: 'Approaching deadline', progress : 30}
-    } else {
-      return { priority: 3, color: 'green', text: 'Upcoming', description: 'Formation on schedule', progress : 10, }
+    const hasStarted = today >= startDate
+  
+    // Urgent if 1 day left
+    if (daysUntilEnd === 1) {
+      return { priority: 1, color: 'red', text: 'Urgent', description: '1 day left', progress: 90 }
     }
+    // Important if already started
+    else if (hasStarted) {
+      return { priority: 2, color: 'yellow', text: 'Important', description: 'Happening now', progress: 50 }
+    }
+    // Upcoming if hasn't started yet
+    else if (!hasStarted) {
+      return { priority: 3, color: 'green', text: 'Upcoming', description: 'Not started yet', progress: 10 }
+    }
+    return { priority: 3, color: 'green', text: 'Upcoming', description: 'Upcoming', progress: 10 }
   }
-
+  
   const filteredFormations = formations
     .filter(formation =>
       formation.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -98,7 +106,7 @@ export default function Component() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-sans font-bold text-gray-800 mb-8">Formations Workflow</h1>
         <div className="relative w-full max-w-md mb-8">
@@ -123,11 +131,11 @@ export default function Component() {
                       variant="ghost"
                       size="icon"
                       onClick={() => toggleExpand(formation._id)}
-                      className="text-white hover:bg-opacity-20"
+                      className="text-white "
                       aria-label={expandedFormations.includes(formation._id) ? "Collapse formation details" : "Expand formation details"}
                     >
                       {expandedFormations.includes(formation._id) ? (
-                        <ChevronUp className="h-5 w-5" />
+                        <ChevronUp className="h-2 w-2" />
                       ) : (
                         <ChevronDown className="h-5 w-5" />
                       )}
@@ -140,15 +148,17 @@ export default function Component() {
                     variant="outline" 
                     className={`${
                       importance.color === 'yellow' 
-                        ? 'bg-yellow-500 text-white border-yellow-400' 
+                        ? 'bg-yellow-400 text-white border-yellow-400' 
                         : `bg-${importance.color}-500 text-white border-${importance.color}-600`
                     } px-3 py-1 text-sm font-semibold`}
                   >
                     {importance.text}
                   </Badge>
                     <div className="flex items-center space-x-2">
-                      <Clock className={`w-4 h-4 text-${importance.color}-600`} />
-                      <span className={`text-sm font-medium text-${importance.color}-600`}>{importance.description}</span>
+                      <Clock className={`w-4 h-4 text-black-600`} />
+                      <span className={`text-sm font-medium text-black-600`}>
+                        {importance.description}
+                      </span>
                     </div>
                   </div>
                   <Progress value={importance.progress} className="mb-4" />
@@ -160,7 +170,7 @@ export default function Component() {
                   </div>
                   <p className="text-sm text-gray-700 mb-2">{formation.description}</p>
                   <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary" className={`bg-${importance.color}-100 text-${importance.color}-800`}>
+                    <Badge variant="secondary" className={`bg-transparent text-black hover:bg-gray-200 hover:text-gray-600 transition-colors duration-200`}>
                       {formation.type}
                     </Badge>
                   </div>
