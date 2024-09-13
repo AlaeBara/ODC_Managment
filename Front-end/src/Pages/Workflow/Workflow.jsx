@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress"
 export default function Component() {
   const [formations, setFormations] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [expandedFormations, setExpandedFormations] = useState([])
+  const [expandedFormation, setExpandedFormation] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -43,13 +43,9 @@ export default function Component() {
   }, [])
 
   const toggleExpand = (formationId) => {
-    setExpandedFormations(prev =>
-      prev.includes(formationId)
-        ? prev.filter(id => id !== formationId)
-        : [...prev, formationId]
-    )
+    setExpandedFormation(prev => (prev === formationId ? null : formationId))
   }
-
+  
   const getImportanceLevel = (formation) => {
     const startDate = new Date(formation.startDate)
     const endDate = new Date(formation.endDate)
@@ -57,16 +53,11 @@ export default function Component() {
     const daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24))
     const hasStarted = today >= startDate
   
-    // Urgent if 1 day left
     if (daysUntilEnd === 1) {
       return { priority: 1, color: 'red', text: 'Urgent', description: '1 day left', progress: 90 }
-    }
-    // Important if already started
-    else if (hasStarted) {
+    } else if (hasStarted) {
       return { priority: 2, color: 'yellow', text: 'Important', description: 'Happening now', progress: 50 }
-    }
-    // Upcoming if hasn't started yet
-    else if (!hasStarted) {
+    } else if (!hasStarted) {
       return { priority: 3, color: 'green', text: 'Upcoming', description: 'Not started yet', progress: 10 }
     }
     return { priority: 3, color: 'green', text: 'Upcoming', description: 'Upcoming', progress: 10 }
@@ -79,22 +70,19 @@ export default function Component() {
     .sort((a, b) => {
       const importanceA = getImportanceLevel(a).priority
       const importanceB = getImportanceLevel(b).priority
-      return importanceA - importanceB // Urgent (priority 1) comes first
+      return importanceA - importanceB
     })
 
   const importCandidates = (formationId) => {
     console.log(`Importing candidates for formation ${formationId}`)
-    // Implement the import functionality here
   }
 
   const validateCandidates = (formationId) => {
     console.log(`Validating candidates for formation ${formationId}`)
-    // Implement the validation functionality here
   }
 
   const checkPresence = (formationId) => {
     console.log(`Checking presence for formation ${formationId}`)
-    // Implement the presence checking functionality here
   }
 
   if (isLoading) {
@@ -124,20 +112,20 @@ export default function Component() {
             const importance = getImportanceLevel(formation)
             return (
               <Card key={formation._id} className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
-                <CardHeader className={`text-white bg-gradient-to-r from-orange-500 to-orange-600`}>
+                <CardHeader className={`text-white bg-gradient-to-r from-orange-500 to-orange-600 py-2`}>
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-xl font-bold truncate">{formation.title}</CardTitle>
+                    <CardTitle className="text-lg font-bold truncate">{formation.title}</CardTitle>
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => toggleExpand(formation._id)}
-                      className="text-white "
-                      aria-label={expandedFormations.includes(formation._id) ? "Collapse formation details" : "Expand formation details"}
+                      className="text-white"
+                      aria-label={expandedFormation === formation._id ? "Collapse formation details" : "Expand formation details"}
                     >
-                      {expandedFormations.includes(formation._id) ? (
-                        <ChevronUp className="h-2 w-2" />
+                      {expandedFormation === formation._id ? (
+                        <ChevronUp className="h-4 w-4" />
                       ) : (
-                        <ChevronDown className="h-5 w-5" />
+                        <ChevronDown className="h-4 w-4" />
                       )}
                     </Button>
                   </div>
@@ -181,7 +169,7 @@ export default function Component() {
                     </p>
                   </div>
                 </CardContent>
-                {expandedFormations.includes(formation._id) && (
+                {expandedFormation === formation._id && (
                   <CardFooter className="bg-gray-50 p-4">
                     <div className="w-full space-y-2">
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => importCandidates(formation._id)}>
