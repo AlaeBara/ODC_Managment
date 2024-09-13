@@ -121,10 +121,12 @@ const NavBar = () => {
                 <span>Cloud</span>
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Calendar className="mr-2 h-4 w-4" />
-                <span>Calendar</span>
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+              <DropdownMenuItem asChild>
+                <Link to="/calendar" className="flex items-center">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  <span>Calendar</span>
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
