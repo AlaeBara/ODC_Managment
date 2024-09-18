@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import axios from 'axios' // Import axios
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,6 +15,7 @@ export default function Component() {
   const [expandedFormation, setExpandedFormation] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [file, setFile] = useState(null) // File state
 
   useEffect(() => {
     const fetchFormations = async () => {
@@ -73,28 +75,27 @@ export default function Component() {
       return importanceA - importanceB
     })
 
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0])
+  }
 
-  const FileUpload = () => {
-    const [file, setFile] = useState(null);
-  
-    const handleFileChange = (e) => {
-      setFile(e.target.files[0]);
-    };
-  
-    const handleUpload = async () => {
-      const formData = new FormData();
-      formData.append('file', file);
-  
-      try {
-        await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        alert('File uploaded successfully');
-      } catch (err) {
-        console.error('Error uploading file', err);
-        alert('File upload failed');
-      }
-    };
+  const handleUpload = async () => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true,
+      })
+      alert('File uploaded successfully')
+    } catch (err) {
+      console.error('Error uploading file', err)
+      alert('File upload failed')
+    }
+  }
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading formations...</div>
@@ -143,16 +144,16 @@ export default function Component() {
                 </CardHeader>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-4">
-                  <Badge 
-                    variant="outline" 
-                    className={`${
-                      importance.color === 'yellow' 
-                        ? 'bg-yellow-400 text-white border-yellow-400' 
-                        : `bg-${importance.color}-500 text-white border-${importance.color}-600`
-                    } px-3 py-1 text-sm font-semibold`}
-                  >
-                    {importance.text}
-                  </Badge>
+                    <Badge 
+                      variant="outline" 
+                      className={`${
+                        importance.color === 'yellow' 
+                          ? 'bg-yellow-400 text-white border-yellow-400' 
+                          : `bg-${importance.color}-500 text-white border-${importance.color}-600`
+                      } px-3 py-1 text-sm font-semibold`}
+                    >
+                      {importance.text}
+                    </Badge>
                     <div className="flex items-center space-x-2">
                       <Clock className={`w-4 h-4 text-black-600`} />
                       <span className={`text-sm font-medium text-black-600`}>
@@ -183,9 +184,13 @@ export default function Component() {
                 {expandedFormation === formation._id && (
                   <CardFooter className="bg-gray-50 p-4">
                     <div className="w-full space-y-2">
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
+                      <div className="flex items-center justify-center space-x-2">
                         <Upload className="w-4 h-4" />
                         <span>Import Candidates</span>
+                        <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+                      </div>
+                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
+                        Upload
                       </Button>
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
                         <Phone className="w-4 h-4" />
@@ -205,4 +210,4 @@ export default function Component() {
       </div>
     </div>
   )
-}}
+}
