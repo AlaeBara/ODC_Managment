@@ -1,5 +1,3 @@
-'use client'
-
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -7,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Calendar, ChevronDown, ChevronUp, Upload, Phone, UserCheck, Search, Users, Clock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { Link } from 'react-router-dom';
 
 export default function Component() {
   const [formations, setFormations] = useState([])
@@ -176,10 +175,16 @@ export default function Component() {
                         <Upload className="w-4 h-4" />
                         <span>Import Candidates</span>
                       </Button>
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
+                      {/* <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
                         <Phone className="w-4 h-4" />
                         <span>Validate Candidates</span>
-                      </Button>
+                      </Button> */}
+                      <Link to="/Validate" className="flex items-center space-x-2">
+                        <Button size="sm" className="w-full flex items-center justify-center space-x-2">
+                          <Phone className="w-4 h-4" />
+                          <span>Validate Candidates</span>
+                        </Button>
+                      </Link>
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => checkPresence(formation._id)}>
                         <UserCheck className="w-4 h-4" />
                         <span>Check Presence</span>
