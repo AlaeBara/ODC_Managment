@@ -7,6 +7,7 @@ const multer = require('multer');
 // Configure Multer for memory storage
 const upload = multer({ storage: multer.memoryStorage() });
 
+//normal routes
 router.get('/Getprofile', authenticated, Getprofile);
 
 router.put('/Updateprofile', authenticated, Updateprofile);

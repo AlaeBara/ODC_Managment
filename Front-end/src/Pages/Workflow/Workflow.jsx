@@ -73,17 +73,28 @@ export default function Component() {
       return importanceA - importanceB
     })
 
-  const importCandidates = (formationId) => {
-    console.log(`Importing candidates for formation ${formationId}`)
-  }
 
-  const validateCandidates = (formationId) => {
-    console.log(`Validating candidates for formation ${formationId}`)
-  }
-
-  const checkPresence = (formationId) => {
-    console.log(`Checking presence for formation ${formationId}`)
-  }
+  const FileUpload = () => {
+    const [file, setFile] = useState(null);
+  
+    const handleFileChange = (e) => {
+      setFile(e.target.files[0]);
+    };
+  
+    const handleUpload = async () => {
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      try {
+        await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        alert('File uploaded successfully');
+      } catch (err) {
+        console.error('Error uploading file', err);
+        alert('File upload failed');
+      }
+    };
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading formations...</div>
@@ -172,7 +183,7 @@ export default function Component() {
                 {expandedFormation === formation._id && (
                   <CardFooter className="bg-gray-50 p-4">
                     <div className="w-full space-y-2">
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => importCandidates(formation._id)}>
+                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
                         <Upload className="w-4 h-4" />
                         <span>Import Candidates</span>
                       </Button>
@@ -194,4 +205,4 @@ export default function Component() {
       </div>
     </div>
   )
-}
+}}
