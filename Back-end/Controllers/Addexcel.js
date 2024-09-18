@@ -41,7 +41,7 @@ const upload = multer({ storage: storage });
 const router = express.Router();
 
 // Route to handle Excel file upload and save data to MongoDB
-router.post('/upload-excel', upload.single('file'), async (req, res) => {
+router.post('/upload-excel', authenticated, upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
