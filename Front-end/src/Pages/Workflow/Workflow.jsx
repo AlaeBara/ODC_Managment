@@ -1,13 +1,15 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import axios from 'axios' // Import axios
+import React, { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Calendar, ChevronDown, ChevronUp, Upload, Phone, UserCheck, Search, Users, Clock } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function Component() {
   const [formations, setFormations] = useState([])
@@ -15,7 +17,8 @@ export default function Component() {
   const [expandedFormation, setExpandedFormation] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [file, setFile] = useState(null) // File state
+  const [file, setFile] = useState(null)
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     const fetchFormations = async () => {
@@ -76,25 +79,54 @@ export default function Component() {
     })
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0])
+    const selectedFile = e.target.files[0]
+    if (selectedFile) {
+      if (selectedFile.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+          selectedFile.type === "application/vnd.ms-excel") {
+        setFile(selectedFile)
+        toast.info(`File "${selectedFile.name}" selected`)
+      } else {
+        toast.error("Please select an Excel file (.xlsx or .xls)")
+        e.target.value = null
+      }
+    }
   }
 
   const handleUpload = async () => {
+    if (!file) {
+      toast.error("Please select a file to upload")
+      return
+    }
+
     const formData = new FormData()
     formData.append('file', file)
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
         },
         withCredentials: true,
       })
-      alert('File uploaded successfully')
+      toast.success('File uploaded successfully')
+      setFile(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
     } catch (err) {
       console.error('Error uploading file', err)
-      alert('File upload failed')
+      toast.error('File upload failed. Please try again.')
     }
+  }
+
+  const validateCandidates = async (formationId) => {
+    toast.info('Validating candidates...')
+    // Implement the validation logic here
+  }
+
+  const checkPresence = async (formationId) => {
+    toast.info('Checking presence...')
+    // Implement the presence checking logic here
   }
 
   if (isLoading) {
@@ -107,6 +139,7 @@ export default function Component() {
 
   return (
     <div className="min-h-screen p-8">
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-sans font-bold text-gray-800 mb-8">Formations Workflow</h1>
         <div className="relative w-full max-w-md mb-8">
@@ -187,8 +220,22 @@ export default function Component() {
                       <div className="flex items-center justify-center space-x-2">
                         <Upload className="w-4 h-4" />
                         <span>Import Candidates</span>
-                        <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
+                        <input 
+                          type="file" 
+                          accept=".xlsx, .xls" 
+                          onChange={handleFileChange} 
+                          ref={fileInputRef}
+                          className="hidden"
+                          id={`file-upload-${formation._id}`}
+                        />
+                        <label 
+                          htmlFor={`file-upload-${formation._id}`} 
+                          className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                        >
+                          Choose File
+                        </label>
                       </div>
+                      {file && <p className="text-sm text-gray-600">Selected: {file.name}</p>}
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
                         Upload
                       </Button>
