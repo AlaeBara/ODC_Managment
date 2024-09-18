@@ -34,6 +34,7 @@ connectDB();
 app.use('/api/auth', Auth);
 app.use('/api/courses', Formation);
 app.use('/api/profile', Profile);
+app.use('/api', require('./Controllers/Addexcel.js'));
 
 
 //insert line for test:

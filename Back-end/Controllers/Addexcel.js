@@ -2,76 +2,64 @@ const express = require('express');
 const multer = require('multer');
 const xlsx = require('xlsx');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const authenticated = require('../Middlewares/Authmiddleware'); // Adjust the path as needed
 
-const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
-
-// MongoDB model
-const mongoose = require('mongoose');
-
-const DataSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  gender: {
-    type: String, // Now a string
-  },
-  birthdate: {
-    type: String, // Now a string
-  },
-  country: {
-    type: String,
-  },
-  profession: {
-    type: String,
-  },
-  age: {
-    type: Number,
-  },
-  phoneNumber: {
-    type: String,
-  },
-  educationLevel: {
-    type: String,
-  },
-  speciality: {
-    type: String,
-  },
-  participationInODC: {
-    type: Boolean,
-  },
-  presenceState: {
-    type: Boolean,
-  }
+// Define the Candidate schema
+const CandidateSchema = new mongoose.Schema({
+  email: { type: String },
+  firstName: { type: String },
+  lastName: { type: String },
+  gender: { type: String },
+  birthdate: { type: String },
+  country: { type: String },
+  profession: { type: String },
+  age: { type: Number },
+  phoneNumber: { type: String },
+  educationLevel: { type: String },
+  speciality: { type: String },
+  participationInODC: { type: String },
+  presenceState: { type: Boolean },
 });
 
-const DataModel = mongoose.model('Data', DataSchema);
+// Create the model
+const Candidate = mongoose.model('Candidate', CandidateSchema);
 
-router.post('/api/upload-excel', upload.single('file'), async (req, res) => {
+// Configure multer for file uploads (saving in 'uploads' directory)
+const upload = multer({ dest: 'uploads/' });
+
+const router = express.Router();
+
+// Route to handle Excel file upload and save data to MongoDB
+router.post('/upload-excel', authenticated, upload.single('file'), async (req, res) => {
   try {
-    const file = req.file;
-    const workbook = xlsx.readFile(file.path);
+    const filePath = req.file.path;
+    const workbook = xlsx.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // Save each row from the Excel file into MongoDB
-    const dataToSave = sheetData.map(row => ({
-      field1: row['Column1'],  // Adjust this based on Excel column names
-      field2: row['Column2'],
-      // Add other fields as needed
+    // Map Excel rows to the Candidate schema
+    const candidates = sheetData.map(row => ({
+      email: row['Email'],               // Excel column names must match
+      firstName: row['First Name'],
+      lastName: row['Last Name'],
+      gender: row['Gender'],
+      birthdate: row['Birthdate'],
+      country: row['Country'],
+      profession: row['Profession'],
+      age: row['Age'],
+      phoneNumber: row['Phone Number'],
+      educationLevel: row['Education Level'],
+      speciality: row['Speciality'],
+      participationInODC: row['Participation in ODC'],
+      presenceState: row['Presence State'] === 'Present',
     }));
 
-    await DataModel.insertMany(dataToSave);
+    // Insert candidates into MongoDB
+    await Candidate.insertMany(candidates);
+
+    // Clean up the uploaded file
+    fs.unlinkSync(filePath);
 
     res.status(200).json({ message: 'File uploaded and data saved to database' });
   } catch (error) {
