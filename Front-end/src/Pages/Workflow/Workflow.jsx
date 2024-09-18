@@ -1,7 +1,4 @@
-'use client'
-
-import React, { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { Link } from 'react-router-dom';
 
 export default function Component() {
   const [formations, setFormations] = useState([])
@@ -239,10 +237,16 @@ export default function Component() {
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
                         Upload
                       </Button>
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
+                      {/* <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
                         <Phone className="w-4 h-4" />
                         <span>Validate Candidates</span>
-                      </Button>
+                      </Button> */}
+                      <Link to="/Validate" className="flex items-center space-x-2">
+                        <Button size="sm" className="w-full flex items-center justify-center space-x-2">
+                          <Phone className="w-4 h-4" />
+                          <span>Validate Candidates</span>
+                        </Button>
+                      </Link>
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => checkPresence(formation._id)}>
                         <UserCheck className="w-4 h-4" />
                         <span>Check Presence</span>

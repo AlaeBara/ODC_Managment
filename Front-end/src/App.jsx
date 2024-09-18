@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './Security/ProtectedRoutes.jsx';
 import MainLayout from './MainLayout';
 import Spinner from './components/Spinner/Spinner.jsx';
+import Validate from './Pages/Validate/Validate.jsx';
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -77,6 +78,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <Workflow />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/validate"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Validate/>
                 </MainLayout>
               </ProtectedRoute>
             }
