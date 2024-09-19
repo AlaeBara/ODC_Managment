@@ -83,7 +83,7 @@ function App() {
             }
           />
           <Route
-            path="/validate"
+            path="/validate/:id"
             element={
               <ProtectedRoute>
                 <MainLayout>

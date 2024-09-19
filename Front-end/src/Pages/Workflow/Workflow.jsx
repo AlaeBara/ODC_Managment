@@ -1,6 +1,4 @@
-'use client'
-
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef  } from 'react'
 import axios from 'axios'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -10,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from "react-router-dom";
 
 export default function Component() {
   const [formations, setFormations] = useState([])
@@ -19,6 +18,7 @@ export default function Component() {
   const [error, setError] = useState(null)
   const [file, setFile] = useState(null)
   const fileInputRef = useRef(null)
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFormations = async () => {
@@ -92,7 +92,7 @@ export default function Component() {
     }
   }
 
-  const handleUpload = async () => {
+  const handleUpload = async (id_Formation) => {
     if (!file) {
       toast.error("Please select a file to upload")
       return
@@ -100,9 +100,10 @@ export default function Component() {
 
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('id_Formation', id_Formation);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/workFlow/upload-excel`, formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
         },
@@ -120,13 +121,11 @@ export default function Component() {
   }
 
   const validateCandidates = async (formationId) => {
-    toast.info('Validating candidates...')
-    // Implement the validation logic here
+    navigate(`/validate/${formationId}`);
   }
 
   const checkPresence = async (formationId) => {
     toast.info('Checking presence...')
-    // Implement the presence checking logic here
   }
 
   if (isLoading) {
@@ -236,7 +235,7 @@ export default function Component() {
                         </label>
                       </div>
                       {file && <p className="text-sm text-gray-600">Selected: {file.name}</p>}
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
+                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={()=>handleUpload(formation._id)}>
                         Upload
                       </Button>
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
