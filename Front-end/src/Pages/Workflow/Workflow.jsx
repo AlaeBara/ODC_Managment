@@ -283,6 +283,12 @@ export default function Component() {
             })}
           </AnimatePresence>
         </motion.div>
+        
+        { filteredFormations.length === 0 &&
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 mt-9">
+           <p className="text-lg font-medium">No Formation found.</p>
+          </div>
+        }
       </div>
     </div>
   )
