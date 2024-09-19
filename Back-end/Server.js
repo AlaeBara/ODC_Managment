@@ -9,6 +9,7 @@ const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
+const workFlow = require('./Routes/WorkFlow.js');
 
 
 dotenv.config();
@@ -34,7 +35,7 @@ connectDB();
 app.use('/api/auth', Auth);
 app.use('/api/courses', Formation);
 app.use('/api/profile', Profile);
-app.use('/api', require('./Controllers/Addexcel.js'));
+app.use('/api/workFlow', workFlow);
 
 
 //insert line for test:

@@ -1,7 +1,5 @@
-'use client'
-
 import React, { useState, useEffect, useRef } from 'react'
-import axios from 'axios'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useNavigate } from "react-router-dom"
 
 export default function Component() {
   const [formations, setFormations] = useState([])
@@ -18,7 +17,9 @@ export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [file, setFile] = useState(null)
+  const [upload, setUpload] = useState(false)
   const fileInputRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchFormations = async () => {
@@ -26,13 +27,9 @@ export default function Component() {
       try {
         const response = await fetch(
           `${import.meta.env.VITE_API_LINK}/api/courses/GetFormationsOfMentor`,
-          {
-            credentials: "include",
-          }
+          { credentials: "include" }
         )
-        if (!response.ok) {
-          throw new Error("Failed to fetch formations")
-        }
+        if (!response.ok) throw new Error("Failed to fetch formations")
         const data = await response.json()
         setFormations(data)
         setError(null)
@@ -43,40 +40,32 @@ export default function Component() {
         setIsLoading(false)
       }
     }
-
     fetchFormations()
   }, [])
 
   const toggleExpand = (formationId) => {
     setExpandedFormation(prev => (prev === formationId ? null : formationId))
   }
-  
+
   const getImportanceLevel = (formation) => {
     const startDate = new Date(formation.startDate)
     const endDate = new Date(formation.endDate)
     const today = new Date()
     const daysUntilEnd = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24))
     const hasStarted = today >= startDate
-  
+
     if (daysUntilEnd === 1) {
       return { priority: 1, color: 'red', text: 'Urgent', description: '1 day left', progress: 90 }
     } else if (hasStarted) {
       return { priority: 2, color: 'yellow', text: 'Important', description: 'Happening now', progress: 50 }
-    } else if (!hasStarted) {
+    } else {
       return { priority: 3, color: 'green', text: 'Upcoming', description: 'Not started yet', progress: 10 }
     }
-    return { priority: 3, color: 'green', text: 'Upcoming', description: 'Upcoming', progress: 10 }
   }
-  
+
   const filteredFormations = formations
-    .filter(formation =>
-      formation.title.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      const importanceA = getImportanceLevel(a).priority
-      const importanceB = getImportanceLevel(b).priority
-      return importanceA - importanceB
-    })
+    .filter(formation => formation.title.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => getImportanceLevel(a).priority - getImportanceLevel(b).priority)
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]
@@ -84,6 +73,7 @@ export default function Component() {
       if (selectedFile.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
           selectedFile.type === "application/vnd.ms-excel") {
         setFile(selectedFile)
+        setUpload(true)
         toast.info(`File "${selectedFile.name}" selected`)
       } else {
         toast.error("Please select an Excel file (.xlsx or .xls)")
@@ -92,7 +82,7 @@ export default function Component() {
     }
   }
 
-  const handleUpload = async () => {
+  const handleUpload = async (id_Formation) => {
     if (!file) {
       toast.error("Please select a file to upload")
       return
@@ -100,160 +90,202 @@ export default function Component() {
 
     const formData = new FormData()
     formData.append('file', file)
+    formData.append('id_Formation', id_Formation)
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/upload-excel`, formData, {
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
+      await fetch(`${import.meta.env.VITE_API_LINK}/api/workFlow/upload-excel`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
       })
       toast.success('File uploaded successfully')
       setFile(null)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
+      setUpload(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
     } catch (err) {
       console.error('Error uploading file', err)
       toast.error('File upload failed. Please try again.')
     }
   }
 
-  const validateCandidates = async (formationId) => {
-    toast.info('Validating candidates...')
-    // Implement the validation logic here
-  }
+  const validateCandidates = (formationId) => navigate(`/validate/${formationId}`)
 
-  const checkPresence = async (formationId) => {
-    toast.info('Checking presence...')
-    // Implement the presence checking logic here
-  }
+  const checkPresence = (formationId) => toast.info('Checking presence...')
 
-  if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading formations...</div>
-  }
+  if (isLoading) return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-orange-500"></div>
+    </div>
+  )
 
-  if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>
-  }
+  if (error) return (
+    <div className="flex justify-center items-center h-screen text-red-500">{error}</div>
+  )
 
   return (
     <div className="min-h-screen p-8">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-sans font-bold text-gray-800 mb-8">Formations Workflow</h1>
-        <div className="relative w-full max-w-md mb-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-5xl font-extrabold text-orange-500 mb-8 text-center">
+          Formations Workflow
+        </h1>
+        <div className="relative w-full max-w-md mx-auto mb-12">
           <Input
             type="text"
             placeholder="Search formations..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full"
+            className="pl-10 pr-4 py-3 w-full rounded-full shadow-md ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 transition duration-300"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFormations.map((formation) => {
-            const importance = getImportanceLevel(formation)
-            return (
-              <Card key={formation._id} className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
-                <CardHeader className={`text-white bg-gradient-to-r from-orange-500 to-orange-600 py-2`}>
-                  <div className="flex justify-between items-center">
-                    <CardTitle className="text-lg font-bold truncate">{formation.title}</CardTitle>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => toggleExpand(formation._id)}
-                      className="text-white"
-                      aria-label={expandedFormation === formation._id ? "Collapse formation details" : "Expand formation details"}
-                    >
-                      {expandedFormation === formation._id ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <Badge 
-                      variant="outline" 
-                      className={`${
-                        importance.color === 'yellow' 
-                          ? 'bg-yellow-400 text-white border-yellow-400' 
-                          : `bg-${importance.color}-500 text-white border-${importance.color}-600`
-                      } px-3 py-1 text-sm font-semibold`}
-                    >
-                      {importance.text}
-                    </Badge>
-                    <div className="flex items-center space-x-2">
-                      <Clock className={`w-4 h-4 text-black-600`} />
-                      <span className={`text-sm font-medium text-black-600`}>
-                        {importance.description}
-                      </span>
-                    </div>
-                  </div>
-                  <Progress value={importance.progress} className="mb-4" />
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
-                    <p className="text-sm text-gray-600">
-                      {`${new Date(formation.startDate).toLocaleDateString()} - ${new Date(formation.endDate).toLocaleDateString()}`}
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-2">{formation.description}</p>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary" className={`bg-transparent text-black hover:bg-gray-200 hover:text-gray-600 transition-colors duration-200`}>
-                      {formation.type}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Users className="w-4 h-4 text-gray-500" />
-                    <p className="text-xs text-gray-500">
-                      Mentors: {formation.mentors.map((mentor) => mentor.email).join(", ")}
-                    </p>
-                  </div>
-                </CardContent>
-                {expandedFormation === formation._id && (
-                  <CardFooter className="bg-gray-50 p-4">
-                    <div className="w-full space-y-2">
-                      <div className="flex items-center justify-center space-x-2">
-                        <Upload className="w-4 h-4" />
-                        <span>Import Candidates</span>
-                        <input 
-                          type="file" 
-                          accept=".xlsx, .xls" 
-                          onChange={handleFileChange} 
-                          ref={fileInputRef}
-                          className="hidden"
-                          id={`file-upload-${formation._id}`}
-                        />
-                        <label 
-                          htmlFor={`file-upload-${formation._id}`} 
-                          className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <AnimatePresence>
+            {filteredFormations.map((formation) => {
+              const importance = getImportanceLevel(formation)
+              return (
+                <motion.div
+                  key={formation._id}
+                  layout
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 50 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl bg-white rounded-lg">
+                    <CardHeader className={`text-white bg-gradient-to-r from-orange-400 to-orange-500 py-4`}>
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-xl font-bold truncate">{formation.title}</CardTitle>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => toggleExpand(formation._id)}
+                          className="text-white hover:bg-white/20"
+                          aria-label={expandedFormation === formation._id ? "Collapse formation details" : "Expand formation details"}
                         >
-                          Choose File
-                        </label>
+                          {expandedFormation === formation._id ? (
+                            <ChevronUp className="h-6 w-6" />
+                          ) : (
+                            <ChevronDown className="h-6 w-6" />
+                          )}
+                        </Button>
                       </div>
-                      {file && <p className="text-sm text-gray-600">Selected: {file.name}</p>}
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={handleUpload}>
-                        Upload
-                      </Button>
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
-                        <Phone className="w-4 h-4" />
-                        <span>Validate Candidates</span>
-                      </Button>
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => checkPresence(formation._id)}>
-                        <UserCheck className="w-4 h-4" />
-                        <span>Check Presence</span>
-                      </Button>
-                    </div>
-                  </CardFooter>
-                )}
-              </Card>
-            )
-          })}
-        </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge 
+                          variant="outline" 
+                          className={`${
+                            importance.color === 'yellow' 
+                              ? 'bg-yellow-400 text-white border-yellow-400' 
+                              : `bg-${importance.color}-500 text-white border-${importance.color}-600`
+                          } px-3 py-1 text-sm font-semibold`}
+                        >
+                          {importance.text}
+                        </Badge>
+                        <div className="flex items-center space-x-2">
+                          <Clock className={`w-5 h-5 ${
+                            importance.color === 'red' ? 'text-red-600' : 
+                            importance.color === 'yellow' ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`} />
+                          <span className={`text-sm font-medium ${
+                            importance.color === 'red' ? 'text-red-600' : 
+                            importance.color === 'yellow' ? 'text-yellow-600' : 
+                            'text-green-600'
+                          }`}>
+                            {importance.description}
+                          </span>
+                        </div>
+                      </div>
+                      <Progress 
+                        value={importance.progress} 
+                        className={`mb-6 h-2`}
+                      />
+                      <div className="flex items-center space-x-2 mb-4">
+                        <Calendar className="w-5 h-5 text-gray-500" />
+                        <p className="text-sm text-gray-600">
+                          {`${new Date(formation.startDate).toLocaleDateString()} - ${new Date(formation.endDate).toLocaleDateString()}`}
+                        </p>
+                      </div>
+                      <p className="text-sm text-gray-700 mb-4">{formation.description}</p>
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors duration-200 rounded-full px-3 py-1">
+                          {formation.type}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Users className="w-5 h-5 text-gray-500" />
+                        <p className="text-xs text-gray-500">
+                          Mentors: {formation.mentors.map((mentor) => mentor.email).join(", ")}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <AnimatePresence>
+                      {expandedFormation === formation._id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <CardFooter className="bg-gray-50 p-6">
+                            <div className="w-full space-y-4">
+                              <div className="flex items-center justify-center space-x-4">
+                                <Upload className="w-5 h-5 text-gray-600" />
+                                <span className="text-gray-700 font-medium">Import Candidates</span>
+                                <input 
+                                  type="file" 
+                                  accept=".xlsx, .xls" 
+                                  onChange={handleFileChange} 
+                                  ref={fileInputRef}
+                                  className="hidden"
+                                  id={`file-upload-${formation._id}`}
+                                />
+                                <label 
+                                  htmlFor={`file-upload-${formation._id}`} 
+                                  className="cursor-pointer bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-colors duration-200 shadow-md text-center"
+                                >
+                                  Choose File
+                                </label>
+                              </div>
+                              {file && <p className="text-sm text-gray-600 text-center">Selected: {file.name}</p>}
+                              {upload && (
+                                <Button 
+                                  size="sm" 
+                                  className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
+                                  onClick={() => handleUpload(formation._id)}
+                                >
+                                  Upload
+                                </Button>
+                              )}
+                              <Button 
+                                size="sm" 
+                                className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
+                                onClick={() => validateCandidates(formation._id)}
+                              >
+                                <Phone className="w-4 h-4" />
+                                <span>Validate Candidates</span>
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
+                                onClick={() => checkPresence(formation._id)}
+                              >
+                                <UserCheck className="w-4 h-4" />
+                                <span>Check Presence</span>
+                              </Button>
+                            </div>
+                          </CardFooter>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   )
