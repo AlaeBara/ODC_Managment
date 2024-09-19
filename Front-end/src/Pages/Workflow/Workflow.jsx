@@ -17,9 +17,12 @@ export default function Component() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [file, setFile] = useState(null)
+  const [upload, setupload] = useState(false)
   const fileInputRef = useRef(null)
   const navigate = useNavigate();
 
+
+  //Api for Get Formations Of Mentor
   useEffect(() => {
     const fetchFormations = async () => {
       setIsLoading(true)
@@ -47,10 +50,12 @@ export default function Component() {
     fetchFormations()
   }, [])
 
+
   const toggleExpand = (formationId) => {
     setExpandedFormation(prev => (prev === formationId ? null : formationId))
   }
   
+
   const getImportanceLevel = (formation) => {
     const startDate = new Date(formation.startDate)
     const endDate = new Date(formation.endDate)
@@ -67,6 +72,7 @@ export default function Component() {
     }
     return { priority: 3, color: 'green', text: 'Upcoming', description: 'Upcoming', progress: 10 }
   }
+
   
   const filteredFormations = formations
     .filter(formation =>
@@ -78,12 +84,15 @@ export default function Component() {
       return importanceA - importanceB
     })
 
+
+  //for upload file excel
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0]
     if (selectedFile) {
       if (selectedFile.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
           selectedFile.type === "application/vnd.ms-excel") {
         setFile(selectedFile)
+        setupload(!upload)
         toast.info(`File "${selectedFile.name}" selected`)
       } else {
         toast.error("Please select an Excel file (.xlsx or .xls)")
@@ -92,6 +101,8 @@ export default function Component() {
     }
   }
 
+
+  //Api for import candidate of formation using file excel 
   const handleUpload = async (id_Formation) => {
     if (!file) {
       toast.error("Please select a file to upload")
@@ -120,43 +131,58 @@ export default function Component() {
     }
   }
 
+
   const validateCandidates = async (formationId) => {
     navigate(`/validate/${formationId}`);
   }
+
 
   const checkPresence = async (formationId) => {
     toast.info('Checking presence...')
   }
 
+
   if (isLoading) {
     return <div className="flex justify-center items-center h-screen">Loading formations...</div>
   }
+
 
   if (error) {
     return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>
   }
 
+
   return (
     <div className="min-h-screen p-8">
+
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
+
       <div className="max-w-6xl mx-auto">
+
         <h1 className="text-4xl font-sans font-bold text-gray-800 mb-8">Formations Workflow</h1>
+
         <div className="relative w-full max-w-md mb-8">
           <Input
             type="text"
             placeholder="Search formations..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full"
+            className="pl-10 pr-4 py-2 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
           {filteredFormations.map((formation) => {
             const importance = getImportanceLevel(formation)
+            
             return (
+
               <Card key={formation._id} className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl">
+
                 <CardHeader className={`text-white bg-gradient-to-r from-orange-500 to-orange-600 py-2`}>
+
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-lg font-bold truncate">{formation.title}</CardTitle>
                     <Button
@@ -173,9 +199,13 @@ export default function Component() {
                       )}
                     </Button>
                   </div>
+
                 </CardHeader>
+
                 <CardContent className="p-4">
+
                   <div className="flex items-center justify-between mb-4">
+
                     <Badge 
                       variant="outline" 
                       className={`${
@@ -192,33 +222,52 @@ export default function Component() {
                         {importance.description}
                       </span>
                     </div>
+
                   </div>
+
                   <Progress value={importance.progress} className="mb-4" />
+
                   <div className="flex items-center space-x-2 mb-2">
+
                     <Calendar className="w-4 h-4 text-gray-500" />
                     <p className="text-sm text-gray-600">
                       {`${new Date(formation.startDate).toLocaleDateString()} - ${new Date(formation.endDate).toLocaleDateString()}`}
                     </p>
+
                   </div>
+
                   <p className="text-sm text-gray-700 mb-2">{formation.description}</p>
+
                   <div className="flex items-center justify-between mb-2">
+
                     <Badge variant="secondary" className={`bg-transparent text-black hover:bg-gray-200 hover:text-gray-600 transition-colors duration-200`}>
                       {formation.type}
                     </Badge>
+
                   </div>
+
                   <div className="flex items-center space-x-2">
+
                     <Users className="w-4 h-4 text-gray-500" />
                     <p className="text-xs text-gray-500">
                       Mentors: {formation.mentors.map((mentor) => mentor.email).join(", ")}
                     </p>
+
                   </div>
+
                 </CardContent>
+                
                 {expandedFormation === formation._id && (
                   <CardFooter className="bg-gray-50 p-4">
+
                     <div className="w-full space-y-2">
-                      <div className="flex items-center justify-center space-x-2">
+
+                      <div className="flex items-center justify-center space-x-2 m-4">
+
                         <Upload className="w-4 h-4" />
+
                         <span>Import Candidates</span>
+
                         <input 
                           type="file" 
                           accept=".xlsx, .xls" 
@@ -227,27 +276,36 @@ export default function Component() {
                           className="hidden"
                           id={`file-upload-${formation._id}`}
                         />
+
                         <label 
                           htmlFor={`file-upload-${formation._id}`} 
-                          className="cursor-pointer bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition-colors"
+                          className="cursor-pointer bg-orange-500 text-white px-2 py-1 rounded hover:bg-orange-600 transition-colors"
                         >
                           Choose File
                         </label>
+
                       </div>
-                      {file && <p className="text-sm text-gray-600">Selected: {file.name}</p>}
-                      <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={()=>handleUpload(formation._id)}>
-                        Upload
-                      </Button>
+
+                      {file && <p className="text-sm text-gray-600 text-center">Selected: {file.name}</p>}
+
+                      {upload && <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={()=>handleUpload(formation._id)}>
+                                 Upload
+                                </Button> 
+                      }
+
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => validateCandidates(formation._id)}>
                         <Phone className="w-4 h-4" />
                         <span>Validate Candidates</span>
                       </Button>
+
                       <Button size="sm" className="w-full flex items-center justify-center space-x-2" onClick={() => checkPresence(formation._id)}>
                         <UserCheck className="w-4 h-4" />
                         <span>Check Presence</span>
                       </Button>
+
                     </div>
                   </CardFooter>
+
                 )}
               </Card>
             )
