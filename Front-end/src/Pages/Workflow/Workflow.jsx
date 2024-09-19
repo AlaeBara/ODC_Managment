@@ -118,18 +118,15 @@ export default function Component() {
     </div>
   )
 
-  if (error) return (
-    <div className="flex justify-center items-center h-screen text-red-500">{error}</div>
-  )
-
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-8  bg-gray-100">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-extrabold text-orange-500 mb-8 text-center">
+
+        <h1 className="text-5xl font-extrabold text-orange-500 mb-8">
           Formations Workflow
         </h1>
-        <div className="relative w-full max-w-md mx-auto mb-12">
+        <div className="relative w-full max-w-md  mb-12">
           <Input
             type="text"
             placeholder="Search formations..."
@@ -227,7 +224,7 @@ export default function Component() {
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.5 }}
                         >
                           <CardFooter className="bg-gray-50 p-6">
                             <div className="w-full space-y-4">
@@ -286,6 +283,12 @@ export default function Component() {
             })}
           </AnimatePresence>
         </motion.div>
+        
+        { filteredFormations.length === 0 &&
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 mt-9">
+           <p className="text-lg font-medium">No Formation found.</p>
+          </div>
+        }
       </div>
     </div>
   )
