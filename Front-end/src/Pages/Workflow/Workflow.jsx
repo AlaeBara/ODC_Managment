@@ -119,7 +119,7 @@ export default function Component() {
   )
 
   return (
-    <div className="min-h-screen p-8  bg-gray-100">
+    <div className="min-h-screen p-8">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
 

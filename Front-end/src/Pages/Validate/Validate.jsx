@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { Input } from "@/components/ui/input"
@@ -24,26 +24,29 @@ const ComprehensiveTable = () => {
     "participationInODC"
   ]
 
-
-  //api for get candidate 
-  useEffect(() => {
-    const fetchCandidates = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/candidates/${id}`, {
-          headers: { 
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        })
-        setData(response.data.data)
-      } catch (error) {
-        console.error('Error fetching candidates:', error)
-        console.log('Failed to fetch candidates. Please try again.')
-      }
+  const fetchCandidates = useCallback(async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/candidates/${id}`, {
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+      setData(response.data.data)
+      const initialPresence = {}
+      response.data.data.forEach(candidate => {
+        initialPresence[candidate._id] = candidate.presenceState || false
+      })
+      setUserPresence(initialPresence)
+    } catch (error) {
+      console.error('Error fetching candidates:', error)
+      console.log('Failed to fetch candidates. Please try again.')
     }
-
-    fetchCandidates()
   }, [id])
+
+  useEffect(() => {
+    fetchCandidates()
+  }, [fetchCandidates])
 
   useEffect(() => {
     setCurrentPage(1)
@@ -79,10 +82,6 @@ const ComprehensiveTable = () => {
     }
   }
 
-  const handlePresenceChange = (id, checked) => {
-    setUserPresence((prev) => ({ ...prev, [id]: checked }))
-  }
-
   const clearFilter = () => {
     setFilter("")
   }
@@ -96,11 +95,33 @@ const ComprehensiveTable = () => {
     setItemsPerPage(Number(value))
   }
 
-
+  const handlePresenceChange = useCallback(async (id, checked) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/workFlow/toggle-presence`, { id }, {
+        headers: { 
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
+  
+      // If the status code is 200, then it's successful
+      if (response.status === 200) {
+        setUserPresence(prev => ({ ...prev, [id]: checked }));
+        setData(prevData => prevData.map(item => 
+          item._id === id ? { ...item, presenceState: checked } : item
+        ));
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error updating presence:', error);
+      alert(error.message || 'Failed to update presence. Please try again.');
+    }
+  }, []);
+  
 
   return (
-    <div className="bg-white p-8 flex flex-col">
-      
+    <div className="p-8 flex flex-col">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -169,7 +190,7 @@ const ComprehensiveTable = () => {
                       </td>
                     </motion.tr>
                   ) : (
-                    paginatedData.map((item, index) => (
+                    paginatedData.map((item) => (
                       <motion.tr 
                         key={item._id}
                         initial={{ opacity: 0 }}

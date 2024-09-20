@@ -1,7 +1,7 @@
 const express = require('express');
-const { uploadExcelFile , getAllCandidatesByFormation } = require('../Controllers/WorkFlow');
+const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence  } = require('../Controllers/WorkFlow');
 const authenticated = require('../Middlewares/Authmiddleware');
-const upload = require('../Middlewares/Multer'); // Import multer middleware
+const upload = require('../Middlewares/Multer');
 
 const router = express.Router();
 
@@ -11,5 +11,8 @@ router.post('/upload-excel', authenticated, upload.single('file'), uploadExcelFi
 
 // Route to Get Candidates By Formation
 router.get('/Candidates/:id', authenticated,   getAllCandidatesByFormation );
+
+//Route to toggle candidate presence state
+router.post('/toggle-presence', toggleCandidatePresence);
 
 module.exports = router;
