@@ -33,7 +33,7 @@ const uploadExcelFile = async (req, res) => {
       educationLevel: row['Education Level'] || '',
       speciality: row['Speciality'] || '',
       participationInODC: row['Participation in ODC'] || '',
-      presenceState: row['Presence State'] === 'Present',
+      presenceState: false,
     }));
 
     // Insert candidates into MongoDB
@@ -48,6 +48,12 @@ const uploadExcelFile = async (req, res) => {
     res.status(500).json({ message: 'Error uploading file' });
   }
 };
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////
 
 
 // Function to get all candidates for a specific formation
@@ -85,6 +91,42 @@ const getAllCandidatesByFormation = async (req, res) => {
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+
+//API for setting a candidate as valid or not
+
+const toggleCandidatePresence = async (req, res) => {
+  try {
+    const { id } = req.body; 
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid candidate ID" });
+    }
+
+    const candidate = await Candidate.findById(id);
+
+    if (!candidate) {
+      return res.status(404).json({ success: false, message: "Candidate not found" });
+    }
+
+    candidate.presenceState = !candidate.presenceState;
+
+    await candidate.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Candidate's presence state updated successfully`,
+      presenceState: candidate.presenceState,
+    });
+  } catch (error) {
+    console.error('Error toggling presence state:', error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error toggling presence state", 
+      error: error.message 
+    });
+  }
+};
 
 
 
@@ -92,4 +134,10 @@ const getAllCandidatesByFormation = async (req, res) => {
 
 
 
-module.exports = { uploadExcelFile , getAllCandidatesByFormation };
+
+
+
+
+
+
+module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence };
