@@ -62,7 +62,7 @@ export default function Homepage() {
                 placeholder="Search courses..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full"
+                className="pl-10 pr-4 py-2 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             </div>
