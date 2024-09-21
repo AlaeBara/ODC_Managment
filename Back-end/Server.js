@@ -5,6 +5,7 @@ const connectDB = require('./Config/config.js');
 const Auth = require('./Routes/auth.js')
 const Formation = require('./Routes/Formation.js')
 const Profile = require('./Routes/Profile.js')
+const Evaluation = require('./Routes/Evaluation.js')
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -36,6 +37,7 @@ app.use('/api/auth', Auth);
 app.use('/api/courses', Formation);
 app.use('/api/profile', Profile);
 app.use('/api/workFlow', workFlow);
+app.use('/api/evaluation', Evaluation)
 
 
 //insert line for test:

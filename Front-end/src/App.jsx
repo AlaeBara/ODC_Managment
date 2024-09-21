@@ -4,6 +4,8 @@ import ProtectedRoute from './Security/ProtectedRoutes.jsx';
 import MainLayout from './MainLayout';
 import Spinner from './components/Spinner/Spinner.jsx';
 import Validate from './Pages/Validate/Validate.jsx';
+import Evaluation from './Pages/Evaluation/Evaluation.jsx';
+import EvaluationForm from './Pages/Evaluation/Evaluationform.jsx';
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -91,6 +93,20 @@ function App() {
                 </MainLayout>
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="evaluation"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Evaluation/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/evaluation/:id" 
+            element={<EvaluationForm />} 
           />
         </Routes>
       </Suspense>

@@ -8,7 +8,7 @@ router.post('/Addformation', authenticated, AddFormation);
 
 router.get('/GetFormations', authenticated, GetFormations);
 
-router.get('/GetOneFormations/:id', authenticated, GetOneFormations);
+router.get('/GetOneFormations/:id', GetOneFormations);
 
 router.put('/UpdateFormations/:id', authenticated, UpdateFormations);
 
