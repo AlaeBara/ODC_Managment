@@ -24,7 +24,7 @@ export default function CourseEvaluations() {
         })
         if (!response.ok) throw new Error("Failed to fetch courses")
         const data = await response.json()
-        setCourses(data)
+        setCourses(data) // Assuming data is the array of courses directly
         setError(null)
       } catch (error) {
         console.error("Error fetching courses:", error)
@@ -35,7 +35,7 @@ export default function CourseEvaluations() {
     }
     fetchCourses()
   }, [])
-
+  
   const toggleExpand = (courseId) => {
     setExpandedCourse(prev => (prev === courseId ? null : courseId))
   }
