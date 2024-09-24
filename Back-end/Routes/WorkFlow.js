@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence, CandidatesAvailable  } = require('../Controllers/WorkFlow');
+const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence, CandidatesAvailable, dayOfFormation , updatePresence  } = require('../Controllers/WorkFlow');
 const authenticated = require('../Middlewares/Authmiddleware');
 const upload = require('../Middlewares/Multer');
 
@@ -17,5 +17,11 @@ router.post('/toggle-presence',authenticated, toggleCandidatePresence);
 
 //Route to retrieving candidates will be available within the formation.
 router.get('/CandidatesAvailable/:id', authenticated, CandidatesAvailable) ;
+
+//Route to get day of formation.
+router.get('/FormationDays/:id', authenticated,  dayOfFormation) ;
+
+//Route to update presence of candidate within day of formation.
+router.post('/updatePresence',authenticated, updatePresence);
 
 module.exports = router;

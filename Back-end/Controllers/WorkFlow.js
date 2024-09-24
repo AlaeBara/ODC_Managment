@@ -101,7 +101,7 @@ const uploadExcelFile = async (req, res) => {
         speciality: row['Speciality'] || '',
         participationInODC: row['Participation in ODC'] || '',
         presenceState: false,
-        participants: participantDates // Set participants here
+        sessions: participantDates // Set participants here
       };
     });
 
@@ -118,13 +118,7 @@ const uploadExcelFile = async (req, res) => {
   }
 };
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////
-
-
 // Function to get all candidates for a specific formation
 const getAllCandidatesByFormation = async (req, res) => {
   try {
@@ -238,6 +232,73 @@ const CandidatesAvailable = async (req, res) => {
 };
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+// Function to day of formation with out weekday
+
+const dayOfFormation =  async(req, res)=>{
+  try {
+    const formation = await Courses.findById(req.params.id); 
+    const start = new Date(formation.startDate);
+    const end = new Date(formation.endDate);
+
+    const weekdays = getWeekdays(start, end);
+    
+    res.status(200).json({
+      success: true,
+      days:weekdays,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching formation days',
+    });
+  }
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//for update presence
+
+const updatePresence = async (req, res) => {
+  try {
+    const { sessionDate, morning, afternoon, candidateIds } = req.body;
+
+    // Validate request data
+    if (!sessionDate || (morning === undefined && afternoon === undefined) || !candidateIds || candidateIds.length === 0) {
+        return res.status(400).json({ message: "Invalid request data" });
+    }
+
+    // Map over candidateIds and prepare bulk write operations
+    const updates = candidateIds.map(candidateId => {
+        const updateFields = {};
+
+        if (morning !== undefined) {
+            updateFields['sessions.$.morningStatus'] = morning ? "Present" : "Absent";
+        }
+
+        if (afternoon !== undefined) {
+            updateFields['sessions.$.afternoonStatus'] = afternoon ? "Present" : "Absent";
+        }
+
+        return {
+            updateOne: {
+                filter: { _id: candidateId, 'sessions.date': sessionDate }, 
+                update: { $set: updateFields }
+            }
+        };
+    });
+
+    // Perform bulk write
+    await Candidate.bulkWrite(updates);
+
+    res.json({ message: `Presence updated successfully for ${candidateIds.length} candidates.`});
+
+  } catch (error) {
+    console.error("Error updating presence:", error);
+    res.status(500).json({ message: "An error occurred while updating presence." });
+  }
+};
 
 
 
@@ -245,4 +306,5 @@ const CandidatesAvailable = async (req, res) => {
 
 
 
-module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence ,CandidatesAvailable };
+
+module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence ,CandidatesAvailable, updatePresence ,dayOfFormation  };

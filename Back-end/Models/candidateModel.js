@@ -15,7 +15,7 @@ const CandidateSchema = new mongoose.Schema({
   speciality: { type: String },
   participationInODC: { type: String },
   presenceState: { type: Boolean },
-  participants: [
+  sessions:  [
     {
       sessionDate: { type: Date, required: true },
       morningStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' }, // 9 AM - 1 PM
