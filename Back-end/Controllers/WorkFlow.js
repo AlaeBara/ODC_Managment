@@ -2,7 +2,40 @@ const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
 const Candidate = require('../models/candidateModel');
+const Courses = require('../Models/courseModel')
 const mongoose = require('mongoose');
+
+
+const getWeekdays = (start, end) => {
+  const weekdays = [];
+  
+ 
+  if (start > end) {
+    return weekdays; // Return empty array if the range is invalid
+  }
+  
+  // Set the start date to the next Monday if it falls on a weekend
+  const currentDate = new Date(start);
+  if (currentDate.getDay() === 0) { // Sunday
+    currentDate.setDate(currentDate.getDate() + 1);
+  } else if (currentDate.getDay() === 6) { // Saturday
+    currentDate.setDate(currentDate.getDate() + 2);
+  }
+
+  // Loop through the date range, incrementing by 1 day
+  while (currentDate <= end) {
+    weekdays.push(new Date(currentDate)); // Push a copy of the current date
+    currentDate.setDate(currentDate.getDate() + 1);
+
+    // Skip weekends
+    while (currentDate.getDay() === 0 || currentDate.getDay() === 6) {
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  }
+  
+  return weekdays;
+};
+
 
 // Function to handle Excel file upload and save data to MongoDB
 const uploadExcelFile = async (req, res) => {
@@ -18,29 +51,65 @@ const uploadExcelFile = async (req, res) => {
     const sheetName = workbook.SheetNames[0];
     const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
+    // Fetch the formation details using the id_Formation
+    const course = await Courses.findById(id_Formation);
+    
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Log the course object for debugging
+    console.log('Fetched Course:', course);
+
+    // Ensure the dates are correctly parsed from the course object
+    const formationStartDate = new Date(course.startDate);
+    const formationEndDate = new Date(course.endDate);
+
+    // Debugging logs to check date parsing
+    console.log('Formation Start Date:', formationStartDate);
+    console.log('Formation End Date:', formationEndDate);
+
+    // Check if dates are valid
+    if (isNaN(formationStartDate.getTime()) || isNaN(formationEndDate.getTime())) {
+      return res.status(400).json({ message: 'Invalid formation dates' });
+    }
+
+    // Get weekdays for the formation
+    const formationDays = getWeekdays(formationStartDate, formationEndDate);
+    console.log('Formation Days:', formationDays); // Debugging line
+
     // Map Excel rows to the Candidate schema
-    const candidates = sheetData.map(row => ({
-      id_Formation,
-      email: row['Email'] || '',
-      firstName: row['First Name'] || '',
-      lastName: row['Last Name'] || '',
-      gender: row['Gender'] || '',
-      birthdate: row['Birthdate'] || '',
-      country: row['Country'] || '',
-      profession: row['Profession'] || '',
-      age: row['Age'] || null,
-      phoneNumber: row['Phone Number'] || '',
-      educationLevel: row['Education Level'] || '',
-      speciality: row['Speciality'] || '',
-      participationInODC: row['Participation in ODC'] || '',
-      presenceState: false,
-    }));
+    const candidates = sheetData.map(row => {
+      const participantDates = formationDays.map(sessionDate => ({
+        sessionDate,
+        morningStatus: 'Absent', // Default to Absent
+        afternoonStatus: 'Absent', // Default to Absent
+      }));
+
+      return {
+        id_Formation,
+        email: row['Email'] || '',
+        firstName: row['First Name'] || '',
+        lastName: row['Last Name'] || '',
+        gender: row['Gender'] || '',
+        birthdate: row['Birthdate'] || '',
+        country: row['Country'] || '',
+        profession: row['Profession'] || '',
+        age: row['Age'] || null,
+        phoneNumber: row['Phone Number'] || '',
+        educationLevel: row['Education Level'] || '',
+        speciality: row['Speciality'] || '',
+        participationInODC: row['Participation in ODC'] || '',
+        presenceState: false,
+        participants: participantDates // Set participants here
+      };
+    });
 
     // Insert candidates into MongoDB
     await Candidate.insertMany(candidates);
 
     // Clean up the uploaded file
-    // fs.unlinkSync(filePath);
+    // fs.unlinkSync(filePath); // Uncomment if you want to delete the file after processing
 
     res.status(200).json({ message: 'File uploaded and data saved to database' });
   } catch (error) {
@@ -92,7 +161,6 @@ const getAllCandidatesByFormation = async (req, res) => {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
-
 //API for setting a candidate as valid or not
 
 const toggleCandidatePresence = async (req, res) => {
@@ -131,6 +199,43 @@ const toggleCandidatePresence = async (req, res) => {
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+//API for retrieving candidates will be available within the formation.
+
+const CandidatesAvailable = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    console.log('ID:', id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid formation ID" });
+    }
+
+    const formation = await Courses.findById(id).select('title');
+
+    if (!formation) {
+      return res.status(404).json({ success: false, message: "Formation not found" });
+    }
+
+    const data = await Candidate.find({ id_Formation: id, presenceState: true });
+
+    res.status(200).json({
+      success: true,
+      message: "Candidates fetched successfully",
+      data: data,
+      nameOfFormation: formation.title 
+    });
+
+  } catch (error) {
+    console.error('Error fetching candidates:', error);
+    res.status(500).json({ 
+      success: false,
+      message: "Error fetching candidates", 
+      error: error.message
+    });
+  }
+};
 
 
 
@@ -140,4 +245,4 @@ const toggleCandidatePresence = async (req, res) => {
 
 
 
-module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence };
+module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence ,CandidatesAvailable };

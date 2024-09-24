@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-// Define the Candidate schema
 const CandidateSchema = new mongoose.Schema({
   id_Formation:{type: mongoose.Schema.Types.ObjectId, ref: 'Course'},
   email: { type: String },
@@ -16,9 +15,16 @@ const CandidateSchema = new mongoose.Schema({
   speciality: { type: String },
   participationInODC: { type: String },
   presenceState: { type: Boolean },
+  participants: [
+    {
+      sessionDate: { type: Date, required: true },
+      morningStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' }, // 9 AM - 1 PM
+      afternoonStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' } // 2 PM - 4 PM
+    }
+  ]
 });
 
-// Create and export the model
+
 const Candidate = mongoose.model('Candidate', CandidateSchema);
 
 

@@ -1,43 +1,38 @@
+"use client"
+
 import React, { useState, useEffect, useCallback } from "react"
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowUpDown, X, Search, Users, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
-const ComprehensiveTable = () => {
+export default function CandidateCheck() {
   const [filter, setFilter] = useState("")
   const [sortColumn, setSortColumn] = useState("")
   const [sortOrder, setSortOrder] = useState("asc")
-  const [userPresence, setUserPresence] = useState({})
+  const [name, setName] = useState(null)
   const { id } = useParams()
   const [data, setData] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(7)
 
   const columns = [
-    "email", "firstName", "lastName", "gender", "birthdate", "country",
-    "profession", "age", "phoneNumber", "educationLevel", "speciality",
-    "participationInODC"
+    "email", "firstName", "lastName", "phoneNumber"
   ]
 
   const fetchCandidates = useCallback(async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/candidates/${id}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/CandidatesAvailable/${id}`, {
         headers: { 
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       })
       setData(response.data.data)
-      const initialPresence = {}
-      response.data.data.forEach(candidate => {
-        initialPresence[candidate._id] = candidate.presenceState || false
-      })
-      setUserPresence(initialPresence)
+      setName(response.data.nameOfFormation)
     } catch (error) {
       console.error('Error fetching candidates:', error)
       console.log('Failed to fetch candidates. Please try again.')
@@ -95,71 +90,58 @@ const ComprehensiveTable = () => {
     setItemsPerPage(Number(value))
   }
 
-  const handlePresenceChange = useCallback(async (id, checked) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/workFlow/toggle-presence`, { id }, {
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-      });
-  
-      // If the status code is 200, then it's successful
-      if (response.status === 200) {
-        setUserPresence(prev => ({ ...prev, [id]: checked }));
-        setData(prevData => prevData.map(item => 
-          item._id === id ? { ...item, presenceState: checked } : item
-        ));
-      } else {
-        throw new Error(response.data.message);
-      }
-    } catch (error) {
-      console.error('Error updating presence:', error);
-      alert(error.message || 'Failed to update presence. Please try again.');
-    }
-  }, []);
-  
-
   return (
-    <div className="p-8 flex flex-col">
+    <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto">
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="space-y-6 flex flex-col"
+        className="space-y-6"
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Input
-                placeholder="Filter table..."
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm border-2 border-orange-500 focus:border-orange-600 rounded-full transition-all duration-300 ease-in-out ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 h-4 w-4" />
+        <div className="flex flex-col space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5">
+            <h2 className="text-2xl font-bold text-gray-800">
+              Formation:<span className="text-orange-500">  {name}</span>
+            </h2>
+            <div className="flex items-center space-x-2 text-orange-500 mt-2 sm:mt-0">
+              <Users className="h-5 w-5" />
+              <span className="font-semibold">
+                {filteredData.length} Candidate{filteredData.length !== 1 ? 's' : ''}
+              </span>
             </div>
-            <Button onClick={clearFilter} variant="outline" className="w-full sm:w-auto px-6 py-2 bg-white text-orange-500 border-2 border-orange-500 hover:bg-orange-50 rounded-full transition-all duration-300 ease-in-out">
-              <X className="mr-2 h-4 w-4" /> Clear
-            </Button>
           </div>
-          <div className="flex items-center space-x-2 text-orange-500">
-            <Users className="h-5 w-5" />
-            <span className="font-semibold">
-              {filteredData.length} Candidate{filteredData.length !== 1 ? 's' : ''} DB
-            </span>
+
+          <div className="w-full sm:w-auto sm:max-w-md">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-grow">
+                <Input
+                  placeholder="Filter table..."
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 text-sm border-2 border-orange-500 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 rounded-full transition-all duration-300 ease-in-out"
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 h-4 w-4" />
+              </div>
+              <Button 
+                onClick={clearFilter} 
+                variant="outline" 
+                className="px-4 py-2 bg-white text-orange-500 border-2 border-orange-500 hover:bg-orange-50 rounded-full transition-all duration-300 ease-in-out"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-orange-200">
-              <thead className="bg-orange-500">
+            <table className="w-full divide-y divide-orange-200">
+              <thead className="bg-orange-500 text-white">
                 <tr>
                   {columns.map((column) => (
                     <th
                       key={column}
-                      className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                      className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider"
                     >
                       <button
                         onClick={() => handleSort(column)}
@@ -170,13 +152,10 @@ const ComprehensiveTable = () => {
                       </button>
                     </th>
                   ))}
-                  <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider sticky right-0 bg-orange-500">
-                    Present
-                  </th>
                 </tr>
               </thead>
               
-              <tbody className="bg-white divide-y divide-orange-200">
+              <tbody className="bg-white divide-y divide-orange-100">
                 <AnimatePresence mode="wait">
                   {paginatedData.length === 0 ? (
                     <motion.tr
@@ -185,7 +164,7 @@ const ComprehensiveTable = () => {
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                     >
-                      <td colSpan={columns.length + 1} className="p-4 text-center text-orange-500">
+                      <td colSpan={columns.length} className="p-4 text-center text-orange-500">
                         No results found
                       </td>
                     </motion.tr>
@@ -207,14 +186,6 @@ const ComprehensiveTable = () => {
                             {item[column]}
                           </td>
                         ))}
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 sticky right-0 bg-white">
-                          <Checkbox
-                            checked={userPresence[item._id] || false}
-                            onCheckedChange={(checked) => handlePresenceChange(item._id, checked)}
-                            className="border-orange-500 text-orange-500 focus:ring-orange-500 rounded-full transition-all duration-300 ease-in-out
-                                       data-[state=checked]:bg-orange-500 data-[state=checked]:border-orange-500"
-                          />
-                        </td>
                       </motion.tr>
                     ))
                   )}
@@ -247,6 +218,8 @@ const ComprehensiveTable = () => {
               <Button
                 onClick={goToFirstPage}
                 disabled={currentPage === 1}
+                size="icon"
+                variant="outline"
                 className="p-2 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors duration-300"
               >
                 <ChevronsLeft className="h-4 w-4" />
@@ -254,6 +227,8 @@ const ComprehensiveTable = () => {
               <Button
                 onClick={goToPrevPage}
                 disabled={currentPage === 1}
+                size="icon"
+                variant="outline"
                 className="p-2 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors duration-300"
               >
                 <ChevronLeft className="h-4 w-4" />
@@ -261,6 +236,8 @@ const ComprehensiveTable = () => {
               <Button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
+                size="icon"
+                variant="outline"
                 className="p-2 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors duration-300"
               >
                 <ChevronRight className="h-4 w-4" />
@@ -268,6 +245,8 @@ const ComprehensiveTable = () => {
               <Button
                 onClick={goToLastPage}
                 disabled={currentPage === totalPages}
+                size="icon"
+                variant="outline"
                 className="p-2 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-md transition-colors duration-300"
               >
                 <ChevronsRight className="h-4 w-4" />
@@ -279,5 +258,3 @@ const ComprehensiveTable = () => {
     </div>
   )
 }
-
-export default ComprehensiveTable

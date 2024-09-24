@@ -110,7 +110,7 @@ export default function Component() {
 
   const validateCandidates = (formationId) => navigate(`/validate/${formationId}`)
 
-  const checkPresence = (formationId) => toast.info('Checking presence...')
+  const checkPresence = (formationId) => navigate(`/Check_Presence/${formationId}`)
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-screen">

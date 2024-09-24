@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence  } = require('../Controllers/WorkFlow');
+const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence, CandidatesAvailable  } = require('../Controllers/WorkFlow');
 const authenticated = require('../Middlewares/Authmiddleware');
 const upload = require('../Middlewares/Multer');
 
@@ -13,6 +13,9 @@ router.post('/upload-excel', authenticated, upload.single('file'), uploadExcelFi
 router.get('/Candidates/:id', authenticated,   getAllCandidatesByFormation );
 
 //Route to toggle candidate presence state
-router.post('/toggle-presence', toggleCandidatePresence);
+router.post('/toggle-presence',authenticated, toggleCandidatePresence);
+
+//Route to retrieving candidates will be available within the formation.
+router.get('/CandidatesAvailable/:id', authenticated, CandidatesAvailable) ;
 
 module.exports = router;
