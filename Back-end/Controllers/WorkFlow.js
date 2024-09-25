@@ -1,7 +1,7 @@
 const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
-const Candidate = require('../models/candidateModel');
+const Candidate = require('../Models/candidateModel');
 const Courses = require('../Models/courseModel')
 const mongoose = require('mongoose');
 
@@ -265,28 +265,36 @@ const updatePresence = async (req, res) => {
     const { sessionDate, morning, afternoon, candidateIds } = req.body;
 
     // Validate request data
-    if (!sessionDate || (morning === undefined && afternoon === undefined) || !candidateIds || candidateIds.length === 0) {
-        return res.status(400).json({ message: "Invalid request data" });
+    if (!sessionDate || !candidateIds || candidateIds.length === 0) {
+      return res.status(400).json({ message: "Invalid request data" });
     }
+
+    const sessionDateObj = new Date(sessionDate);
 
     // Map over candidateIds and prepare bulk write operations
     const updates = candidateIds.map(candidateId => {
-        const updateFields = {};
+      const updateFields = {};
 
-        if (morning !== undefined) {
-            updateFields['sessions.$.morningStatus'] = morning ? "Present" : "Absent";
+      if (morning !== undefined) {
+        updateFields['sessions.$.morningStatus'] = morning[candidateId] ? "Present" : "Absent";
+      }
+
+      if (afternoon !== undefined) {
+        updateFields['sessions.$.afternoonStatus'] = afternoon[candidateId] ? "Present" : "Absent";
+      }
+
+      return {
+        updateOne: {
+          filter: { 
+            _id: candidateId, 
+            'sessions.sessionDate': sessionDateObj 
+          },
+          update: { 
+            $set: updateFields 
+          },
+          upsert: true // This will create a new session if it doesn't exist
         }
-
-        if (afternoon !== undefined) {
-            updateFields['sessions.$.afternoonStatus'] = afternoon ? "Present" : "Absent";
-        }
-
-        return {
-            updateOne: {
-                filter: { _id: candidateId, 'sessions.date': sessionDate }, 
-                update: { $set: updateFields }
-            }
-        };
+      };
     });
 
     // Perform bulk write
@@ -302,9 +310,39 @@ const updatePresence = async (req, res) => {
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+//Api for fetch attendance for a specific date
+const getAttendance = async (req, res) => {
+  try {
+    const { formationId, date } = req.params;
+    const sessionDate = new Date(date);
+
+    const candidates = await Candidate.find({ id_Formation: formationId })
+      .select('_id sessions')
+      .lean();
+
+    const attendance = {};
+    candidates.forEach(candidate => {
+      const session = candidate.sessions.find(s => s.sessionDate.toDateString() === sessionDate.toDateString());
+      attendance[candidate._id] = {
+        morning: session?.morningStatus === 'Present',
+        afternoon: session?.afternoonStatus === 'Present'
+      };
+    });
+
+    res.json({ attendance });
+
+  } catch (error) {
+    console.error("Error fetching attendance:", error);
+    res.status(500).json({ message: "An error occurred while fetching attendance." });
+  }
+};
 
 
 
 
 
-module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence ,CandidatesAvailable, updatePresence ,dayOfFormation  };
+
+
+
+module.exports = { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence ,CandidatesAvailable, updatePresence ,dayOfFormation  , getAttendance };

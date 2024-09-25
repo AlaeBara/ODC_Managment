@@ -1,5 +1,6 @@
 const Course = require('../Models/courseModel');
 const Evaluation = require('../Models/evaluationModel');
+const Candidate =require('../Models/candidateModel')
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -72,4 +73,41 @@ const GenerateEvaluationLink = async (req, res) => {
   }
 };
 
-module.exports = { SubmitEvaluation, GenerateEvaluationLink };
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+//Api For get number candidate of any formation.
+
+const NumberOfCandidates = async (req, res) => {
+  try {
+
+    const results = await Candidate.aggregate([
+      {
+        $match: {
+          presenceState: true // Only count candidates with presenceState true
+        }
+      },
+      {
+        $group: {
+          _id: "$id_Formation", // Group by formation ID
+          numberOfCandidates: { $sum: 1 } // Count the candidates in each formation
+        }
+      }
+    ]);
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching number of candidates:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
+
+
+
+
+module.exports = { SubmitEvaluation, GenerateEvaluationLink , NumberOfCandidates};
