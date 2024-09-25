@@ -21,13 +21,13 @@ export default function CandidateCheck() {
   const [isAttendanceChanged, setIsAttendanceChanged] = useState(false)
   
   const columns = ["email", "firstName", "lastName", "phoneNumber", "attendance"]
-  
+
+
+
   const fetchCandidates = useCallback(async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/CandidatesAvailable/${id}`, {
-        headers: { 
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
       setData(response.data.data)
@@ -40,9 +40,7 @@ export default function CandidateCheck() {
   const fetchFormationDays = useCallback(async () => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/FormationDays/${id}`, {
-        headers: { 
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         withCredentials: true,
       })
       setFormationDays(response.data.days)
@@ -51,10 +49,25 @@ export default function CandidateCheck() {
     }
   }, [id])
 
+  const fetchAttendance = useCallback(async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/workFlow/attendance/${id}/${today}`, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
+      setAttendance(response.data.attendance)
+    } catch (error) {
+      console.error('Error fetching attendance:', error)
+    }
+  }, [id])
+
+
   useEffect(() => {
     fetchCandidates()
     fetchFormationDays()
-  }, [fetchCandidates, fetchFormationDays])
+    fetchAttendance()
+  }, [fetchCandidates, fetchFormationDays, fetchAttendance])
 
   const filteredData = data.filter((item) =>
     Object.values(item).some((value) =>
@@ -94,15 +107,34 @@ export default function CandidateCheck() {
     setIsAttendanceChanged(true)
   }
 
-  const clearAttendance = () => {
-    setAttendance({})
-    setIsAttendanceChanged(false)
-  }
+  const saveAttendance = async () => {
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const candidateIds = Object.keys(attendance)
+      const morning = candidateIds.reduce((acc, id) => {
+        acc[id] = attendance[id]?.morning || false
+        return acc
+      }, {})
+      const afternoon = candidateIds.reduce((acc, id) => {
+        acc[id] = attendance[id]?.afternoon || false
+        return acc
+      }, {})
 
-  const saveAttendance = () => {
-    // TODO: Implement the API call to save attendance
-    console.log("Saving attendance:", attendance)
-    setIsAttendanceChanged(false)
+      await axios.post(`${import.meta.env.VITE_API_LINK}/api/workFlow/updatePresence`, {
+        sessionDate: today,
+        morning,
+        afternoon,
+        candidateIds
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      })
+
+      setIsAttendanceChanged(false)
+      console.log("Attendance updated successfully")
+    } catch (error) {
+      console.error("Error saving attendance:", error)
+    }
   }
 
   const today = new Date().toISOString().split('T')[0]
@@ -152,8 +184,8 @@ export default function CandidateCheck() {
               </div>
               <div className="flex items-center space-x-2">
                 <Calendar className="h-5 w-5 text-orange-500" />
-                <span className={`font-semibold ${isTodayFormationDay ? 'text-green-600' : 'text-gray-600'}`}>
-                  {isTodayFormationDay ? 'Today is a formation day' : 'Not a formation day'}
+                <span className={`font-semibold  ${isTodayFormationDay ? 'text-green-600' : 'text-gray-600'}`}>
+                  {isTodayFormationDay ? `${today}` : 'Not a formation day'}
                 </span>
               </div>
             </div>
@@ -239,8 +271,8 @@ export default function CandidateCheck() {
                                       </div>
                                       <div className="flex items-center space-x-2">
                                         <Checkbox
-                                          checked={attendance[item._id]?.evening || false}
-                                          onCheckedChange={() => handleAttendanceChange(item._id, 'evening')}
+                                          checked={attendance[item._id]?.afternoon || false}
+                                          onCheckedChange={() => handleAttendanceChange(item._id, 'afternoon')}
                                           className="border-orange-500 data-[state=checked]:bg-orange-500 data-[state=checked]:text-white"
                                         />
                                         <Moon className="h-4 w-4 text-orange-500" />
