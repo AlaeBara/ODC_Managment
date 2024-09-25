@@ -1,7 +1,7 @@
 const xlsx = require('xlsx');
 const fs = require('fs');
 const path = require('path');
-const Candidate = require('../models/candidateModel');
+const Candidate = require('../Models/candidateModel');
 const Courses = require('../Models/courseModel')
 const mongoose = require('mongoose');
 
