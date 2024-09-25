@@ -9,7 +9,7 @@ router.post('/SubmitEvaluation', SubmitEvaluation);
 
 router.get('/SubmitEvaluation', authenticated , NumberOfCandidates);
 
-//router.get('/api/evaluations/:formationId', authenticated, getEvaluationsByCourse)
+router.get('/evaluationdash/:id', authenticated, getEvaluationsByCourse)
 
 
 module.exports = router;

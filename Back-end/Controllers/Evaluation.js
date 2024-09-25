@@ -103,4 +103,19 @@ const NumberOfCandidates = async (req, res) => {
   }
 };
 
-module.exports = { SubmitEvaluation, GenerateEvaluationLink , NumberOfCandidates };
+////////////////////////////////
+
+const getEvaluationsByCourse = async (req, res) => {
+  try {
+    const evaluation = await Evaluation.findOne({ courseId: req.params.id });
+    if (!evaluation) {
+      return res.status(404).json({ message: 'Evaluation not found' });
+    }
+    res.json(evaluation);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+
+module.exports = { SubmitEvaluation, GenerateEvaluationLink , NumberOfCandidates, getEvaluationsByCourse };
