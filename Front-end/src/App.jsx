@@ -6,6 +6,7 @@ import Spinner from './components/Spinner/Spinner.jsx';
 import Validate from './Pages/Validate/Validate.jsx';
 import Evaluation from './Pages/Evaluation/Evaluation.jsx';
 import EvaluationForm from './Pages/Evaluation/Evaluationform.jsx';
+import Check from './Pages/PresenceCK/Check.jsx';
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -90,6 +91,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <Validate/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Check_Presence/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Check/>
                 </MainLayout>
               </ProtectedRoute>
             }

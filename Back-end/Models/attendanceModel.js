@@ -6,7 +6,8 @@ const attendanceSchema = new mongoose.Schema({
   participants: [
     {
       participantName: { type: String, required: true },
-      status: { type: String, enum: ['Present', 'Absent'], default: 'Absent' } // Initially set to 'Absent'
+      morningStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' }, // 9 AM - 1 PM
+      afternoonStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' } // 2 PM - 4 PM
     }
   ]
 });

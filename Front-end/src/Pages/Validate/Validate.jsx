@@ -146,7 +146,7 @@ const ComprehensiveTable = () => {
           <div className="flex items-center space-x-2 text-orange-500">
             <Users className="h-5 w-5" />
             <span className="font-semibold">
-              {filteredData.length} Candidate{filteredData.length !== 1 ? 's' : ''}
+              {filteredData.length} Candidate{filteredData.length !== 1 ? 's' : ''} DB
             </span>
           </div>
         </div>

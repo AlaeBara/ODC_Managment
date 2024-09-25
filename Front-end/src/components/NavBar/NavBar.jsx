@@ -59,7 +59,7 @@ const NavBar = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">Evaluation</Link>
+          <Link to="/evaluation" className="text-muted-foreground transition-colors hover:text-foreground">Evaluation</Link>
         </nav>
 
         {/* Mobile Menu Button */}
