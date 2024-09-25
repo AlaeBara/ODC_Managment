@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Loader2, AlertTriangle, Star } from 'lucide-react';
 
+
 const evaluationFields = [
   { label: "Qualité du contenu de la formation", name: "contentQuality" },
   { label: "Qualité des compétences acquises", name: "acquiredSkillsQuality" },
@@ -33,13 +34,30 @@ export default function EvaluationDisplay() {
   useEffect(() => {
     const fetchEvaluation = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_LINK}/api/evaluation/evaluationdash/${id}`);
-        if (!response.ok) throw new Error('Failed to fetch evaluation');
+        const response = await fetch(`${import.meta.env.VITE_API_LINK}/api/evaluation/evaluationdash/${id}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Unauthorized: Please log in to view this evaluation');
+          }
+          if (response.status === 404) {
+            throw new Error('Evaluation not found');
+          }
+          throw new Error('Failed to fetch evaluation');
+        }
+
         const data = await response.json();
         setEvaluation(data);
       } catch (error) {
         console.error('Error fetching evaluation:', error);
-        setError('Failed to load evaluation data');
+        setError(error.message || 'Failed to load evaluation data');
+        
       } finally {
         setLoading(false);
       }
@@ -61,6 +79,15 @@ export default function EvaluationDisplay() {
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100">
         <AlertTriangle className="w-20 h-20 text-red-500 mb-4" />
         <p className="text-2xl font-semibold text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  if (!evaluation) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100">
+        <AlertTriangle className="w-20 h-20 text-yellow-500 mb-4" />
+        <p className="text-2xl font-semibold text-yellow-600">No evaluation data found</p>
       </div>
     );
   }
