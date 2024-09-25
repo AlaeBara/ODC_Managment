@@ -103,11 +103,4 @@ const NumberOfCandidates = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-module.exports = { SubmitEvaluation, GenerateEvaluationLink , NumberOfCandidates};
+module.exports = { SubmitEvaluation, GenerateEvaluationLink , NumberOfCandidates };

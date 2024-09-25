@@ -6,6 +6,7 @@ import Spinner from './components/Spinner/Spinner.jsx';
 import Validate from './Pages/Validate/Validate.jsx';
 import Evaluation from './Pages/Evaluation/Evaluation.jsx';
 import EvaluationForm from './Pages/Evaluation/Evaluationform.jsx';
+import Evaluationdash from './Pages/beneficiare/evaluationdash.jsx'
 import Check from './Pages/PresenceCK/Check.jsx';
 
 // Lazy load components
@@ -118,6 +119,16 @@ function App() {
           <Route 
             path="/evaluation/:id" 
             element={<EvaluationForm />} 
+          />
+                    <Route
+            path="/beneficiary/overview"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Evaluationdash/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
           />
         </Routes>
       </Suspense>
