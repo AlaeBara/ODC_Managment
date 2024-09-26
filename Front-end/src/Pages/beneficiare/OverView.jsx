@@ -1,15 +1,49 @@
-'use client'
-
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Search, ArrowUpRight, Users, UserRoundCheck, Clock, BookOpen } from "lucide-react"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Calendar, Search, ArrowUpRight, Users, UserRoundCheck, Clock, AlertCircle } from "lucide-react"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from "framer-motion"
 
-export default function CourseOverviewTimeline() {
+const HexagonProgress = ({ value, max, color, icon: Icon, label }) => {
+  const percentage = (value / max) * 100
+  const size = 120
+  const centerX = size / 2
+  const centerY = size / 2
+  const radius = size * 0.4
+
+  const points = Array.from({ length: 6 }, (_, i) => {
+    const angle = (Math.PI / 3) * i - Math.PI / 2
+    return `${centerX + radius * Math.cos(angle)},${centerY + radius * Math.sin(angle)}`
+  }).join(' ')
+
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <polygon points={points} fill={`${color}33`} stroke={color} strokeWidth="2" />
+        <polygon
+          points={points}
+          fill={color}
+          strokeWidth="0"
+          transform={`translate(${centerX} ${centerY}) scale(${percentage / 100}) translate(-${centerX} -${centerY})`}
+        />
+        <foreignObject x={centerX - 20} y={centerY - 20} width="40" height="40">
+          <div className="flex items-center justify-center w-full h-full">
+            <Icon className="w-8 h-8 text-white" />
+          </div>
+        </foreignObject>
+      </svg>
+      <div className="mt-2 text-center">
+        <span className="text-2xl font-bold text-gray-700">{value}</span>
+        <span className="block text-sm font-medium text-gray-500">{label}</span>
+      </div>
+    </div>
+  )
+}
+
+export default function CourseOverviewDashboard() {
   const [courses, setCourses] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
@@ -122,7 +156,7 @@ export default function CourseOverviewTimeline() {
   )
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 ">
+    <div className="min-h-screen p-4 sm:p-8 bg-gray-50">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
         <motion.h1 
@@ -131,7 +165,7 @@ export default function CourseOverviewTimeline() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Courses OverView
+          Course Dashboard
         </motion.h1>
         <div className="flex flex-col items-center mb-12 gap-6">
           <motion.div 
@@ -145,7 +179,7 @@ export default function CourseOverviewTimeline() {
               placeholder="Search courses..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 pr-4 py-3 w-full rounded-full shadow-lg ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 "
+              className="pl-12 pr-4 py-3 w-full rounded-full shadow-lg ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
             />
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400" size={24} />
           </motion.div>
@@ -171,67 +205,84 @@ export default function CourseOverviewTimeline() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
-            <ol className="relative border-l border-gray-200 dark:border-gray-700">
-              {sortedCourses.map((course, index) => {
-                const status = getStatus(course)
-                return (
-                  <motion.li 
-                    key={course._id} 
-                    className="mb-10 ml-6"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <span className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-8 ring-white ${getStatusColor(status)}`}>
-                      <BookOpen className="w-3 h-3 text-white" />
-                    </span>
-                    <div className="p-4 bg-white rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2 sm:mb-0">{course.title}</h3>
-                        <span className={`bg-${status === 'Completed' ? 'orange' : status === 'Ongoing' ? 'green' : 'blue'}-100 text-${status === 'Completed' ? 'orange' : status === 'Ongoing' ? 'green' : 'blue'}-800 text-sm font-medium px-2.5 py-0.5 rounded-full`}>
-                          {status}
-                        </span>
+            {sortedCourses.map((course, index) => {
+              const status = getStatus(course)
+              const confirmedCount = studentCounts[course._id] || 0
+              const attendanceCount = presenceCounts[course._id] || 0
+              const maxCount = Math.max(confirmedCount, attendanceCount, 10) // Ensure a minimum of 10 for visual scaling
+
+              return (
+                <motion.div 
+                  key={course._id} 
+                  className="bg-white rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-gray-900">{course.title}</h3>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        status === 'Completed' ? 'bg-orange-100 text-orange-800' :
+                        status === 'Ongoing' ? 'bg-green-100 text-green-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-5 h-5 text-orange-500" />
+                        <span className="text-sm text-gray-600">Start: {new Date(course.startDate).toLocaleDateString()}</span>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="w-5 h-5 text-orange-500" />
-                          <span className="text-sm text-gray-600">Start: {new Date(course.startDate).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Clock className="w-5 h-5 text-orange-500" />
-                          <span className="text-sm text-gray-600">End: {new Date(course.endDate).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <UserRoundCheck className="w-5 h-5 text-orange-500" />
-                          <span className="text-sm text-gray-600">Confirmed: {studentCounts[course._id] || 0}</span>
-                        </div>
-                        {status === "Completed" && (
-                          <div className="flex items-center space-x-2">
-                            <Users className="w-5 h-5 text-orange-500" />
-                            <span className="text-sm text-gray-600">Attendance: {presenceCounts[course._id] || 0}</span>
-                          </div>
-                        )}
+                      <div className="flex items-center space-x-2">
+                        <Clock className="w-5 h-5 text-orange-500" />
+                        <span className="text-sm text-gray-600">End: {new Date(course.endDate).toLocaleDateString()}</span>
                       </div>
-                      {status === "Completed" && (
-                        <div className="mt-4">
-                          <Button 
-                            onClick={() => {
-                              console.log("View details for", course.title)
-                              toast.info(`Viewing details for ${course.title}`)
-                            }}
-                            className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
-                          >
-                            <ArrowUpRight className="w-4 h-4" />
-                            <span>View Details</span>
-                          </Button>
+                    </div>
+                    <div className="flex justify-around items-center mt-6">
+                      <HexagonProgress 
+                        value={confirmedCount} 
+                        max={maxCount} 
+                        color="#f97316" 
+                        icon={UserRoundCheck}
+                        label="Confirmed" 
+                      />
+                      {status === "Completed" ? (
+                        <HexagonProgress 
+                          value={attendanceCount} 
+                          max={maxCount} 
+                          color="#3b82f6" 
+                          icon={Users}
+                          label="Attendance" 
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <AlertCircle className="w-12 h-12 text-yellow-500 mb-2" />
+                          <span className="text-sm text-gray-500 text-center">Attendance data<br />not available</span>
                         </div>
                       )}
                     </div>
-                  </motion.li>
-                )
-              })}
-            </ol>
+                    {status === "Completed" && (
+                      <div className="mt-6">
+                        <Button 
+                          onClick={() => {
+                            console.log("View details for", course.title)
+                            toast.info(`Viewing details for ${course.title}`)
+                          }}
+                          className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
+                        >
+                          <ArrowUpRight className="w-4 h-4" />
+                          <span>View Details</span>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
         </AnimatePresence>
         {sortedCourses.length === 0 && (
