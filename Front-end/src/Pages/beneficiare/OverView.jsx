@@ -1,19 +1,22 @@
+'use client'
+
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Calendar, Search, ArrowUpRight, Users, UserRoundCheck, Clock } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Calendar, Search, ArrowUpRight, Users, UserRoundCheck, Clock, BookOpen } from "lucide-react"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from "framer-motion"
 
-export default function OverView() {
+export default function CourseOverviewTimeline() {
   const [courses, setCourses] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [studentCounts, setStudentCounts] = useState({})
   const [presenceCounts, setPresenceCounts] = useState({})
+  const [activeTab, setActiveTab] = useState("all")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,137 +80,161 @@ export default function OverView() {
   const getStatusColor = (status) => {
     switch (status) {
       case "Not Started":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-500"
       case "Ongoing":
-        return "bg-green-100 text-green-800"
+        return "bg-green-500"
       case "Completed":
-        return "bg-orange-100 text-orange-800"
+        return "bg-orange-500"
       default:
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-500"
     }
   }
 
   const filteredCourses = courses.filter(course => 
-    course.title.toLowerCase().includes(searchTerm.toLowerCase())
+    course.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (activeTab === "all" || getStatus(course).toLowerCase() === activeTab)
   )
 
-  const groupedCourses = filteredCourses.reduce((acc, course) => {
-    const status = getStatus(course)
-    if (!acc[status]) {
-      acc[status] = []
-    }
-    acc[status].push(course)
-    return acc
-  }, {})
+  const sortedCourses = filteredCourses.sort((a, b) => {
+    const statusOrder = { "Ongoing": 0, "Not Started": 1, "Completed": 2 }
+    return statusOrder[getStatus(a)] - statusOrder[getStatus(b)]
+  })
 
   if (isLoading) return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-100 to-orange-200">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-orange-500"></div>
+    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-500"></div>
     </div>
   )
   
   if (error) return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-100 to-orange-200">
-      <div className="text-center">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+      <div className="text-center p-8 bg-white rounded-lg shadow-xl">
         <h2 className="text-2xl font-bold text-orange-600 mb-4">Error</h2>
         <p className="text-gray-700">{error}</p>
+        <Button 
+          onClick={() => window.location.reload()} 
+          className="mt-6 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-200"
+        >
+          Try Again
+        </Button>
       </div>
     </div>
   )
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-br from-orange-50 to-orange-100">
+    <div className="min-h-screen p-4 sm:p-8 ">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-bold text-orange-600 mb-8 text-center">Course Overview</h1>
-        <div className="relative w-full max-w-md mx-auto mb-12">
-          <Input
-            type="text"
-            placeholder="Search courses..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12 pr-4 py-3 w-full rounded-full shadow-lg ring-2 ring-orange-300 focus:ring-orange-500 transition-all duration-300"
-          />
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400" size={24} />
+        <motion.h1 
+          className="text-4xl sm:text-5xl font-bold text-orange-600 mb-8 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          Courses OverView
+        </motion.h1>
+        <div className="flex flex-col items-center mb-12 gap-6">
+          <motion.div 
+            className="relative w-full max-w-md"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Input
+              type="text"
+              placeholder="Search courses..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-12 pr-4 py-3 w-full rounded-full shadow-lg ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 "
+            />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400" size={24} />
+          </motion.div>
+          <motion.div
+            className="w-full max-w-2xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Tabs defaultValue="all" onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-2 sm:grid-cols-4 bg-orange-100 rounded-full p-0 pr-1 pl-1 gap-1">
+                <TabsTrigger value="all" className="rounded-full px-4 py-2">All</TabsTrigger>
+                <TabsTrigger value="ongoing" className="rounded-full px-4 py-2">Ongoing</TabsTrigger>
+                <TabsTrigger value="not started" className="rounded-full px-4 py-2">Not Started</TabsTrigger>
+                <TabsTrigger value="completed" className="rounded-full px-4 py-2">Completed</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </motion.div>
         </div>
-        {['Ongoing' ,'Not Started', 'Completed' ].map(status => (
-          groupedCourses[status] && groupedCourses[status].length > 0 && (
-            <motion.div
-              key={status}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-12"
-            >
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">{status} Formations</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {groupedCourses[status].map((course) => (
-                  <motion.div
-                    key={course._id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
+        <AnimatePresence>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ol className="relative border-l border-gray-200 dark:border-gray-700">
+              {sortedCourses.map((course, index) => {
+                const status = getStatus(course)
+                return (
+                  <motion.li 
+                    key={course._id} 
+                    className="mb-10 ml-6"
+                    initial={{ opacity: 0, x: -50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white rounded-2xl transform hover:-translate-y-2">
-                      <CardHeader className="p-6 bg-orange-500">
-                        <CardTitle className="text-xl font-bold truncate text-white">{course.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="p-6">
-                        <div className="space-y-4">
-                          <div className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(status)}`}>
-                            {status}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <Calendar className="w-5 h-5 text-orange-500" />
-                              <span className="text-sm text-gray-600">Start Date</span>
-                            </div>
-                            <span className="text-sm font-medium">{new Date(course.startDate).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <Clock className="w-5 h-5 text-orange-500" />
-                              <span className="text-sm text-gray-600">End Date</span>
-                            </div>
-                            <span className="text-sm font-medium">{new Date(course.endDate).toLocaleDateString()}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2">
-                              <UserRoundCheck className="w-5 h-5 text-orange-500" />
-                              <span className="text-sm text-gray-600">Confirmed</span>
-                            </div>
-                            <span className="text-sm font-medium">{studentCounts[course._id] || 0}</span>
-                          </div>
-                          {status === "Completed" && (
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <Users className="w-5 h-5 text-orange-500" />
-                                <span className="text-sm text-gray-600">Attendance</span>
-                              </div>
-                              <span className="text-sm font-medium">{presenceCounts[course._id] || 0}</span>
-                            </div>
-                          )}
+                    <span className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ring-8 ring-white ${getStatusColor(status)}`}>
+                      <BookOpen className="w-3 h-3 text-white" />
+                    </span>
+                    <div className="p-4 bg-white rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2 sm:mb-0">{course.title}</h3>
+                        <span className={`bg-${status === 'Completed' ? 'orange' : status === 'Ongoing' ? 'green' : 'blue'}-100 text-${status === 'Completed' ? 'orange' : status === 'Ongoing' ? 'green' : 'blue'}-800 text-sm font-medium px-2.5 py-0.5 rounded-full`}>
+                          {status}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-5 h-5 text-orange-500" />
+                          <span className="text-sm text-gray-600">Start: {new Date(course.startDate).toLocaleDateString()}</span>
                         </div>
-                      </CardContent>
-                      <CardFooter className="bg-orange-50 p-6">
-                        <Button 
-                          onClick={() => console.log("View details for", course.title)}
-                          className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-200 rounded-full py-2"
-                        >
-                          <ArrowUpRight className="w-4 h-4" />
-                          <span>View Details</span>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          )
-        ))}
-        {filteredCourses.length === 0 && (
+                        <div className="flex items-center space-x-2">
+                          <Clock className="w-5 h-5 text-orange-500" />
+                          <span className="text-sm text-gray-600">End: {new Date(course.endDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <UserRoundCheck className="w-5 h-5 text-orange-500" />
+                          <span className="text-sm text-gray-600">Confirmed: {studentCounts[course._id] || 0}</span>
+                        </div>
+                        {status === "Completed" && (
+                          <div className="flex items-center space-x-2">
+                            <Users className="w-5 h-5 text-orange-500" />
+                            <span className="text-sm text-gray-600">Attendance: {presenceCounts[course._id] || 0}</span>
+                          </div>
+                        )}
+                      </div>
+                      {status === "Completed" && (
+                        <div className="mt-4">
+                          <Button 
+                            onClick={() => {
+                              console.log("View details for", course.title)
+                              toast.info(`Viewing details for ${course.title}`)
+                            }}
+                            className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
+                          >
+                            <ArrowUpRight className="w-4 h-4" />
+                            <span>View Details</span>
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </motion.li>
+                )
+              })}
+            </ol>
+          </motion.div>
+        </AnimatePresence>
+        {sortedCourses.length === 0 && (
           <motion.div
             className="flex flex-col items-center justify-center h-64 text-gray-500"
             initial={{ opacity: 0, y: 20 }}
@@ -216,7 +243,7 @@ export default function OverView() {
           >
             <Search className="w-16 h-16 text-orange-300 mb-4" />
             <p className="text-xl font-medium text-orange-600">No courses found.</p>
-            <p className="text-gray-400 mt-2">Try adjusting your search terms.</p>
+            <p className="text-gray-400 mt-2">Try adjusting your search terms or filters.</p>
           </motion.div>
         )}
       </div>
