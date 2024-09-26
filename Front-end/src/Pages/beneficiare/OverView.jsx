@@ -165,7 +165,7 @@ export default function CourseOverviewDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Course Dashboard
+          Course Overview
         </motion.h1>
         <div className="flex flex-col items-center mb-12 gap-6">
           <motion.div 
