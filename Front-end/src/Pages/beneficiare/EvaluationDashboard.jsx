@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, Star } from 'lucide-react';
 import { Progress } from "@/components/ui/progress";
 
 const evaluationFields = [
@@ -41,11 +41,11 @@ export default function EvaluationDashboard() {
             'Content-Type': 'application/json',
           },
         });
-
+  
         if (!response.ok) {
           throw new Error(response.status === 401 ? 'Unauthorized: Please log in' : 'Failed to fetch evaluations');
         }
-
+  
         const data = await response.json();
         setEvaluations(data);
       } catch (error) {
@@ -55,26 +55,22 @@ export default function EvaluationDashboard() {
         setLoading(false);
       }
     };
-
+  
     fetchEvaluations();
   }, [id]);
 
   const calculateAverages = () => {
     return evaluationFields.reduce((averages, field) => {
-      // Calculate the sum of all valid numeric values for the current field
       const sum = evaluations.reduce((acc, evaluationItem) => {
-        // Check if the field exists and is a number, otherwise return 0
         const value = Number(evaluationItem[field.name]);
         return acc + (isNaN(value) ? 0 : value);
       }, 0);
   
-      // Calculate the average, using 0 if evaluations length is 0 to prevent division by 0
       averages[field.name] = evaluations.length > 0 ? sum / evaluations.length : 0;
       return averages;
     }, {});
   };
 
-  
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-900">
@@ -116,7 +112,10 @@ export default function EvaluationDashboard() {
               <CardTitle>Note Globale</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-5xl font-bold text-blue-500">{overallAverage.toFixed(2)}</div>
+              <div className="text-5xl font-bold text-blue-500 flex items-center">
+                <Star className="w-8 h-8 mr-2 text-yellow-500" />
+                {overallAverage.toFixed(2)}
+              </div>
               <Progress value={overallAverage * 20} className="mt-2" />
             </CardContent>
           </Card>
@@ -148,7 +147,10 @@ export default function EvaluationDashboard() {
                 <CardTitle className="text-sm">{field.label}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-500">{averages[field.name].toFixed(2)}</div>
+                <div className="text-3xl font-bold text-blue-500 flex items-center">
+                  <Star className="w-6 h-6 mr-2 text-yellow-500" />
+                  {averages[field.name].toFixed(2)}
+                </div>
                 <Progress value={averages[field.name] * 20} className="mt-2" />
               </CardContent>
             </Card>
