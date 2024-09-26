@@ -78,7 +78,6 @@ const GenerateEvaluationLink = async (req, res) => {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 //Api For get number candidate of any formation.
-
 const NumberOfCandidates = async (req, res) => {
   try {
 
