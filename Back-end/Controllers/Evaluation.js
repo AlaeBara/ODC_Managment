@@ -106,14 +106,17 @@ const NumberOfCandidates = async (req, res) => {
 ////////////////////////////////
 
 const getEvaluationsByCourse = async (req, res) => {
+  const { id } = req.params; // Course ID
+
   try {
-    const evaluation = await Evaluation.findOne({ courseId: req.params.id });
-    if (!evaluation) {
-      return res.status(404).json({ message: 'Evaluation not found' });
+    const evaluations = await Evaluation.find({ courseId: id }).populate('mentorId', 'name email');
+    if (!evaluations.length) {
+      return res.status(404).json({ message: 'No evaluations found for this course' });
     }
-    res.json(evaluation);
+    res.status(200).json(evaluations);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    console.error('Error fetching evaluations:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
