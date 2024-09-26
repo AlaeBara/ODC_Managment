@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -132,7 +130,7 @@ export default function OverView() {
           />
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-400" size={24} />
         </div>
-        {['Not Started', 'Ongoing', 'Completed'].map(status => (
+        {['Ongoing' ,'Not Started', 'Completed' ].map(status => (
           groupedCourses[status] && groupedCourses[status].length > 0 && (
             <motion.div
               key={status}
