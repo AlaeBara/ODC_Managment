@@ -1,31 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Loader2, AlertTriangle, Star } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, AlertTriangle } from 'lucide-react';
+import { Progress } from "@/components/ui/progress";
 
 const evaluationFields = [
-  { label: "Qualité du contenu de la formation", name: "contentQuality" },
-  { label: "Qualité des compétences acquises", name: "acquiredSkillsQuality" },
-  { label: "Alignement des compétences acquises avec vos besoins professionnels", name: "alignmentWithNeeds" },
-  { label: "Structure de la formation (rythme, progression pédagogique, etc.)", name: "trainingStructure" },
-  { label: "Niveau de difficulté de la formation", name: "difficultyLevel" },
-  { label: "Qualité pédagogique du formateur (élocution, dynamisme, etc.)", name: "trainerPedagogyQuality" },
-  { label: "Expertise du formateur (niveau de connaissance dans son domaine)", name: "trainerExpertise" },
-  { label: "Qualité des supports de formation", name: "materialQuality" },
-  { label: "Qualité des exercices et des activités", name: "exercisesQuality" },
-  { label: "Adaptation au profil et au niveau des participants", name: "adaptationToParticipants" },
+  { label: "Qualité du contenu", name: "contentQuality" },
+  { label: "Compétences acquises", name: "acquiredSkillsQuality" },
+  { label: "Alignement professionnel", name: "alignmentWithNeeds" },
+  { label: "Structure de formation", name: "trainingStructure" },
+  { label: "Niveau de difficulté", name: "difficultyLevel" },
+  { label: "Pédagogie du formateur", name: "trainerPedagogyQuality" },
+  { label: "Expertise du formateur", name: "trainerExpertise" },
+  { label: "Supports de formation", name: "materialQuality" },
+  { label: "Exercices et activités", name: "exercisesQuality" },
+  { label: "Adaptation aux participants", name: "adaptationToParticipants" },
   { label: "Confort de la salle", name: "roomComfort" },
-  { label: "Accessibilité du lieu de formation", name: "accessibility" },
+  { label: "Accessibilité", name: "accessibility" },
   { label: "Horaires et pauses", name: "timingAndBreaks" },
-  { label: "État et disponibilité du matériel pédagogique", name: "equipmentCondition" },
-  { label: "Communication des informations d'ordre organisationnel", name: "organizationalCommunication" },
+  { label: "Matériel pédagogique", name: "equipmentCondition" },
+  { label: "Communication", name: "organizationalCommunication" },
   { label: "Gestion administrative", name: "administrativeManagement" },
-  { label: "Composition du groupe (taille et niveau)", name: "groupComposition" },
+  { label: "Composition du groupe", name: "groupComposition" },
   { label: "Durée de la formation", name: "trainingDuration" },
 ];
 
-export default function EvaluationDisplay() {
-  const { id } = useParams(); // Course ID from URL
+export default function EvaluationDashboard() {
+  const { id } = useParams();
   const [evaluations, setEvaluations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,20 +43,14 @@ export default function EvaluationDisplay() {
         });
 
         if (!response.ok) {
-          if (response.status === 401) {
-            throw new Error('Unauthorized: Please log in to view this evaluation');
-          }
-          if (response.status === 404) {
-            throw new Error('Evaluations not found');
-          }
-          throw new Error('Failed to fetch evaluations');
+          throw new Error(response.status === 401 ? 'Unauthorized: Please log in' : 'Failed to fetch evaluations');
         }
 
         const data = await response.json();
         setEvaluations(data);
       } catch (error) {
         console.error('Error fetching evaluations:', error);
-        setError(error.message || 'Failed to load evaluations data');
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -64,73 +59,117 @@ export default function EvaluationDisplay() {
     fetchEvaluations();
   }, [id]);
 
+  const calculateAverages = () => {
+    return evaluationFields.reduce((averages, field) => {
+      // Calculate the sum of all valid numeric values for the current field
+      const sum = evaluations.reduce((acc, evaluationItem) => {
+        // Check if the field exists and is a number, otherwise return 0
+        const value = Number(evaluationItem[field.name]);
+        return acc + (isNaN(value) ? 0 : value);
+      }, 0);
+  
+      // Calculate the average, using 0 if evaluations length is 0 to prevent division by 0
+      averages[field.name] = evaluations.length > 0 ? sum / evaluations.length : 0;
+      return averages;
+    }, {});
+  };
+
+  
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100">
-        <Loader2 className="w-16 h-16 animate-spin text-orange-500" />
+      <div className="flex justify-center items-center min-h-screen bg-gray-900">
+        <Loader2 className="w-16 h-16 animate-spin text-blue-500" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
         <AlertTriangle className="w-20 h-20 text-red-500 mb-4" />
-        <p className="text-2xl font-semibold text-red-600">{error}</p>
+        <p className="text-2xl font-semibold">{error}</p>
       </div>
     );
   }
 
   if (!evaluations.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-orange-100 to-yellow-100">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
         <AlertTriangle className="w-20 h-20 text-yellow-500 mb-4" />
-        <p className="text-2xl font-semibold text-yellow-600">No evaluations data found</p>
+        <p className="text-2xl font-semibold">Aucune évaluation trouvée</p>
       </div>
     );
   }
 
+  const averages = calculateAverages();
+  const overallAverage = Object.values(averages).reduce((sum, value) => sum + value, 0) / evaluationFields.length;
+  const recommendationPercentage = (evaluations.filter(evaluationItem => evaluationItem.recommendation === 'Oui').length / evaluations.length) * 100;
+
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-br from-orange-100 to-yellow-100">
-      <Card className="max-w-4xl mx-auto shadow-lg overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white">
-          <CardTitle className="text-3xl font-bold text-center">Résultats de l'évaluation</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6 bg-white space-y-8">
-          {evaluations.map((evaluation, index) => (
-            <div key={index} className="p-4 bg-orange-50 rounded-lg shadow-md border border-orange-200">
-              <h3 className="text-2xl font-bold text-center mb-4">Évaluation {index + 1}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {evaluationFields.map((field) => (
-                  <div key={field.name} className="space-y-3">
-                    <p className="text-lg font-semibold text-gray-700">{field.label}</p>
-                    <div className="flex justify-between items-center">
-                      {[1, 2, 3, 4, 5].map((value) => (
-                        <Star
-                          key={value}
-                          className={`w-8 h-8 ${
-                            evaluation[field.name] >= value ? 'text-orange-400 fill-current' : 'text-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-8 space-y-4">
-                <div className="bg-orange-50 p-4 rounded-lg shadow-md border border-orange-200">
-                  <p className="text-lg font-semibold text-gray-700">Recommanderiez-vous cette formation ?</p>
-                  <p className="text-xl font-bold text-orange-500">{evaluation.recommendation}</p>
-                </div>
-                <div className="bg-orange-50 p-4 rounded-lg shadow-md border border-orange-200">
-                  <p className="text-lg font-semibold text-gray-700">Commentaires généraux :</p>
-                  <p className="text-gray-600 mt-2">{evaluation.generalComments}</p>
-                </div>
-              </div>
-            </div>
+    <div className="min-h-screen p-8 bg-gray-900 text-white">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center">Tableau de Bord des Évaluations</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle>Note Globale</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-5xl font-bold text-blue-500">{overallAverage.toFixed(2)}</div>
+              <Progress value={overallAverage * 20} className="mt-2" />
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle>Recommandations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-5xl font-bold text-green-500">{recommendationPercentage.toFixed(1)}%</div>
+              <Progress value={recommendationPercentage} className="mt-2" />
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle>Nombre d'Évaluations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-5xl font-bold text-purple-500">{evaluations.length}</div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {evaluationFields.map((field) => (
+            <Card key={field.name} className="bg-gray-800 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-sm">{field.label}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-blue-500">{averages[field.name].toFixed(2)}</div>
+                <Progress value={averages[field.name] * 20} className="mt-2" />
+              </CardContent>
+            </Card>
           ))}
-        </CardContent>
-      </Card>
+        </div>
+        
+        <Card className="mt-8 bg-gray-800 border-gray-700">
+          <CardHeader>
+            <CardTitle>Commentaires Récents</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {evaluations.slice(-3).map((evaluationItem, index) => (
+                <li key={index} className="bg-gray-700 p-3 rounded">
+                  {evaluationItem.generalComments}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
