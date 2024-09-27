@@ -108,7 +108,7 @@ const getEvaluationsByCourse = async (req, res) => {
   const { id } = req.params; // Course ID
 
   try {
-    const evaluations = await Evaluation.find({ courseId: id }).populate('mentorId', 'name email');
+    const evaluations = await Evaluation.find({ courseId: id }).populate('mentorId', 'name email').populate('courseId', 'title');
     if (!evaluations.length) {
       return res.status(404).json({ message: 'No evaluations found for this course' });
     }

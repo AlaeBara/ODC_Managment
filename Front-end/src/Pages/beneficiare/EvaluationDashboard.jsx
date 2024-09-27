@@ -73,16 +73,16 @@ export default function EvaluationDashboard() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gray-900">
-        <Loader2 className="w-16 h-16 animate-spin text-blue-500" />
+      <div className="flex justify-center items-center min-h-screen bg-white">
+        <Loader2 className="w-16 h-16 animate-spin text-orange-500" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-        <AlertTriangle className="w-20 h-20 text-red-500 mb-4" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white text-orange-900">
+        <AlertTriangle className="w-20 h-20 text-orange-500 mb-4" />
         <p className="text-2xl font-semibold">{error}</p>
       </div>
     );
@@ -90,8 +90,8 @@ export default function EvaluationDashboard() {
 
   if (!evaluations.length) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
-        <AlertTriangle className="w-20 h-20 text-yellow-500 mb-4" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-white text-orange-900">
+        <AlertTriangle className="w-20 h-20 text-orange-500 mb-4" />
         <p className="text-2xl font-semibold">Aucune évaluation trouvée</p>
       </div>
     );
@@ -102,69 +102,69 @@ export default function EvaluationDashboard() {
   const recommendationPercentage = (evaluations.filter(evaluationItem => evaluationItem.recommendation === 'Oui').length / evaluations.length) * 100;
 
   return (
-    <div className="min-h-screen p-8 bg-gray-900 text-white">
+    <div className="min-h-screen p-8 bg-white text-orange-900">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center">Tableau de Bord des Évaluations</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-orange-600">{evaluations[0]?.courseId?.title || "Titre de la formation"}</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-orange-50 border-orange-200">
             <CardHeader>
-              <CardTitle>Note Globale</CardTitle>
+              <CardTitle className="text-orange-800">Note Globale</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-5xl font-bold text-blue-500 flex items-center">
-                <Star className="w-8 h-8 mr-2 text-yellow-500" />
+              <div className="text-5xl font-bold text-orange-600 flex items-center">
+                <Star className="w-8 h-8 mr-2 text-orange-400" />
                 {overallAverage.toFixed(2)}
               </div>
-              <Progress value={overallAverage * 20} className="mt-2" />
+              <Progress value={overallAverage * 20} className="mt-2 bg-orange-200" />
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-orange-50 border-orange-200">
             <CardHeader>
-              <CardTitle>Recommandations</CardTitle>
+              <CardTitle className="text-orange-800">Recommandations</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-5xl font-bold text-green-500">{recommendationPercentage.toFixed(1)}%</div>
-              <Progress value={recommendationPercentage} className="mt-2" />
+              <div className="text-5xl font-bold text-orange-600">{recommendationPercentage.toFixed(1)}%</div>
+              <Progress value={recommendationPercentage} className="mt-2 bg-orange-200" />
             </CardContent>
           </Card>
           
-          <Card className="bg-gray-800 border-gray-700">
+          <Card className="bg-orange-50 border-orange-200">
             <CardHeader>
-              <CardTitle>Nombre d'Évaluations</CardTitle>
+              <CardTitle className="text-orange-800">Nombre d'Évaluations</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-5xl font-bold text-purple-500">{evaluations.length}</div>
+              <div className="text-5xl font-bold text-orange-600">{evaluations.length}</div>
             </CardContent>
           </Card>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {evaluationFields.map((field) => (
-            <Card key={field.name} className="bg-gray-800 border-gray-700">
+            <Card key={field.name} className="bg-orange-50 border-orange-200">
               <CardHeader>
-                <CardTitle className="text-sm">{field.label}</CardTitle>
+                <CardTitle className="text-sm text-orange-800">{field.label}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold text-blue-500 flex items-center">
-                  <Star className="w-6 h-6 mr-2 text-yellow-500" />
+                <div className="text-3xl font-bold text-orange-600 flex items-center">
+                  <Star className="w-6 h-6 mr-2 text-orange-400" />
                   {averages[field.name].toFixed(2)}
                 </div>
-                <Progress value={averages[field.name] * 20} className="mt-2" />
+                <Progress value={averages[field.name] * 20} className="mt-2 bg-orange-200" />
               </CardContent>
             </Card>
           ))}
         </div>
         
-        <Card className="mt-8 bg-gray-800 border-gray-700">
+        <Card className="mt-8 bg-orange-50 border-orange-200">
           <CardHeader>
-            <CardTitle>Commentaires Récents</CardTitle>
+            <CardTitle className="text-orange-800">Commentaires Récents</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {evaluations.slice(-3).map((evaluationItem, index) => (
-                <li key={index} className="bg-gray-700 p-3 rounded">
+                <li key={index} className="bg-white p-3 rounded border border-orange-200">
                   {evaluationItem.generalComments}
                 </li>
               ))}
