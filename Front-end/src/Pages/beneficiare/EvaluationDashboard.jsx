@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, AlertTriangle, Star } from 'lucide-react'
+import { Loader2, AlertTriangle, Star, Users, ThumbsUp } from 'lucide-react'
 import { Progress } from "@/components/ui/progress"
 
 const evaluationFields = [
@@ -69,7 +69,7 @@ export default function EvaluationDashboard() {
       return averages
     }, {})
   }
-
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-background">
@@ -98,13 +98,8 @@ export default function EvaluationDashboard() {
 
   const averages = calculateAverages()
   const overallAverage = Object.values(averages).reduce((sum, value) => sum + value, 0) / evaluationFields.length
-  const recommendationPercentage = (evaluations.filter(evaluationItem => evaluationItem.recommendation === 'Oui').length / evaluations.length) * 100
-
-  const starRatings = [5, 4, 3, 2, 1].map(stars => ({
-    stars,
-    count: evaluations.filter(e => Math.round(e.overallRating || 0) === stars).length,
-    percentage: (evaluations.filter(e => Math.round(e.overallRating || 0) === stars).length / evaluations.length) * 100
-  }))
+  const recommendationPercentage = (evaluations.filter(item => item.recommendation === 'OUI').length *100 / evaluations.length)
+  console.log(recommendationPercentage)
 
   return (
     <div className="min-h-screen p-8 bg-background text-foreground">
@@ -113,29 +108,33 @@ export default function EvaluationDashboard() {
           Evaluation for {evaluations[0]?.courseId?.title || 'Évaluation du cours'}
         </h1>
         
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Résumé de l'évaluation</CardTitle>
+        <Card className="mb-8 overflow-hidden">
+          <CardHeader className="bg-primary text-primary-foreground bg-orange-500	">
+            <CardTitle className="text-2xl">Résumé de l'évaluation</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center">
-              <div className="text-5xl font-bold text-primary flex items-center">
-                <Star className="w-10 h-10 mr-2 text-yellow-400 fill-current" />
-                {overallAverage.toFixed(2)}
-              </div>
-            </div>
-            <div className="mt-4">
-              {starRatings.map(({ stars, count, percentage }) => (
-                <div key={stars} className="flex items-center mb-2">
-                  <div className="w-20 flex items-center">
-                    {[...Array(stars)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <Progress value={percentage} className="flex-grow mx-2" />
-                  <span className="w-16 text-right text-sm text-muted-foreground">{count}</span>
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
+                <div className="text-5xl font-bold text-primary flex items-center mb-2">
+                  <Star className="w-10 h-10 mr-2 text-yellow-400 fill-current" />
+                  {overallAverage.toFixed(2)}
                 </div>
-              ))}
+                <span className="text-sm text-muted-foreground">Note moyenne</span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
+                <div className="text-4xl font-bold text-primary flex items-center mb-2">
+                  <Users className="w-8 h-8 mr-2 text-primary" />
+                  {evaluations.length}
+                </div>
+                <span className="text-sm text-muted-foreground">Évaluations totales</span>
+              </div>
+              <div className="flex flex-col items-center justify-center p-4 bg-muted rounded-lg">
+                <div className="text-4xl font-bold text-primary flex items-center mb-2">
+                  <ThumbsUp className="w-8 h-8 mr-2 text-green-500" />
+                  {recommendationPercentage.toFixed(0)}%
+                </div>
+                <span className="text-sm text-muted-foreground">Recommandation</span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -156,22 +155,24 @@ export default function EvaluationDashboard() {
             </Card>
           ))}
         </div>
-        
         <Card className="mt-8">
           <CardHeader>
             <CardTitle>Commentaires Récents</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-4">
-              {evaluations.slice(-3).map((evaluationItem, index) => (
-                <li key={index} className="bg-muted p-4 rounded-lg">
-                  <p className="text-sm italic text-muted-foreground mb-2">
-                    "{evaluationItem.generalComments || 'Pas de commentaire'}"
-                  </p>
-                  <div className="flex items-center justify-end">
-                  </div>
-                </li>
-              ))}
+          <ul className="space-y-4">
+              {evaluations
+                .filter(evaluation => evaluation.generalComments)
+                .slice(-3)
+                .map((evaluationItem, index) => (
+                  <li key={index} className="bg-muted p-4 rounded-lg">
+                    <p className="text-sm italic text-muted-foreground mb-2">
+                      "{evaluationItem.generalComments}"
+                    </p>
+                <div className="flex items-center justify-end">
+                </div>
+              </li>
+            ))}
             </ul>
           </CardContent>
         </Card>
