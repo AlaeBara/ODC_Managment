@@ -8,6 +8,7 @@ import Evaluation from './Pages/Evaluation/Evaluation.jsx';
 import EvaluationForm from './Pages/Evaluation/Evaluationform.jsx';
 import OverView from './Pages/beneficiare/OverView.jsx'
 import EvaluationDashboard from './Pages/beneficiare/EvaluationDashboard.jsx'
+import OverView from './Pages/beneficiare/OverView.jsx'
 import Check from './Pages/PresenceCK/Check.jsx';
 
 // Lazy load components
@@ -137,6 +138,7 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <EvaluationDashboard/>
+                  <OverView/>
                 </MainLayout>
               </ProtectedRoute>
             }

@@ -6,6 +6,7 @@ const Auth = require('./Routes/auth.js')
 const Formation = require('./Routes/Formation.js')
 const Profile = require('./Routes/Profile.js')
 const Evaluation = require('./Routes/Evaluation.js')
+const Binificary = require('./Routes/Benificary.js')
 const {User} = require('./Models/userModel.js')
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
@@ -38,6 +39,7 @@ app.use('/api/courses', Formation);
 app.use('/api/profile', Profile);
 app.use('/api/workFlow', workFlow);
 app.use('/api/evaluation', Evaluation)
+app.use('/api/binificary', Binificary)
 
 
 //insert line for test:

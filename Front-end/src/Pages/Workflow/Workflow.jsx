@@ -10,7 +10,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom"
 
-// funcs
+
 export default function Component() {
   const [formations, setFormations] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -22,6 +22,9 @@ export default function Component() {
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
 
+
+
+  //api for
   useEffect(() => {
     const fetchFormations = async () => {
       setIsLoading(true)
@@ -49,24 +52,31 @@ export default function Component() {
   }
 
   const getImportanceLevel = (formation) => {
-    const startDate = new Date(formation.startDate)
-    const endDate = new Date(formation.endDate)
-    const today = new Date()
-  
-    const daysUntilStart = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24))
-    const hasStarted = today >= startDate && today <= endDate
-    const hasEnded = today > endDate
-  
+    const startDate = new Date(formation.startDate);
+    const endDate = new Date(formation.endDate);
+    const today = new Date();
+    
+    // Normalize the time for startDate
+    startDate.setHours(0, 0, 0, 0);
+
+    // Set the end date cutoff to 7 PM
+    endDate.setHours(19, 0, 0, 0);
+
+    const daysUntilStart = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
+    const hasStarted = today >= startDate && today <= endDate;
+    const hasEnded = today > endDate;
+
     if (hasEnded) {
-      return { priority: 4, color: 'gray', text: 'Ended', description: 'Formation has ended', progress: 100 }
+      return { priority: 4, color: 'gray', text: 'Ended', description: 'Formation has ended', progress: 100 };
     } else if (hasStarted) {
-      return { priority: 1, color: 'yellow', text: 'Ongoing', description: 'Happening now', progress: 50 }
+      return { priority: 1, color: 'yellow', text: 'Ongoing', description: 'Happening now', progress: 50 };
     } else if (daysUntilStart < 7 && daysUntilStart >= 0) {
-      return { priority: 2, color: 'red', text: 'Urgent', description: `Starts in ${daysUntilStart} day(s)`, progress: 90 }
+      return { priority: 2, color: 'red', text: 'Urgent', description: `Starts in ${daysUntilStart} day(s)`, progress: 90 };
     } else {
-      return { priority: 3, color: 'green', text: 'Upcoming', description: 'More than 7 days away', progress: 10 }
+      return { priority: 3, color: 'green', text: 'Upcoming', description: 'More than 7 days away', progress: 10 };
     }
-  }
+  };
+
 
   const filteredFormations = formations
     .filter(formation => {
