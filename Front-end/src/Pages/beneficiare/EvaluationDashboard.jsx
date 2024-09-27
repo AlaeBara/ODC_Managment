@@ -60,12 +60,16 @@ export default function EvaluationDashboard() {
 
   const calculateAverages = () => {
     return evaluationFields.reduce((averages, field) => {
-      const sum = evaluations.reduce((acc, evaluationItem) => {
+      // Filter evaluations that have a valid value for the current field
+      const validEvaluations = evaluations.filter(evaluationItem => !isNaN(Number(evaluationItem[field.name])) && evaluationItem[field.name] !== '')
+
+      const sum = validEvaluations.reduce((acc, evaluationItem) => {
         const value = Number(evaluationItem[field.name])
-        return acc + (isNaN(value) ? 0 : value)
+        return acc + value
       }, 0)
   
-      averages[field.name] = evaluations.length > 0 ? sum / evaluations.length : 0
+      // Calculate average based on the number of valid evaluations
+      averages[field.name] = validEvaluations.length > 0 ? sum / validEvaluations.length : 0
       return averages
     }, {})
   }
@@ -99,8 +103,7 @@ export default function EvaluationDashboard() {
   const averages = calculateAverages()
   const overallAverage = Object.values(averages).reduce((sum, value) => sum + value, 0) / evaluationFields.length
   const recommendationPercentage = (evaluations.filter(item => item.recommendation === 'OUI').length *100 / evaluations.length)
-  console.log(recommendationPercentage)
-
+  
   return (
     <div className="min-h-screen p-8 bg-background text-foreground">
       <div className="max-w-7xl mx-auto">
