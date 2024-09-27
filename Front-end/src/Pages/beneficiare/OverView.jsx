@@ -6,6 +6,7 @@ import { Calendar, Search, ArrowUpRight, Users, UserRoundCheck, Clock, AlertCirc
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from 'react-router-dom'
 
 const HexagonProgress = ({ value, max, color, icon: Icon, label }) => {
   const percentage = (value / max) * 100
@@ -51,6 +52,7 @@ export default function CourseOverviewDashboard() {
   const [studentCounts, setStudentCounts] = useState({})
   const [presenceCounts, setPresenceCounts] = useState({})
   const [activeTab, setActiveTab] = useState("all")
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,6 +140,9 @@ export default function CourseOverviewDashboard() {
     const statusOrder = { "Ongoing": 0, "Not Started": 1, "Completed": 2 }
     return statusOrder[getStatus(a)] - statusOrder[getStatus(b)]
   })
+
+
+  const stateOfEvaluation = (id)=> navigate(`/beneficiary/overview/${id}`)
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-50 to-orange-100">
@@ -274,8 +279,7 @@ export default function CourseOverviewDashboard() {
                       <div className="mt-6">
                         <Button 
                           onClick={() => {
-                            console.log("View details for", course.title)
-                            toast.info(`Viewing details for ${course.title}`)
+                            stateOfEvaluation(course._id)
                           }}
                           className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
                         >
