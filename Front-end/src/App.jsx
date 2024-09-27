@@ -137,7 +137,6 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <EvaluationDashboard/>
-                  <OverView/>
                 </MainLayout>
               </ProtectedRoute>
             }
