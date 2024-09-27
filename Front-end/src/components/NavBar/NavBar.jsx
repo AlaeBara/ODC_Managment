@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate } from 'react-router-dom';
+import axios from 'axios'
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -24,6 +25,27 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import Logo from './images.png';
 
 const NavBar = () => {
+
+  const navigate = useNavigate()
+
+
+
+
+  const handleLogout = async () => {
+    try {
+        await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/logout`,{withCredentials:true});
+        navigate('/login'); 
+        localStorage.clear();
+    } catch (error) {
+        console.error('Logout failed:', error);
+        alert("Logout failed");
+    }
+  }
+
+
+
+
+
   return (
     <header className="z-10 sticky top-0 flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
       {/* Left side: Logo */}
@@ -138,10 +160,12 @@ const NavBar = () => {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+            <DropdownMenuItem asChild>
+              <Link onClick={handleLogout} className="flex items-center">
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
