@@ -98,18 +98,23 @@ export default function CourseOverviewDashboard() {
   }, [])
 
   const getStatus = (course) => {
-    const now = new Date()
-    const startDate = new Date(course.startDate)
-    const endDate = new Date(course.endDate)
+    const now = new Date();
+    const startDate = new Date(course.startDate);
+    const endDate = new Date(course.endDate);
     
+    // Normalize the start date and set end date cutoff to 7 PM
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(19, 0, 0, 0); // 7 PM on the end date
+
     if (startDate > now) {
-      return "Not Started"
-    } else if (endDate > now) {
-      return "Ongoing"
+      return "Not Started";
+    } else if (endDate >= now) {
+      return "Ongoing";
     } else {
-      return "Completed"
+      return "Completed";
     }
-  }
+  };
+
 
   const getStatusColor = (status) => {
     switch (status) {
