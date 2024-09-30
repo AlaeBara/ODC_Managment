@@ -1,15 +1,20 @@
 const xlsx = require('xlsx');
-const fs = require('fs');
 const path = require('path');
 const Candidate = require('../Models/candidateModel');
 const Courses = require('../Models/courseModel')
 const mongoose = require('mongoose');
+const fs = require('fs');
+const stream = require("stream");
+const {google} = require("googleapis");
+const KEYFILEPATH = path.join(__dirname, "..", "cred.json");
+
+console.log(__dirname)
+
 
 
 const getWeekdays = (start, end) => {
   const weekdays = [];
   
- 
   if (start > end) {
     return weekdays; // Return empty array if the range is invalid
   }
@@ -35,88 +40,178 @@ const getWeekdays = (start, end) => {
   
   return weekdays;
 };
+const uploadFileToDrive = async (fileObject, fullFileName, userToShareWith, folderName) => {
+  const auth = new google.auth.GoogleAuth({
+      keyFile: KEYFILEPATH, // Path to your credentials file
+      scopes: ["https://www.googleapis.com/auth/drive"],
+  });
 
+  const driveService = google.drive({ version: "v3", auth });
+
+  // Create a folder in Google Drive
+  const fileMetadata = {
+      name: folderName,
+      mimeType: "application/vnd.google-apps.folder",
+  };
+
+  try {
+      const folderResponse = await driveService.files.create({
+          requestBody: fileMetadata,
+          fields: "id",
+      });
+      const folderId = folderResponse.data.id;
+      console.log(`Folder created: ${folderName} with ID: ${folderId}`);
+
+      // Share the folder with the specified user
+      await shareFolder(driveService, folderId, userToShareWith);
+
+      // Use the in-memory buffer for file upload
+      const bufferStream = new stream.PassThrough();
+      bufferStream.end(fileObject.buffer);
+
+      const { data } = await driveService.files.create({
+          media: {
+              mimeType: fileObject.mimetype,
+              body: bufferStream,
+          },
+          requestBody: {
+              name: fullFileName,
+              parents: [folderId], // Specify the folder ID
+          },
+          fields: "id,name",
+      });
+      console.log(`Uploaded file ${data.name} with ID: ${data.id}`);
+
+      // Share the uploaded file with the specified user
+      await shareFile(driveService, data.id, userToShareWith);
+
+      return { folderId, fileId: data.id }; // Return folder and file IDs
+  } catch (error) {
+      console.error('Error uploading file to Drive:', error.message);
+      throw new Error('Failed to upload file to Google Drive');
+  }
+};
+
+
+const shareFolder = async (driveService, folderId, emailAddress) => {
+    const permission = {
+        type: 'user',
+        role: 'writer', 
+        emailAddress,
+    };
+
+    try {
+        await driveService.permissions.create({
+            fileId: folderId,
+            requestBody: permission,
+        });
+        console.log(`Folder shared with email: ${emailAddress}`);
+    } catch (error) {
+        console.error('Error sharing folder:', error.message);
+    }
+};
+
+const shareFile = async (driveService, fileId, emailAddress) => {
+    const permission = {
+        type: 'user',
+        role: 'writer', 
+        emailAddress,
+    };
+
+    try {
+        await driveService.permissions.create({
+            fileId: fileId,
+            requestBody: permission,
+        });
+        console.log(`File shared with email: ${emailAddress}`);
+    } catch (error) {
+        console.error('Error sharing file:', error.message);
+    }
+};
 
 // Function to handle Excel file upload and save data to MongoDB
 const uploadExcelFile = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
+      if (!req.file) {
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
 
-    const filePath = req.file.path;
-    const id_Formation = req.body.id_Formation;
+      const fileBuffer = req.file.buffer; // Get the file buffer from memory
+      const id_Formation = req.body.id_Formation;
 
-    const workbook = xlsx.readFile(filePath);
-    const sheetName = workbook.SheetNames[0];
-    const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      // Use xlsx.read to read the buffer directly
+      const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
+      const sheetName = workbook.SheetNames[0];
+      const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // Fetch the formation details using the id_Formation
-    const course = await Courses.findById(id_Formation);
-    
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
-    }
+      // Fetch the formation details using the id_Formation
+      const course = await Courses.findById(id_Formation);
+      
+      if (!course) {
+          return res.status(404).json({ message: 'Course not found' });
+      }
 
-    // Log the course object for debugging
-    console.log('Fetched Course:', course);
+      // Extract the file extension from the uploaded file's original name
+      const fileExtension = req.file.originalname.split('.').pop();
+      
+      // Combine course title and file extension to form the complete file name
+      const fullFileName = `${course.title}.${fileExtension}`;
 
-    // Ensure the dates are correctly parsed from the course object
-    const formationStartDate = new Date(course.startDate);
-    const formationEndDate = new Date(course.endDate);
+      // Upload the file to Google Drive and share it with a user
+      const userToShareWith = 'odcmanagmanet@gmail.com'; // Email to share the file with
+      const folderName = `${course.title}_${Date.now()}`; // Name for the new folder
+      await uploadFileToDrive(req.file, fullFileName, userToShareWith, folderName);
 
-    // Debugging logs to check date parsing
-    console.log('Formation Start Date:', formationStartDate);
-    console.log('Formation End Date:', formationEndDate);
+      // Ensure the dates are correctly parsed from the course object
+      const formationStartDate = new Date(course.startDate);
+      const formationEndDate = new Date(course.endDate);
 
-    // Check if dates are valid
-    if (isNaN(formationStartDate.getTime()) || isNaN(formationEndDate.getTime())) {
-      return res.status(400).json({ message: 'Invalid formation dates' });
-    }
+      // Check if dates are valid
+      if (isNaN(formationStartDate.getTime()) || isNaN(formationEndDate.getTime())) {
+          return res.status(400).json({ message: 'Invalid formation dates' });
+      }
 
-    // Get weekdays for the formation
-    const formationDays = getWeekdays(formationStartDate, formationEndDate);
-    console.log('Formation Days:', formationDays); // Debugging line
+      // Get weekdays for the formation
+      const formationDays = getWeekdays(formationStartDate, formationEndDate);
+      console.log('Formation Days:', formationDays); // Debugging line
 
-    // Map Excel rows to the Candidate schema
-    const candidates = sheetData.map(row => {
-      const participantDates = formationDays.map(sessionDate => ({
-        sessionDate,
-        morningStatus: 'Absent', // Default to Absent
-        afternoonStatus: 'Absent', // Default to Absent
-      }));
+      // Map Excel rows to the Candidate schema
+      const candidates = sheetData.map(row => {
+          const participantDates = formationDays.map(sessionDate => ({
+              sessionDate,
+              morningStatus: 'Absent', // Default to Absent
+              afternoonStatus: 'Absent', // Default to Absent
+          }));
 
-      return {
-        id_Formation,
-        email: row['email'] || '',
-        firstName: row['firstName'] || '',
-        lastName: row['lastName'] || '',
-        gender: row['gender'] || '',
-        birthdate: row['birthDay'] || '',
-        country: row['country'] || '',
-        profession: row['profession'] || '',
-        age: row['Votre Age'] || null,
-        phoneNumber: row['Votre numéro de téléphone'] || '',
-        educationLevel: row["Votre niveau d'études"] || '',
-        speciality: row['Votre spécialité'] || '',
-        participationInODC: row['Avez Vous déjà participer au programmes ODC'] || '',
-        presenceState: false,
-        sessions: participantDates // Set participants here
-      };
-    });
+          return {
+              id_Formation,
+              email: row['email'] || '',
+              firstName: row['firstName'] || '',
+              lastName: row['lastName'] || '',
+              gender: row['gender'] || '',
+              birthdate: row['birthDay'] || '',
+              country: row['country'] || '',
+              profession: row['profession'] || '',
+              age: row['Votre Age'] || null,
+              phoneNumber: row['Votre numéro de téléphone'] || '',
+              educationLevel: row["Votre niveau d'études"] || '',
+              speciality: row['Votre spécialité'] || '',
+              participationInODC: row['Avez Vous déjà participer au programmes ODC'] || '',
+              presenceState: false,
+              sessions: participantDates // Set participants here
+          };
+      });
 
-    // Insert candidates into MongoDB
-    await Candidate.insertMany(candidates);
+      // Insert candidates into MongoDB
+      await Candidate.insertMany(candidates);
 
-    // Clean up the uploaded file
-    // fs.unlinkSync(filePath); // Uncomment if you want to delete the file after processing
-
-    res.status(200).json({ message: 'File uploaded and data saved to database' });
+      res.status(200).json({ message: 'File uploaded and data saved to database' });
   } catch (error) {
-    console.error('Error processing file', error);
-    res.status(500).json({ message: 'Error uploading file' });
+      console.error('Error processing file', error);
+      res.status(500).json({ message: 'Error uploading file' });
   }
 };
+
 
 ///////////////////////////////////////////////////////////////////////////////////////
 // Function to get all candidates for a specific formation

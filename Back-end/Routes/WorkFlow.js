@@ -1,5 +1,5 @@
 const express = require('express');
-const { uploadExcelFile , getAllCandidatesByFormation , toggleCandidatePresence, CandidatesAvailable, dayOfFormation , updatePresence , getAttendance  } = require('../Controllers/WorkFlow');
+const {  uploadExcelFile  , getAllCandidatesByFormation , toggleCandidatePresence, CandidatesAvailable, dayOfFormation , updatePresence , getAttendance  } = require('../Controllers/WorkFlow');
 const authenticated = require('../Middlewares/Authmiddleware');
 const upload = require('../Middlewares/Multer');
 
@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 // Route to handle Excel file upload
-router.post('/upload-excel', authenticated, upload.single('file'), uploadExcelFile);
+router.post('/upload-excel', authenticated, upload.single('file'),  uploadExcelFile);
 
 // Route to Get Candidates By Formation
 router.get('/Candidates/:id', authenticated,   getAllCandidatesByFormation );
