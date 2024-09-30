@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Calendar, Tag, ChevronDown, ChevronUp } from 'lucide-react';
+import { Calendar, Tag, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
+
+
 
 const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -30,11 +33,26 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
             />
           </div>
         )}
-        <CardTitle className="text-base font-bold truncate">{course.title}</CardTitle>
-        <CardDescription className="text-white flex items-center mt-1 text-xs">
-          <Calendar className="w-3 h-3 mr-1" />
-          {new Date(course.startDate).toLocaleDateString()} - {new Date(course.endDate).toLocaleDateString()}
-        </CardDescription>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-base font-bold truncate">{course.title}</CardTitle>
+            <CardDescription className="text-white flex items-center mt-1 text-xs">
+              <Calendar className="w-3 h-3 mr-1" />
+              {new Date(course.startDate).toLocaleDateString()} - {new Date(course.endDate).toLocaleDateString()}
+            </CardDescription>
+          </div>
+          <Link to={`/formation/${course._id}`}>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="p-1 h-6 w-6 bg-white hover:bg-gray-100 transition-colors duration-200"
+              title="View Course"
+            >
+              <Eye className="h-4 w-4 text-black" />
+              <span className="sr-only">View Course</span>
+            </Button>
+          </Link>
+        </div>
       </CardHeader>
       <CardContent className="p-2 flex-grow">
         <p className="text-gray-700 mb-2 text-xs">
