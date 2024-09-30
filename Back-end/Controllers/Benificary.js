@@ -2,8 +2,6 @@ const Candidate = require('../Models/candidateModel');
 const Courses = require('../Models/courseModel')
 
 
-
-
 const NumberOfCandidatesConfirmer = async (req, res) => {
     try {
   

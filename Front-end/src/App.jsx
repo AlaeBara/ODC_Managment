@@ -17,6 +17,7 @@ const Formation = lazy(() => import('./Pages/FormationPage/Formation'));
 const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
+const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -137,6 +138,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <EvaluationDashboard/>
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/formation/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <OneFormation/>
                 </MainLayout>
               </ProtectedRoute>
             }
