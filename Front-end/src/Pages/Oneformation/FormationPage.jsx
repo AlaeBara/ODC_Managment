@@ -1,10 +1,12 @@
+'use client'
+
 import React, { useState, useEffect, useCallback } from "react"
 import axios from "axios"
 import { useParams } from "react-router-dom"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowUpDown, X, Search, Users, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Sun, Moon, Calendar, Clock } from "lucide-react"
+import { ArrowUpDown, X, Search, Users, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Sun, Moon, Calendar, Clock, ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -19,11 +21,12 @@ export default function FormationPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(7)
   const [error, setError] = useState(null)
+  const [expandedSessions, setExpandedSessions] = useState({})
 
   const columns = [
     "email", "firstName", "lastName", "gender", "birthdate", "country",
     "profession", "age", "phoneNumber", "educationLevel", "speciality",
-    "participationInODC", "presenceState", "sessions"
+    "participationInODC", "sessions"
   ]
 
   const fetchCandidates = useCallback(async () => {
@@ -99,10 +102,17 @@ export default function FormationPage() {
     setItemsPerPage(Number(value))
   }
 
-  const formatSessions = (sessions) => {
+  const toggleSessionExpand = (id) => {
+    setExpandedSessions(prev => ({ ...prev, [id]: !prev[id] }))
+  }
+
+  const formatSessions = (sessions, id) => {
+    const isExpanded = expandedSessions[id]
+    const displaySessions = isExpanded ? sessions : sessions.slice(0, 3)
+
     return (
       <div className="space-y-2">
-        {sessions.map((session, index) => (
+        {displaySessions.map((session, index) => (
           <div key={index} className="flex items-center space-x-2">
             <span className="font-medium">{new Date(session.sessionDate).toLocaleDateString()}:</span>
             <div className="flex items-center space-x-1">
@@ -119,6 +129,26 @@ export default function FormationPage() {
             </div>
           </div>
         ))}
+        {sessions.length > 3 && (
+          <Button
+            onClick={() => toggleSessionExpand(id)}
+            variant="ghost"
+            size="sm"
+            className="mt-2"
+          >
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-4 h-4 mr-2" />
+                Show Less
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-4 h-4 mr-2" />
+                Show More ({sessions.length - 3} more)
+              </>
+            )}
+          </Button>
+        )}
       </div>
     )
   }
@@ -164,7 +194,8 @@ export default function FormationPage() {
               <div className="mt-4 flex items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                 <Clock className="w-5 h-5 mr-2" />
                 <p className="text-lg">
-                  Duration: {Math.ceil((new Date(formationInfo.endDate) - new Date(formationInfo.startDate)) / (1000 * 60 * 60 * 24))} days
+                  Duration: {Math.max(Math.ceil((new Date(formationInfo.endDate) - new Date(formationInfo.startDate)) / (1000 * 60 * 60 * 24)), 1)} days
+
                 </p>
               </div>
             </CardContent>
@@ -189,7 +220,7 @@ export default function FormationPage() {
           <div className="flex items-center space-x-2 text-orange-500">
             <Users className="h-5 w-5" />
             <span className="font-semibold">
-              {filteredData.length} Candidate{filteredData.length !== 1 ? "s" : ""} DB
+              {filteredData.length} Candidate{filteredData.length !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
@@ -244,13 +275,7 @@ export default function FormationPage() {
                               key={column}
                               className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
                             >
-                              {column === "sessions" ? formatSessions(item[column]) :
-                               column === "presenceState" ? (
-                                <Badge variant={item[column] ? "success" : "destructive"}>
-                                  {item[column] ? "Present" : "Absent"}
-                                </Badge>
-                               ) :
-                               item[column]}
+                              {column === "sessions" ? formatSessions(item[column], item._id) : item[column]}
                             </td>
                           ))}
                         </motion.tr>
