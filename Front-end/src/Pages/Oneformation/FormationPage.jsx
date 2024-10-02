@@ -111,19 +111,19 @@ export default function FormationPage() {
     const displaySessions = isExpanded ? sessions : sessions.slice(0, 3)
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-1">
         {displaySessions.map((session, index) => (
-          <div key={index} className="flex items-center space-x-2">
+          <div key={index} className="flex items-center space-x-1 text-xs">
             <span className="font-medium">{new Date(session.sessionDate).toLocaleDateString()}:</span>
-            <div className="flex items-center space-x-1">
-              <Sun className="w-4 h-4 text-yellow-500" />
-              <Badge variant={session.morningStatus === "Present" ? "success" : "destructive"}>
+            <div className="flex items-center">
+              <Sun className="w-3 h-3 text-yellow-500 mr-1" />
+              <Badge variant={session.morningStatus === "Present" ? "success" : "destructive"} className="text-xs px-1 py-0">
                 {session.morningStatus}
               </Badge>
             </div>
-            <div className="flex items-center space-x-1">
-              <Moon className="w-4 h-4 text-blue-500" />
-              <Badge variant={session.afternoonStatus === "Present" ? "success" : "destructive"}>
+            <div className="flex items-center">
+              <Moon className="w-3 h-3 text-blue-500 mr-1" />
+              <Badge variant={session.afternoonStatus === "Present" ? "success" : "destructive"} className="text-xs px-1 py-0">
                 {session.afternoonStatus}
               </Badge>
             </div>
@@ -134,16 +134,16 @@ export default function FormationPage() {
             onClick={() => toggleSessionExpand(id)}
             variant="ghost"
             size="sm"
-            className="mt-2"
+            className="mt-1 text-xs p-0 h-auto"
           >
             {isExpanded ? (
               <>
-                <ChevronUp className="w-4 h-4 mr-2" />
+                <ChevronUp className="w-3 h-3 mr-1" />
                 Show Less
               </>
             ) : (
               <>
-                <ChevronDown className="w-4 h-4 mr-2" />
+                <ChevronDown className="w-3 h-3 mr-1" />
                 Show More ({sessions.length - 3} more)
               </>
             )}
@@ -154,78 +154,71 @@ export default function FormationPage() {
   }
 
   if (error) {
-    return <div className="p-8 text-red-500">{error}</div>
+    return <div className="p-4 text-red-500">{error}</div>
   }
 
   return (
-    <div className="p-8 flex flex-col space-y-8">
+    <div className="p-6 flex flex-col space-y-6 bg-orange-50">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="space-y-6 flex flex-col"
+        className="space-y-4 flex flex-col"
       >
         {formationInfo && (
-          <Card className="bg-gradient-to-r from-orange-400 to-orange-600 text-white overflow-hidden">
+          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white overflow-hidden shadow-lg">
             <CardHeader className="pb-2">
-              <CardTitle className="text-3xl font-bold">Formation Information</CardTitle>
+              <CardTitle className="text-2xl font-bold">Formation Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex flex-col items-center justify-center p-4 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                  <h3 className="text-xl font-semibold mb-2">Program</h3>
-                  <p className="text-center">{formationInfo.title}</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">Program</h3>
+                  <p className="text-center text-sm">{formationInfo.title}</p>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                  <h3 className="text-xl font-semibold mb-2">Start Date</h3>
+                <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">Start Date</h3>
                   <div className="flex items-center">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    <p>{new Date(formationInfo.startDate).toLocaleDateString()}</p>
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <p className="text-sm">{new Date(formationInfo.startDate).toLocaleDateString()}</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center p-4 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                  <h3 className="text-xl font-semibold mb-2">End Date</h3>
+                <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
+                  <h3 className="text-lg font-semibold mb-1">End Date</h3>
                   <div className="flex items-center">
-                    <Calendar className="w-5 h-5 mr-2" />
-                    <p>{new Date(formationInfo.endDate).toLocaleDateString()}</p>
+                    <Calendar className="w-4 h-4 mr-1" />
+                    <p className="text-sm">{new Date(formationInfo.endDate).toLocaleDateString()}</p>
                   </div>
                 </div>
-              </div>
-              <div className="mt-4 flex items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
-                <Clock className="w-5 h-5 mr-2" />
-                <p className="text-lg">
-                  Duration: {Math.max(Math.ceil((new Date(formationInfo.endDate) - new Date(formationInfo.startDate)) / (1000 * 60 * 60 * 24)), 1)} days
-
-                </p>
               </div>
             </CardContent>
           </Card>
         )}
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
             <div className="relative w-full sm:w-64">
               <Input
                 placeholder="Filter table..."
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 text-sm border-2 border-orange-500 focus:border-orange-600 rounded-full transition-all duration-300 ease-in-out"
+                className="w-full pl-8 pr-4 py-1 text-sm border-2 border-orange-400 focus:border-orange-500 rounded-full transition-all duration-300 ease-in-out"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 h-4 w-4" />
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-orange-400 h-4 w-4" />
             </div>
-            <Button onClick={clearFilter} variant="outline" className="w-full sm:w-auto px-6 py-2 bg-white text-orange-500 border-2 border-orange-500 hover:bg-orange-50 rounded-full transition-all duration-300 ease-in-out">
-              <X className="mr-2 h-4 w-4" /> Clear
+            <Button onClick={clearFilter} variant="outline" className="w-full sm:w-auto px-4 py-1 text-sm bg-white text-orange-500 border-2 border-orange-400 hover:bg-orange-100 rounded-full transition-all duration-300 ease-in-out">
+              <X className="mr-1 h-3 w-3" /> Clear
             </Button>
           </div>
-          <div className="flex items-center space-x-2 text-orange-500">
-            <Users className="h-5 w-5" />
-            <span className="font-semibold">
+          <div className="flex items-center space-x-1 text-orange-600">
+            <Users className="h-4 w-4" />
+            <span className="font-semibold text-sm">
               {filteredData.length} Candidate{filteredData.length !== 1 ? "s" : ""}
             </span>
           </div>
         </div>
 
-        <Card>
+        <Card className="bg-white shadow-md">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full divide-y divide-orange-200">
@@ -234,20 +227,20 @@ export default function FormationPage() {
                     {columns.map((column) => (
                       <th
                         key={column}
-                        className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider"
+                        className="px-4 py-4 text-left text-sm font-bold text-white uppercase tracking-wider"
                       >
                         <button
                           onClick={() => handleSort(column)}
-                          className="flex items-center space-x-2 hover:text-orange-200 transition-colors duration-200"
+                          className="flex items-center space-x-1 hover:text-orange-100 transition-colors duration-200"
                         >
                           <span>{column.charAt(0).toUpperCase() + column.slice(1).replace(/([A-Z])/g, " $1").trim()}</span>
-                          <ArrowUpDown className="h-4 w-4" />
+                          <ArrowUpDown className="h-3 w-3" />
                         </button>
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-orange-200">
+                <tbody className="bg-white divide-y divide-orange-100">
                   <AnimatePresence mode="wait">
                     {paginatedData.length === 0 ? (
                       <motion.tr
@@ -256,7 +249,7 @@ export default function FormationPage() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                       >
-                        <td colSpan={columns.length} className="p-4 text-center text-orange-500">
+                        <td colSpan={columns.length} className="p-3 text-center text-orange-500">
                           No results found
                         </td>
                       </motion.tr>
@@ -273,7 +266,7 @@ export default function FormationPage() {
                           {columns.map((column) => (
                             <td
                               key={column}
-                              className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                              className="px-3 py-2 whitespace-nowrap text-sm text-gray-700"
                             >
                               {column === "sessions" ? formatSessions(item[column], item._id) : item[column]}
                             </td>
@@ -288,11 +281,11 @@ export default function FormationPage() {
           </CardContent>
         </Card>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+        <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Rows per page:</span>
+            <span className="text-xs text-gray-600">Rows per page:</span>
             <Select value={itemsPerPage.toString()} onValueChange={handleRowsPerPageChange}>
-              <SelectTrigger className="w-[70px]">
+              <SelectTrigger className="w-[60px] h-8 text-xs border-orange-300 focus:ring-orange-500">
                 <SelectValue placeholder="7" />
               </SelectTrigger>
               <SelectContent>
@@ -304,21 +297,21 @@ export default function FormationPage() {
             </Select>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">
+            <span className="text-xs text-gray-600">
               Page {currentPage} of {totalPages}
             </span>
             <div className="flex space-x-1">
-              <Button onClick={goToFirstPage} variant="outline" size="icon">
-                <ChevronsLeft className="w-4 h-4" />
+              <Button onClick={goToFirstPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                <ChevronsLeft className="w-3 h-3" />
               </Button>
-              <Button onClick={goToPrevPage} variant="outline" size="icon">
-                <ChevronLeft className="w-4 h-4" />
+              <Button onClick={goToPrevPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                <ChevronLeft className="w-3 h-3" />
               </Button>
-              <Button onClick={goToNextPage} variant="outline" size="icon">
-                <ChevronRight className="w-4 h-4" />
+              <Button onClick={goToNextPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                <ChevronRight className="w-3 h-3" />
               </Button>
-              <Button onClick={goToLastPage} variant="outline" size="icon">
-                <ChevronsRight className="w-4 h-4" />
+              <Button onClick={goToLastPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                <ChevronsRight className="w-3 h-3" />
               </Button>
             </div>
           </div>
