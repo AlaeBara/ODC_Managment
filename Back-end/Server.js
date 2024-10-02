@@ -12,6 +12,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 const workFlow = require('./Routes/WorkFlow.js');
+const Presence = require('./Routes/Presence.js')
 
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/api/profile', Profile);
 app.use('/api/workFlow', workFlow);
 app.use('/api/evaluation', Evaluation)
 app.use('/api/binificary', Binificary)
+app.use('/api/presence', Presence)
 
 
 //insert line for test:
