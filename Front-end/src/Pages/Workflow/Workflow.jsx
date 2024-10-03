@@ -19,6 +19,7 @@ export default function Component() {
   const [error, setError] = useState(null)
   const [file, setFile] = useState(null)
   const [upload, setUpload] = useState(false)
+  const [isUploading, setIsUploading] = useState(false); // Track upload status
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
 
@@ -114,29 +115,37 @@ export default function Component() {
 
   const handleUpload = async (id_Formation) => {
     if (!file) {
-      toast.error("Please select a file to upload")
-      return
+      toast.error("Please select a file to upload");
+      return;
     }
-
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('id_Formation', id_Formation)
-
+  
+    if (isUploading) {
+      return; // Prevent multiple uploads
+    }
+  
+    setIsUploading(true); // Disable upload button
+  
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('id_Formation', id_Formation);
+  
     try {
       await fetch(`${import.meta.env.VITE_API_LINK}/api/workFlow/upload-excel`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
-      })
-      toast.success('File uploaded successfully')
-      setFile(null)
-      setUpload(false)
-      if (fileInputRef.current) fileInputRef.current.value = ""
+      });
+      toast.success('File uploaded successfully');
+      setFile(null);
+      setUpload(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
-      console.error('Error uploading file', err)
-      toast.error('File upload failed. Please try again.')
+      console.error('Error uploading file', err);
+      toast.error('File upload failed. Please try again.');
+    } finally {
+      setIsUploading(false); // Re-enable upload button
     }
-  }
+  };
 
   const validateCandidates = (formationId) => navigate(`/validate/${formationId}`)
 
@@ -281,13 +290,13 @@ export default function Component() {
                                     </div>
                                     {file && <p className="text-sm text-gray-600 text-center">Selected: {file.name}</p>}
                                     {upload && (
-                                      <Button 
-                                        size="sm" 
-                                        className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
-                                        onClick={() => handleUpload(formation._id)}
-                                      >
-                                        Upload
-                                      </Button>
+                                    <Button
+                                      onClick={() => handleUpload(formation._id)}
+                                      disabled={isUploading}
+                                      className={`w-full flex bg-orange-500 items-center justify-center text-white px-4 py-2 rounded-full ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'}`}
+                                    >
+                                      {isUploading ? "Uploading..." : "Upload"}
+                                    </Button>
                                     )}
                                     <Button 
                                       size="sm" 
