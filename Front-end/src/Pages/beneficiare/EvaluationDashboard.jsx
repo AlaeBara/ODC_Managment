@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, AlertTriangle, Star, Users, ThumbsUp } from 'lucide-react'
 import { Progress } from "@/components/ui/progress"
+import EvaluationCart from './evaluation-cart'
 
 const evaluationFields = [
   { label: "Qualité du contenu", name: "contentQuality" },
@@ -60,7 +61,6 @@ export default function EvaluationDashboard() {
 
   const calculateAverages = () => {
     return evaluationFields.reduce((averages, field) => {
-      // Filter evaluations that have a valid value for the current field
       const validEvaluations = evaluations.filter(evaluationItem => !isNaN(Number(evaluationItem[field.name])) && evaluationItem[field.name] !== '')
 
       const sum = validEvaluations.reduce((acc, evaluationItem) => {
@@ -68,7 +68,6 @@ export default function EvaluationDashboard() {
         return acc + value
       }, 0)
   
-      // Calculate average based on the number of valid evaluations
       averages[field.name] = validEvaluations.length > 0 ? sum / validEvaluations.length : 0
       return averages
     }, {})
@@ -102,7 +101,7 @@ export default function EvaluationDashboard() {
 
   const averages = calculateAverages()
   const overallAverage = Object.values(averages).reduce((sum, value) => sum + value, 0) / evaluationFields.length
-  const recommendationPercentage = (evaluations.filter(item => item.recommendation === 'OUI').length *100 / evaluations.length)
+  const recommendationPercentage = (evaluations.filter(item => item.recommendation === 'OUI').length * 100 / evaluations.length)
   
   return (
     <div className="min-h-screen p-8 bg-background text-foreground">
@@ -179,6 +178,7 @@ export default function EvaluationDashboard() {
             </ul>
           </CardContent>
         </Card>
+        <EvaluationCart evaluations={evaluations} />
       </div>
     </div>
   )
