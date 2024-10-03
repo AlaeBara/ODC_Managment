@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from "@/components/ui/button"
@@ -10,7 +12,6 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useNavigate } from "react-router-dom"
 
-
 export default function Component() {
   const [formations, setFormations] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -19,13 +20,10 @@ export default function Component() {
   const [error, setError] = useState(null)
   const [file, setFile] = useState(null)
   const [upload, setUpload] = useState(false)
-  const [isUploading, setIsUploading] = useState(false); // Track upload status
+  const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
 
-
-
-  //api for
   useEffect(() => {
     const fetchFormations = async () => {
       setIsLoading(true)
@@ -57,10 +55,7 @@ export default function Component() {
     const endDate = new Date(formation.endDate);
     const today = new Date();
     
-    // Normalize the time for startDate
     startDate.setHours(0, 0, 0, 0);
-
-    // Set the end date cutoff to 7 PM
     endDate.setHours(19, 0, 0, 0);
 
     const daysUntilStart = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
@@ -78,13 +73,12 @@ export default function Component() {
     }
   };
 
-
   const filteredFormations = formations
     .filter(formation => {
       const importance = getImportanceLevel(formation)
       return (
         formation.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        importance.priority !== 4 // Exclude ended formations
+        importance.priority !== 4
       )
     })
     .sort((a, b) => getImportanceLevel(a).priority - getImportanceLevel(b).priority)
@@ -120,10 +114,10 @@ export default function Component() {
     }
   
     if (isUploading) {
-      return; // Prevent multiple uploads
+      return;
     }
   
-    setIsUploading(true); // Disable upload button
+    setIsUploading(true);
   
     const formData = new FormData();
     formData.append('file', file);
@@ -143,13 +137,20 @@ export default function Component() {
       console.error('Error uploading file', err);
       toast.error('File upload failed. Please try again.');
     } finally {
-      setIsUploading(false); // Re-enable upload button
+      setIsUploading(false);
     }
   };
 
   const validateCandidates = (formationId) => navigate(`/validate/${formationId}`)
 
   const checkPresence = (formationId) => navigate(`/Check_Presence/${formationId}`)
+
+  const isImportButtonDisabled = (formation) => {
+    const startDate = new Date(formation.startDate);
+    const today = new Date();
+    const daysUntilStart = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
+    return daysUntilStart <= 2;
+  }
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-screen">
@@ -280,10 +281,13 @@ export default function Component() {
                                         ref={fileInputRef}
                                         className="hidden"
                                         id={`file-upload-${formation._id}`}
+                                        disabled={isImportButtonDisabled(formation)}
                                       />
                                       <label 
                                         htmlFor={`file-upload-${formation._id}`} 
-                                        className="cursor-pointer bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-colors duration-200 shadow-md text-center"
+                                        className={`cursor-pointer bg-orange-500 text-white px-4 py-2 rounded-full transition-colors duration-200 shadow-md text-center ${
+                                          isImportButtonDisabled(formation) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
+                                        }`}
                                       >
                                         Choose File
                                       </label>
@@ -292,15 +296,17 @@ export default function Component() {
                                     {upload && (
                                     <Button
                                       onClick={() => handleUpload(formation._id)}
-                                      disabled={isUploading}
-                                      className={`w-full flex bg-orange-500 items-center justify-center text-white px-4 py-2 rounded-full ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'}`}
+                                      disabled={isUploading || isImportButtonDisabled(formation)}
+                                      className={`w-full flex bg-orange-500 items-center justify-center text-white px-4 py-2 rounded-full ${
+                                        isUploading || isImportButtonDisabled(formation)? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
+                                      }`}
                                     >
                                       {isUploading ? "Uploading..." : "Upload"}
                                     </Button>
                                     )}
                                     <Button 
                                       size="sm" 
-                                      className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
+                                      className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200"
                                       onClick={() => validateCandidates(formation._id)}
                                     >
                                       <Phone className="w-4 h-4" />
