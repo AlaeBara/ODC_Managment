@@ -61,25 +61,7 @@ const NavBar = () => {
           <Link to="/Formation" className="text-muted-foreground transition-colors hover:text-foreground">Formation</Link>
 
           {/* Beneficiary Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                <span>Beneficiary</span>
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="bottom" align="start" className="mt-6">
-              <DropdownMenuItem asChild>
-                <Link to="/beneficiary/overview">Overview</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/beneficiary/register">Register</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/beneficiary/reports">Reports</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link to="/beneficiary/overview" className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">Beneficiary</Link>
 
           <Link to="/evaluation" className="text-muted-foreground transition-colors hover:text-foreground">Evaluation</Link>
         </nav>
