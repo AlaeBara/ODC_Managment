@@ -148,8 +148,9 @@ export default function Component() {
   const isImportButtonDisabled = (formation) => {
     const startDate = new Date(formation.startDate);
     const today = new Date();
-    const daysUntilStart = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
-    return daysUntilStart <= 2;
+    today.setHours(0, 0, 0, 0); // Reset time to start of day
+    startDate.setHours(0, 0, 0, 0); // Reset time to start of day
+    return today >= startDate;
   }
 
   if (isLoading) return (
