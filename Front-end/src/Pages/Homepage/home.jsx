@@ -35,10 +35,11 @@ export default function Homepage() {
         setCourses(coursesData)
 
         //////////////////////////////////////////////////////////////////////////////////////////
-        const userResponse = await fetch(`${import.meta.env.VITE_API_LINK}/api/home/Gethomepageinfo`, {
+        const userResponse = await fetch(`${import.meta.env.VITE_API_LINK}/api/home/gethomepageinfo`, {
           credentials: "include",
         })
         if (userResponse.ok) {
+          console.log(`khdaaam Calling API`);
           const userData = await userResponse.json()
           setUserName(userData.firstName)
           setTotalStudents(userData.totalStudents)
@@ -47,6 +48,7 @@ export default function Homepage() {
 
         
       } catch (error) {
+        console.log(` Errror `);
         console.error("Error fetching data:", error)
       }
     }

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// useer model
+// User model
 const userSchema = new mongoose.Schema({
     firstName: { type: String },  // Not required
     lastName: { type: String },   // Not required
@@ -14,4 +14,4 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = { User };
+module.exports = User; // Export User directly
