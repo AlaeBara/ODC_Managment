@@ -134,7 +134,7 @@ function App() {
             }
           />
           <Route
-            path="/beneficiary/overview/:id"
+            path="/evalution/:id"
             element={
               <ProtectedRoute>
                 <MainLayout>

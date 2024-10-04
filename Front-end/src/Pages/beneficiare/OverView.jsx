@@ -142,7 +142,7 @@ export default function CourseOverviewDashboard() {
   })
 
 
-  const stateOfEvaluation = (id)=> navigate(`/beneficiary/overview/${id}`)
+  const stateOfEvaluation = (id)=> navigate(`/formation/${id}`)
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-50 to-orange-100">
