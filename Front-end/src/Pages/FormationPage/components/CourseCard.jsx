@@ -22,7 +22,8 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
   const mentor = course.mentors[0] || {};
 
   return (
-    <Card className={`w-64 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col text-sm m-4 ${deleteMode ? 'relative' : ''}`}>
+    <Card className={`w-80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col text-sm m-4 ${deleteMode ? 'relative' : ''}`}>
+
       <CardHeader className={`bg-orange-500 text-white p-2 rounded-t-lg relative`}>
         {deleteMode && (
           <div className="absolute top-2 right-2 z-10">
@@ -36,28 +37,32 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
         <div className="flex justify-between items-start">
           <div>
             <CardTitle className="text-base font-bold truncate">{course.title}</CardTitle>
-            <CardDescription className="text-white flex items-center mt-1 text-xs">
+            <CardDescription className="text-white flex items-center mt-1 text-ms">
               <Calendar className="w-3 h-3 mr-1" />
               {new Date(course.startDate).toLocaleDateString()} - {new Date(course.endDate).toLocaleDateString()}
             </CardDescription>
           </div>
-          <Link to={`/formation/${course._id}`}>
-            <Button
-              variant="secondary"
-              size="icon"
-              className="p-1 h-6 w-6 bg-white hover:bg-gray-100 transition-colors duration-200"
-              title="View Course"
-            >
-              <Eye className="h-4 w-4 text-black" />
-              <span className="sr-only">View Course</span>
-            </Button>
-          </Link>
+          {!deleteMode && <Link to={`/formation/${course._id}`}>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="p-1 h-6 w-6 bg-white hover:bg-gray-100 transition-colors duration-200"
+                title="View Course"
+              >
+                <Eye className="h-4 w-4 text-black " />
+                <span className="sr-only">View Course</span>
+              </Button>
+            </Link>
+          }
         </div>
       </CardHeader>
+
       <CardContent className="p-2 flex-grow">
-        <p className="text-gray-700 mb-2 text-xs">
+
+        <p className="text-gray-700 mb-2 text-xs mb-4">
           {isExpanded ? course.description : truncateDescription(course.description, 60)}
         </p>
+
         {course.description.length > 60 && (
           <Button variant="link" onClick={toggleDescription} className="p-0 h-auto font-semibold text-orange-600 text-xs">
             {isExpanded ? (
@@ -71,6 +76,7 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
             )}
           </Button>
         )}
+
         <div className="flex items-center mt-2">
           <Avatar className="h-6 w-6 mr-2">
             <AvatarImage src={mentor.avatar} alt={mentor.email || 'Mentor Avatar'} />
@@ -81,7 +87,9 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
             <p className="text-gray-600 text-xs">Mentor</p>
           </div>
         </div>
+
       </CardContent>
+      
       <CardFooter className="p-2 flex gap-1 flex-wrap">
         {course.tags.map((tag, index) => (
           <Badge key={index} variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
@@ -91,6 +99,7 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
         ))}
       </CardFooter>
     </Card>
+
   );
 };
 

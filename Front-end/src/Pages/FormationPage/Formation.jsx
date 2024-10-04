@@ -272,18 +272,20 @@ export default function Formation() {
           >
             <Trash2 className="mr-2" size={20} />
             Delete Formation
-          </Button>
-        </div>
-      </aside>
+          </Button> 
 
-      <main className="flex-1 p-4 lg:ml-64 flex flex-col">
-        {deleteMode && (
-          <div className="flex justify-center items-center mb-4">
+          {deleteMode && (
+          <div className="flex justify-center items-center mb-4 pt-4">
             <Button onClick={showmodel} variant="destructive">
               Delete {selectedForDeletion.length} Formations
             </Button>
           </div>
         )}
+        </div>
+      </aside>
+
+      <main className="flex-1 p-4 lg:ml-64 flex flex-col">
+        
         
         {showConfirmModal && (
           <ConfirmModal
