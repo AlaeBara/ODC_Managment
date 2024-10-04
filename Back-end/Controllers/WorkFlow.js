@@ -3,7 +3,6 @@ const path = require('path');
 const Candidate = require('../Models/candidateModel');
 const Courses = require('../Models/courseModel')
 const mongoose = require('mongoose');
-const fs = require('fs');
 const stream = require("stream");
 const {google} = require("googleapis");
 const KEYFILEPATH = path.join(__dirname, "..", "cred.json");
@@ -40,6 +39,61 @@ const getWeekdays = (start, end) => {
   
   return weekdays;
 };
+
+
+// const uploadFileToDrive = async (fileObject, fullFileName, userToShareWith, folderName) => {
+//   const auth = new google.auth.GoogleAuth({
+//       keyFile: KEYFILEPATH, // Path to your credentials file
+//       scopes: ["https://www.googleapis.com/auth/drive"],
+//   });
+
+//   const driveService = google.drive({ version: "v3", auth });
+
+//   // Create a folder in Google Drive
+//   const fileMetadata = {
+//       name: folderName,
+//       mimeType: "application/vnd.google-apps.folder",
+//   };
+
+//   try {
+//       const folderResponse = await driveService.files.create({
+//           requestBody: fileMetadata,
+//           fields: "id",
+//       });
+//       const folderId = folderResponse.data.id;
+//       console.log(`Folder created: ${folderName} with ID: ${folderId}`);
+
+//       // Share the folder with the specified user
+//       await shareFolder(driveService, folderId, userToShareWith);
+
+//       // Use the in-memory buffer for file upload
+//       const bufferStream = new stream.PassThrough();
+//       bufferStream.end(fileObject.buffer);
+
+//       const { data } = await driveService.files.create({
+//           media: {
+//               mimeType: fileObject.mimetype,
+//               body: bufferStream,
+//           },
+//           requestBody: {
+//               name: fullFileName,
+//               parents: [folderId], // Specify the folder ID
+//           },
+//           fields: "id,name",
+//       });
+//       console.log(`Uploaded file ${data.name} with ID: ${data.id}`);
+
+//       // Share the uploaded file with the specified user
+//       await shareFile(driveService, data.id, userToShareWith);
+
+//       return { folderId, fileId: data.id }; // Return folder and file IDs
+//   } catch (error) {
+//       console.error('Error uploading file to Drive:', error.message);
+//       throw new Error('Failed to upload file to Google Drive');
+//   }
+// };
+
+
 const uploadFileToDrive = async (fileObject, fullFileName, userToShareWith, folderName) => {
   const auth = new google.auth.GoogleAuth({
       keyFile: KEYFILEPATH, // Path to your credentials file
@@ -85,12 +139,23 @@ const uploadFileToDrive = async (fileObject, fullFileName, userToShareWith, fold
       // Share the uploaded file with the specified user
       await shareFile(driveService, data.id, userToShareWith);
 
+      // Set the file to be publicly accessible
+      await driveService.permissions.create({
+          fileId: data.id,
+          requestBody: {
+              role: 'reader',
+              type: 'anyone', // This makes the file accessible to anyone
+          },
+      });
+      console.log(`File shared publicly: ${data.name}`);
+
       return { folderId, fileId: data.id }; // Return folder and file IDs
   } catch (error) {
       console.error('Error uploading file to Drive:', error.message);
       throw new Error('Failed to upload file to Google Drive');
   }
 };
+
 
 
 const shareFolder = async (driveService, folderId, emailAddress) => {
@@ -159,7 +224,7 @@ const uploadExcelFile = async (req, res) => {
 
       // Upload the file to Google Drive and share it with a user
       const userToShareWith = 'odcmanagmanet@gmail.com'; // Email to share the file with
-      const folderName = `${course.title}_${Date.now()}`; // Name for the new folder
+      const folderName = `Formation ${course.title}`; // Name for the new folder
       await uploadFileToDrive(req.file, fullFileName, userToShareWith, folderName);
 
       // Ensure the dates are correctly parsed from the course object
@@ -432,6 +497,11 @@ const getAttendance = async (req, res) => {
     res.status(500).json({ message: "An error occurred while fetching attendance." });
   }
 };
+
+
+
+
+
 
 
 

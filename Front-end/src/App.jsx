@@ -3,12 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './Security/ProtectedRoutes.jsx';
 import MainLayout from './MainLayout';
 import Spinner from './components/Spinner/Spinner.jsx';
-import Validate from './Pages/Validate/Validate.jsx';
-import Evaluation from './Pages/Evaluation/Evaluation.jsx';
-import EvaluationForm from './Pages/Evaluation/Evaluationform.jsx';
-import OverView from './Pages/beneficiare/OverView.jsx'
-import EvaluationDashboard from './Pages/beneficiare/EvaluationDashboard.jsx'
-import Check from './Pages/PresenceCK/Check.jsx';
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -18,6 +12,13 @@ const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
 const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
+const Validate = lazy(() => import('./Pages/Validate/Validate.jsx'));
+const Evaluation = lazy(() => import('./Pages/Evaluation/Evaluation.jsx'));
+const EvaluationForm = lazy(() => import('./Pages/Evaluation/Evaluationform.jsx'));
+const OverView = lazy(() => import('./Pages/beneficiare/OverView.jsx'));
+const EvaluationDashboard = lazy(() => import('./Pages/beneficiare/EvaluationDashboard.jsx'));
+const Check = lazy(() => import('./Pages/PresenceCK/Check.jsx'));
+const Cloud = lazy(() => import('./Pages/Cloud/Cloud.jsx'));
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -93,7 +94,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <Validate/>
+                  <Validate />
                 </MainLayout>
               </ProtectedRoute>
             }
@@ -103,7 +104,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <Check/>
+                  <Check />
                 </MainLayout>
               </ProtectedRoute>
             }
@@ -113,21 +114,27 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <Evaluation/>
+                  <Evaluation />
                 </MainLayout>
               </ProtectedRoute>
             }
           />
-          <Route 
-            path="/evaluation/:id" 
-            element={<EvaluationForm />} 
+          <Route
+            path="/evaluation/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <EvaluationForm />
+                </MainLayout>
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/beneficiary/overview"
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <OverView/>
+                  <OverView />
                 </MainLayout>
               </ProtectedRoute>
             }
@@ -137,7 +144,7 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <EvaluationDashboard/>
+                  <EvaluationDashboard />
                 </MainLayout>
               </ProtectedRoute>
             }
@@ -147,7 +154,17 @@ function App() {
             element={
               <ProtectedRoute>
                 <MainLayout>
-                  <OneFormation/>
+                  <OneFormation />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cloud"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <Cloud />
                 </MainLayout>
               </ProtectedRoute>
             }

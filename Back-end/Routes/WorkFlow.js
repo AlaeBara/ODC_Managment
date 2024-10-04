@@ -27,4 +27,8 @@ router.post('/updatePresence',authenticated, updatePresence);
 
 router.get('/attendance/:formationId/:date',authenticated, getAttendance);
 
+
+
+
+
 module.exports = router;
