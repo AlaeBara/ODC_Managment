@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Calendar, ChevronDown, ChevronUp, Share2, Search, BookOpen, Users } from "lucide-react"
+import { Calendar, ChevronDown, ChevronUp, Share2, Search, BookOpen, Users , View } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from 'react-router-dom'
 
 export default function CourseEvaluations() {
   const [courses, setCourses] = useState([])
@@ -15,6 +16,7 @@ export default function CourseEvaluations() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [studentCounts, setStudentCounts] = useState({})
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +81,8 @@ export default function CourseEvaluations() {
   const filteredCourses = courses.filter(course => 
     course.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const gotoresult = (id)=> navigate(`/evalution/${id}`);
 
   if (isLoading) return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-100 to-orange-200">
@@ -170,7 +174,7 @@ export default function CourseEvaluations() {
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <CardFooter className="bg-orange-50 p-6">
+                      <CardFooter className="bg-orange-50 pt-3 ">
                         <Button 
                           onClick={() => generateEvaluationLink(course._id)}
                           className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-200"
@@ -179,6 +183,17 @@ export default function CourseEvaluations() {
                           <span>Generate Evaluation Link</span>
                         </Button>
                       </CardFooter>
+
+                      <CardFooter className="bg-orange-50">
+                        <Button 
+                          onClick={() => gotoresult(course._id) }
+                          className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-colors duration-200"
+                        >
+                          <View className="w-5 h-5" />
+                          <span> see the result</span>
+                        </Button>
+                      </CardFooter>
+                      
                     </motion.div>
                   )}
                 </AnimatePresence>
