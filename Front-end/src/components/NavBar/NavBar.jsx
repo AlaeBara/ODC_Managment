@@ -120,10 +120,12 @@ const NavBar = () => {
             <DropdownMenuLabel>Other Links</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Cloud className="mr-2 h-4 w-4" />
-                <span>Cloud</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              <DropdownMenuItem asChild>
+                <Link to="/cloud" className="flex items-center">
+                  <Cloud className="mr-2 h-4 w-4" />
+                  <span>Cloud</span>
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/calendar" className="flex items-center">

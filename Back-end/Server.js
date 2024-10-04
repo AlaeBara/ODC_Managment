@@ -13,7 +13,7 @@ const bcrypt = require('bcryptjs');
 const cookieParser = require('cookie-parser');
 const workFlow = require('./Routes/WorkFlow.js');
 const Presence = require('./Routes/Presence.js')
-
+const Cloud = require('./Routes/Cloud.js')
 
 dotenv.config();
 
@@ -42,7 +42,7 @@ app.use('/api/workFlow', workFlow);
 app.use('/api/evaluation', Evaluation)
 app.use('/api/binificary', Binificary)
 app.use('/api/presence', Presence)
-
+app.use('/api/cloud', Cloud)
 
 //insert line for test:
 const insertTestUser = async () => {
