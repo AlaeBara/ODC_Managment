@@ -1,12 +1,13 @@
+
 const Course = require('../Models/courseModel');
 const Candidate = require('../Models/candidateModel');
-const User = require('../Models/userModel'); // Correct import
+const { User } = require('../Models/userModel');
 
 const Gethomepageinfo = async (req, res) => {
     try {
         const userId = req.user.userId;
     
-        const user = await User.findById(userId).select('firstName');
+        const user = await User.findOne({ _id: userId }).select('firstName');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
