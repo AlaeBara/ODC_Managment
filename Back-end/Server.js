@@ -14,6 +14,7 @@ const cookieParser = require('cookie-parser');
 const workFlow = require('./Routes/WorkFlow.js');
 const Presence = require('./Routes/Presence.js')
 const Cloud = require('./Routes/Cloud.js')
+const homeapi = require('./Routes/Homepageapi.js')
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use('/api/evaluation', Evaluation)
 app.use('/api/binificary', Binificary)
 app.use('/api/presence', Presence)
 app.use('/api/cloud', Cloud)
+app.use('/api/home', homeapi)
 
 //insert line for test:
 const insertTestUser = async () => {
