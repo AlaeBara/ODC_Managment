@@ -139,7 +139,7 @@ export default function EvaluationForm() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-br from-orange-100 to-yellow-100">
+    <div className="min-h-screen p-8 bg-gradient-to-br from-gray-100 to-gray-200">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -147,7 +147,7 @@ export default function EvaluationForm() {
         transition={{ duration: 0.5 }}
       >
         <Card className="max-w-4xl mx-auto shadow-lg overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white">
+          <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white">
             <CardTitle className="text-3xl font-bold text-center">Évaluation de la formation</CardTitle>
             {courseDetails && (
               <p className="text-center text-white text-lg mt-2">{courseDetails.title}</p>
@@ -155,7 +155,7 @@ export default function EvaluationForm() {
           </CardHeader>
           <CardContent className="p-6 bg-white">
             <form onSubmit={handleSubmit} className="space-y-8">
-              <p className="text-md text-gray-600 mb-6 text-center italic">
+              <p className="text-md text-gray-600 mb-6 text-center">
                 Merci de renseigner votre degré de satisfaction par rapport à chacun des éléments ci-dessous.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

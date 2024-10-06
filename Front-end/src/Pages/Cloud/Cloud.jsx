@@ -6,7 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function  Cloud () {
+export default function Cloud() {
   const [folders, setFolders] = useState([])
   const [files, setFiles] = useState([])
   const [loadingFolders, setLoadingFolders] = useState(true)
@@ -17,7 +17,7 @@ export default function  Cloud () {
   useEffect(() => {
     const fetchFolders = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/cloud/folders` , {
+        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/cloud/folders`, {
           withCredentials: true,
         })
         setFolders(response.data.folders || [])
@@ -35,7 +35,7 @@ export default function  Cloud () {
     setLoadingFiles(true)
     setSelectedFolder(folderId)
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/cloud/folders/${folderId}/files ` , {
+      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/cloud/folders/${folderId}/files`, {
         withCredentials: true,
       })
       setFiles(response.data.files || [])
@@ -74,7 +74,7 @@ export default function  Cloud () {
 
   if (loadingFolders) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         <Loader2 className="w-12 h-12 animate-spin text-primary" />
       </div>
     )
@@ -82,7 +82,7 @@ export default function  Cloud () {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-white">
+      <div className="flex items-center justify-center h-screen bg-gray-50">
         <Alert variant="destructive" className="w-96">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
@@ -92,11 +92,11 @@ export default function  Cloud () {
   }
 
   return (
-    <div className="min-h-screen bg-white p-8">
+    <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-12 text-primary flex items-center justify-center">
           <CloudIcon className="mr-4 h-12 w-12" />
-            Cloud Storage
+          Cloud Storage
         </h1>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <Card className="lg:col-span-1">
