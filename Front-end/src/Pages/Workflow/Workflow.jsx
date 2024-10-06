@@ -160,188 +160,187 @@ export default function Component() {
   )
 
   return (
-    <div className="min-h-screen p-8">
-      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-extrabold text-orange-500 mb-8">
-          Formations Workflow
-        </h1>
-        <div className="relative w-full max-w-md mb-12">
-          <Input
-            type="text"
-            placeholder="Search formations..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-3 w-full rounded-full shadow-md ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 transition duration-300"
-          />
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-        </div>
-        {['Ongoing', 'Urgent', 'Upcoming'].map((status) => (
-          groupedFormations[status] && groupedFormations[status].length > 0 && (
-            <div key={status} className="mb-12">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">{status} Formations</h2>
-              <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <AnimatePresence>
-                  {groupedFormations[status].map((formation) => {
-                    const importance = getImportanceLevel(formation)
-                    return (
-                      <motion.div
-                        key={formation._id}
-                        layout
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 50 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Card className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl bg-white rounded-lg">
-                          <CardHeader className={`text-white bg-gradient-to-r from-orange-400 to-orange-500 py-4`}>
-                            <div className="flex justify-between items-center">
-                              <CardTitle className="text-xl font-bold truncate">{formation.title}</CardTitle>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => toggleExpand(formation._id)}
-                                className="text-white hover:bg-white/20"
-                                aria-label={expandedFormation === formation._id ? "Collapse formation details" : "Expand formation details"}
-                              >
-                                {expandedFormation === formation._id ? (
-                                  <ChevronUp className="h-6 w-6" />
-                                ) : (
-                                  <ChevronDown className="h-6 w-6" />
-                                )}
-                              </Button>
-                            </div>
-                          </CardHeader>
-                          <CardContent className="p-6">
-                            <div className="flex items-center justify-between mb-4">
-                              <Badge 
-                                variant="outline" 
-                                className={`${
-                                  importance.color === 'yellow' 
-                                    ? 'bg-yellow-400 text-white border-yellow-400' 
-                                    : `bg-${importance.color}-500 text-white border-${importance.color}-600`
-                                } px-3 py-1 text-sm font-semibold`}
-                              >
-                                {importance.text}
-                              </Badge>
-                              <div className="flex items-center space-x-2">
-                                <Clock className={`w-5 h-5 ${
-                                  importance.color === 'red' ? 'text-red-600' : 
-                                  importance.color === 'yellow' ? 'text-yellow-600' : 
-                                  'text-green-600'
-                                }`} />
-                                <span className={`text-sm font-medium ${
-                                  importance.color === 'red' ? 'text-red-600' : 
-                                  importance.color === 'yellow' ? 'text-yellow-600' : 
-                                  'text-green-600'
-                                }`}>
-                                  {importance.description}
-                                </span>
-                              </div>
-                            </div>
-                            <Progress 
-                              value={importance.progress} 
-                              className={`mb-6 h-2`}
-                            />
-                            <div className="flex items-center space-x-2 mb-4">
-                              <Calendar className="w-5 h-5 text-gray-500" />
-                              <p className="text-sm text-gray-600">
-                                {`${new Date(formation.startDate).toLocaleDateString()} - ${new Date(formation.endDate).toLocaleDateString()}`}
-                              </p>
-                            </div>
-                            <p className="text-sm text-gray-700 mb-4">{formation.description}</p>
-                            <div className="flex items-center justify-between mb-4">
-                              <Badge variant="secondary" className="bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors duration-200 rounded-full px-3 py-1">
-                                {formation.type}
-                              </Badge>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Users className="w-5 h-5 text-gray-500" />
-                              <p className="text-xs text-gray-500">
-                                Mentors: {formation.mentors.map((mentor) => mentor.email).join(", ")}
-                              </p>
-                            </div>
-                          </CardContent>
-                          <AnimatePresence>
-                            {expandedFormation === formation._id && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.5 }}
-                              >
-                                <CardFooter className="bg-gray-50 p-6">
-                                  <div className="w-full space-y-4">
-                                    <div className="flex items-center justify-center space-x-4">
-                                      <Upload className="w-5 h-5 text-gray-600" />
-                                      <span className="text-gray-700 font-medium">Import Candidates</span>
-                                      <input 
-                                        type="file" 
-                                        accept=".xlsx, .xls" 
-                                        onChange={handleFileChange} 
-                                        ref={fileInputRef}
-                                        className="hidden"
-                                        id={`file-upload-${formation._id}`}
-                                        disabled={isImportButtonDisabled(formation)}
-                                      />
-                                      <label 
-                                        htmlFor={`file-upload-${formation._id}`} 
-                                        className={`cursor-pointer bg-orange-500 text-white px-4 py-2 rounded-full transition-colors duration-200 shadow-md text-center ${
-                                          isImportButtonDisabled(formation) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
-                                        }`}
-                                      >
-                                        Choose File
-                                      </label>
-                                    </div>
-                                    {file && <p className="text-sm text-gray-600 text-center">Selected: {file.name}</p>}
-                                    {upload && (
-                                    <Button
-                                      onClick={() => handleUpload(formation._id)}
-                                      disabled={isUploading || isImportButtonDisabled(formation)}
-                                      className={`w-full flex bg-orange-500 items-center justify-center text-white px-4 py-2 rounded-full ${
-                                        isUploading || isImportButtonDisabled(formation)? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
-                                      }`}
-                                    >
-                                      {isUploading ? "Uploading..." : "Upload"}
-                                    </Button>
-                                    )}
-                                    <Button 
-                                      size="sm" 
-                                      className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200"
-                                      onClick={() => validateCandidates(formation._id)}
-                                    >
-                                      <Phone className="w-4 h-4" />
-                                      <span>Validate Candidates</span>
-                                    </Button>
-                                    <Button 
-                                      size="sm" 
-                                      className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
-                                      onClick={() => checkPresence(formation._id)}
-                                    >
-                                      <UserCheck className="w-4 h-4" />
-                                      <span>Check Presence</span>
-                                    </Button>
-                                  </div>
-                                </CardFooter>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </Card>
-                      </motion.div>
-                    )
-                  })}
-                </AnimatePresence>
-              </motion.div>
-            </div>
-          )
-        ))}
-        
-        {Object.keys(groupedFormations).length === 0 &&
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 mt-9">
-           <p className="text-lg font-medium">No Formation found.</p>
-          </div>
-        }
-      </div>
+<div className="min-h-screen p-8 bg-gradient-to-br from-gray-100 to-gray-200">
+  <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
+  <div className="max-w-7xl mx-auto">
+    <h1 className="text-5xl font-extrabold text-orange-600 mb-8">Formations Workflow</h1>
+    <div className="relative w-full max-w-md mb-12">
+      <Input
+        type="text"
+        placeholder="Search formations..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-10 pr-4 py-3 w-full rounded-full shadow-md ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 transition duration-300"
+      />
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
     </div>
-  )
-}
+
+    {['Ongoing', 'Urgent', 'Upcoming'].map((status) => (
+      groupedFormations[status] && groupedFormations[status].length > 0 && (
+        <div key={status} className="mb-12">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">{status} Formations</h2>
+          <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <AnimatePresence>
+              {groupedFormations[status].map((formation) => {
+                const importance = getImportanceLevel(formation);
+                return (
+                  <motion.div
+                    key={formation._id}
+                    layout
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 50 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Card className="overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl bg-white rounded-lg">
+                      <CardHeader className="text-white bg-gradient-to-r from-orange-500 to-orange-800 py-2">
+                        <div className="flex justify-between items-center">
+                          <CardTitle className="text-xl font-bold truncate">{formation.title}</CardTitle>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => toggleExpand(formation._id)}
+                            className="text-white hover:bg-white/20"
+                            aria-label={expandedFormation === formation._id ? "Collapse formation details" : "Expand formation details"}
+                          >
+                            {expandedFormation === formation._id ? (
+                              <ChevronUp className="h-6 w-6" />
+                            ) : (
+                              <ChevronDown className="h-6 w-6" />
+                            )}
+                          </Button>
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between mb-4">
+                          <Badge 
+                            variant="outline" 
+                            className={`${
+                              importance.color === 'yellow' 
+                                ? 'bg-yellow-500 text-white' 
+                                : `bg-${importance.color}-500 text-white border-${importance.color}-600`
+                            } px-3 py-1 text-sm font-semibold`}
+                          >
+                            {importance.text}
+                          </Badge>
+                          <div className="flex items-center space-x-2">
+                            <Clock className={`w-5 h-5 ${
+                              importance.color === 'red' ? 'text-red-600' : 
+                              importance.color === 'yellow' ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`} />
+                            <span className={`text-sm font-medium ${
+                              importance.color === 'red' ? 'text-red-600' : 
+                              importance.color === 'yellow' ? 'text-yellow-600' : 
+                              'text-green-600'
+                            }`}>
+                              {importance.description}
+                            </span>
+                          </div>
+                        </div>
+
+                        <Progress value={importance.progress} className={`mb-6 h-2`} />
+
+                        <div className="flex items-center space-x-2 mb-4">
+                          <Calendar className="w-5 h-5 text-gray-500" />
+                          <p className="text-sm text-gray-600">
+                            {`${new Date(formation.startDate).toLocaleDateString()} - ${new Date(formation.endDate).toLocaleDateString()}`}
+                          </p>
+                        </div>
+                        <p className="text-sm text-gray-700 mb-4">{formation.description}</p>
+                        <div className="flex items-center justify-between mb-4">
+                          <Badge variant="secondary" className="bg-gray-100 text-gray-800 hover:bg-gray-200 transition-colors duration-200 rounded-full px-3 py-1">
+                            {formation.type}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Users className="w-5 h-5 text-gray-500" />
+                          <p className="text-xs text-gray-500">
+                            Mentors: {formation.mentors.map((mentor) => mentor.email).join(", ")}
+                          </p>
+                        </div>
+                      </CardContent>
+
+                      <AnimatePresence>
+                        {expandedFormation === formation._id && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <CardFooter className="bg-gray-50 p-6">
+                              <div className="w-full space-y-4">
+                                <div className="flex items-center justify-center space-x-4">
+                                  <Upload className="w-5 h-5 text-gray-600" />
+                                  <span className="text-gray-700 font-medium">Import Candidates</span>
+                                  <input 
+                                    type="file" 
+                                    accept=".xlsx, .xls" 
+                                    onChange={handleFileChange} 
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    id={`file-upload-${formation._id}`}
+                                    disabled={isImportButtonDisabled(formation)}
+                                  />
+                                  <label 
+                                    htmlFor={`file-upload-${formation._id}`} 
+                                    className={`cursor-pointer bg-orange-500 text-white px-4 py-2 rounded-full transition-colors duration-200 shadow-md text-center ${
+                                      isImportButtonDisabled(formation) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
+                                    }`}
+                                  >
+                                    Choose File
+                                  </label>
+                                </div>
+                                {file && <p className="text-sm text-gray-600 text-center">Selected: {file.name}</p>}
+                                {upload && (
+                                <Button
+                                  onClick={() => handleUpload(formation._id)}
+                                  disabled={isUploading || isImportButtonDisabled(formation)}
+                                  className={`w-full flex bg-orange-500 items-center justify-center text-white px-4 py-2 rounded-full ${
+                                    isUploading || isImportButtonDisabled(formation)? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
+                                  }`}
+                                >
+                                  {isUploading ? "Uploading..." : "Upload"}
+                                </Button>
+                                )}
+                                <Button 
+                                  size="sm" 
+                                  className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200"
+                                  onClick={() => validateCandidates(formation._id)}
+                                >
+                                  <Phone className="w-4 h-4" />
+                                  <span>Validate Candidates</span>
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white rounded-full transition-colors duration-200" 
+                                  onClick={() => checkPresence(formation._id)}
+                                >
+                                  <UserCheck className="w-4 h-4" />
+                                  <span>Check Presence</span>
+                                </Button>
+                              </div>
+                            </CardFooter>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+      )
+    ))}
+
+    {Object.keys(groupedFormations).length === 0 && (
+      <div className="flex flex-col items-center justify-center h-full text-gray-500 mt-9">
+        <p className="text-lg font-medium">No Formation found.</p>
+      </div>
+    )}
+  </div>
+</div>
+)}

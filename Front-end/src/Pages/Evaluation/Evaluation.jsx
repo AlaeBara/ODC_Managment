@@ -100,7 +100,7 @@ export default function CourseEvaluations() {
   )
 
   return (
-    <div className="min-h-screen p-8 ">
+    <div className="min-h-screen p-8 bg-gradient-to-br from-gray-100 to-gray-200">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-orange-600 mb-8 text-center">Courses Evaluations</h1>
@@ -130,7 +130,7 @@ export default function CourseEvaluations() {
               transition={{ duration: 0.3 }}
             >
               <Card className="overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white">
-                <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-6">
+                <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-4">
                   <div className="flex justify-between items-center">
                     <CardTitle className="text-2xl font-bold truncate">{course.title}</CardTitle>
                     <Button

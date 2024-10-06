@@ -158,14 +158,14 @@ export default function FormationPage() {
   }
 
   return (
-    <div className="p-6 flex flex-col space-y-6 bg-orange-50">
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-4 flex flex-col"
-      >
-        {formationInfo && (
+<div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+      <div className="container mx-auto px-4 py-8">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="space-y-6"
+        >
           <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white overflow-hidden shadow-lg">
             <CardHeader className="pb-2">
               <CardTitle className="text-2xl font-bold">Formation Information</CardTitle>
@@ -174,149 +174,149 @@ export default function FormationPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">Program</h3>
-                  <p className="text-center text-sm">{formationInfo.title}</p>
+                  <p className="text-center text-sm">Sample Program</p>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">Start Date</h3>
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    <p className="text-sm">{new Date(formationInfo.startDate).toLocaleDateString()}</p>
+                    <p className="text-sm">01/01/2024</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">End Date</h3>
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    <p className="text-sm">{new Date(formationInfo.endDate).toLocaleDateString()}</p>
+                    <p className="text-sm">12/31/2024</p>
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
-        )}
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Input
-                placeholder="Filter table..."
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full pl-8 pr-4 py-1 text-sm border-2 border-orange-400 focus:border-orange-500 rounded-full transition-all duration-300 ease-in-out"
-              />
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-orange-400 h-4 w-4" />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+              <div className="relative w-full sm:w-64">
+                <Input
+                  placeholder="Filter table..."
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="w-full pl-8 pr-4 py-1 text-sm border-2 border-orange-300 focus:border-orange-500 rounded-full transition-all duration-300 ease-in-out"
+                />
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-orange-400 h-4 w-4" />
+              </div>
+              <Button onClick={clearFilter} variant="outline" className="w-full sm:w-auto px-4 py-1 text-sm bg-white text-orange-500 border-2 border-orange-300 hover:bg-orange-50 rounded-full transition-all duration-300 ease-in-out">
+                <X className="mr-1 h-3 w-3" /> Clear
+              </Button>
             </div>
-            <Button onClick={clearFilter} variant="outline" className="w-full sm:w-auto px-4 py-1 text-sm bg-white text-orange-500 border-2 border-orange-400 hover:bg-orange-100 rounded-full transition-all duration-300 ease-in-out">
-              <X className="mr-1 h-3 w-3" /> Clear
-            </Button>
+            <div className="flex items-center space-x-1 text-orange-600">
+              <Users className="h-4 w-4" />
+              <span className="font-semibold text-sm">
+                {filteredData.length} Candidate{filteredData.length !== 1 ? "s" : ""}
+              </span>
+            </div>
           </div>
-          <div className="flex items-center space-x-1 text-orange-600">
-            <Users className="h-4 w-4" />
-            <span className="font-semibold text-sm">
-              {filteredData.length} Candidate{filteredData.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-        </div>
 
-        <Card className="bg-white shadow-md">
-          <CardContent className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full divide-y divide-orange-200">
-                <thead className="bg-orange-500">
-                  <tr>
-                    {columns.map((column) => (
-                      <th
-                        key={column}
-                        className="px-4 py-4 text-left text-sm font-bold text-white uppercase tracking-wider"
-                      >
-                        <button
-                          onClick={() => handleSort(column)}
-                          className="flex items-center space-x-1 hover:text-orange-100 transition-colors duration-200"
+          <Card className="bg-white shadow-md">
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full divide-y divide-gray-200">
+                  <thead className="bg-orange-500">
+                    <tr>
+                      {columns.map((column) => (
+                        <th
+                          key={column}
+                          className="px-4 py-4 text-left text-sm font-bold text-white uppercase tracking-wider"
                         >
-                          <span>{column.charAt(0).toUpperCase() + column.slice(1).replace(/([A-Z])/g, " $1").trim()}</span>
-                          <ArrowUpDown className="h-3 w-3" />
-                        </button>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-orange-100">
-                  <AnimatePresence mode="wait">
-                    {paginatedData.length === 0 ? (
-                      <motion.tr
-                        key="no-results"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <td colSpan={columns.length} className="p-3 text-center text-orange-500">
-                          No results found
-                        </td>
-                      </motion.tr>
-                    ) : (
-                      paginatedData.map((item) => (
-                        <motion.tr 
-                          key={item._id}
+                          <button
+                            onClick={() => handleSort(column)}
+                            className="flex items-center space-x-1 hover:text-orange-100 transition-colors duration-200"
+                          >
+                            <span>{column.charAt(0).toUpperCase() + column.slice(1).replace(/([A-Z])/g, " $1").trim()}</span>
+                            <ArrowUpDown className="h-3 w-3" />
+                          </button>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    <AnimatePresence mode="wait">
+                      {paginatedData.length === 0 ? (
+                        <motion.tr
+                          key="no-results"
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="hover:bg-orange-50 transition-colors duration-200"
                         >
-                          {columns.map((column) => (
-                            <td
-                              key={column}
-                              className="px-3 py-2 whitespace-nowrap text-sm text-gray-700"
-                            >
-                              {column === "sessions" ? formatSessions(item[column], item._id) : item[column]}
-                            </td>
-                          ))}
+                          <td colSpan={columns.length} className="p-3 text-center text-gray-500">
+                            No results found
+                          </td>
                         </motion.tr>
-                      ))
-                    )}
-                  </AnimatePresence>
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                      ) : (
+                        paginatedData.map((item) => (
+                          <motion.tr 
+                            key={item._id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="hover:bg-orange-50 transition-colors duration-200"
+                          >
+                            {columns.map((column) => (
+                              <td
+                                key={column}
+                                className="px-3 py-2 whitespace-nowrap text-sm text-gray-700"
+                              >
+                                {column === "sessions" ? formatSessions(item[column], item._id) : item[column]}
+                              </td>
+                            ))}
+                          </motion.tr>
+                        ))
+                      )}
+                    </AnimatePresence>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-600">Rows per page:</span>
-            <Select value={itemsPerPage.toString()} onValueChange={handleRowsPerPageChange}>
-              <SelectTrigger className="w-[60px] h-8 text-xs border-orange-300 focus:ring-orange-500">
-                <SelectValue placeholder="7" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7">7</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="30">30</SelectItem>
-                <SelectItem value="40">40</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-gray-600">
-              Page {currentPage} of {totalPages}
-            </span>
-            <div className="flex space-x-1">
-              <Button onClick={goToFirstPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
-                <ChevronsLeft className="w-3 h-3" />
-              </Button>
-              <Button onClick={goToPrevPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
-                <ChevronLeft className="w-3 h-3" />
-              </Button>
-              <Button onClick={goToNextPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
-                <ChevronRight className="w-3 h-3" />
-              </Button>
-              <Button onClick={goToLastPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
-                <ChevronsRight className="w-3 h-3" />
-              </Button>
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-gray-600">Rows per page:</span>
+              <Select value={itemsPerPage.toString()} onValueChange={handleRowsPerPageChange}>
+                <SelectTrigger className="w-[60px] h-8 text-xs border-orange-300 focus:ring-orange-500">
+                  <SelectValue placeholder="7" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="30">30</SelectItem>
+                  <SelectItem value="40">40</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-xs text-gray-600">
+                Page {currentPage} of {totalPages}
+              </span>
+              <div className="flex space-x-1">
+                <Button onClick={goToFirstPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                  <ChevronsLeft className="w-3 h-3" />
+                </Button>
+                <Button onClick={goToPrevPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                  <ChevronLeft className="w-3 h-3" />
+                </Button>
+                <Button onClick={goToNextPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                  <ChevronRight className="w-3 h-3" />
+                </Button>
+                <Button onClick={goToLastPage} variant="outline" size="icon" className="w-6 h-6 border-orange-300 text-orange-500 hover:bg-orange-100">
+                  <ChevronsRight className="w-3 h-3" />
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   )
 }

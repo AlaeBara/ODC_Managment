@@ -151,7 +151,7 @@ export default function CourseOverviewDashboard() {
   )
   
   if (error) return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-orange-50 to-orange-100">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <div className="text-center p-8 bg-white rounded-lg shadow-xl">
         <h2 className="text-2xl font-bold text-orange-600 mb-4">Error</h2>
         <p className="text-gray-700">{error}</p>
@@ -281,7 +281,7 @@ export default function CourseOverviewDashboard() {
                           onClick={() => {
                             stateOfEvaluation(course._id)
                           }}
-                          className="w-full flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
+                          className="w-full flex items-center justify-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white transition-all duration-200 rounded-full py-2 px-4 transform"
                         >
                           <ArrowUpRight className="w-4 h-4" />
                           <span>View Details</span>

@@ -230,7 +230,7 @@ export default function Formation() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <Toaster position="top-right" reverseOrder={false} />
       
       <button
@@ -245,44 +245,51 @@ export default function Formation() {
         />
       </button>
 
-      <aside className={`w-64 bg-white border-r lg:fixed lg:left-0 lg:top-16 lg:bottom-0 overflow-y-auto transition-transform duration-300 ease-in-out ${
-        showSidebar ? 'translate-x-0' : '-translate-x-full'
-      } lg:translate-x-0 fixed top-16 bottom-0 z-30`}>
-        <div className="p-4 space-y-2">
-          <Button
-            className="w-full justify-start text-white bg-green-500"
-            onClick={handleAddFormation}
-            variant="outline"
-          >
-            <PlusCircle className="mr-2" size={20} />
-            Add Formation
-          </Button>
-          <Button
-            className="w-full justify-start text-white bg-orange-500  "
-            onClick={handleModifyFormation}
-            variant="outline"
-          >
-            <Edit className="mr-2" size={20} />
-            Modify Formation
-          </Button>
-          <Button
-            className="w-full justify-start text-white  bg-red-500"
-            onClick={handleDeleteFormation}
-            variant="outline"
-          >
-            <Trash2 className="mr-2" size={20} />
-            Delete Formation
-          </Button> 
+      <aside 
+      className={`
+        w-64 bg-gray-100 border-r
+        lg:fixed lg:left-0 lg:top-16 lg:bottom-0 
+        overflow-y-auto transition-all duration-300 ease-in-out 
+        ${showSidebar ? 'translate-x-0' : '-translate-x-full'} 
+        lg:translate-x-0 fixed top-16 bottom-0 z-30
+      `}
+    >
+      <div className="p-6 space-y-4">
+        <Button
+          className="w-full justify-start text-white bg-green-500 hover:bg-green-600 transition-colors duration-200"
+          onClick={handleAddFormation}
+        >
+          <PlusCircle className="mr-3" size={18} />
+          Add Formation
+        </Button>
+        <Button
+          className="w-full justify-start text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200"
+          onClick={handleModifyFormation}
+        >
+          <Edit className="mr-3" size={18} />
+          Modify Formation
+        </Button>
+        <Button
+          className="w-full justify-start text-white bg-red-500 hover:bg-red-600 transition-colors duration-200"
+          onClick={handleDeleteFormation}
+        >
+          <Trash2 className="mr-3" size={18} />
+          Delete Formation
+        </Button> 
 
-          {deleteMode && (
-          <div className="flex justify-center items-center mb-4 pt-4">
-            <Button onClick={showmodel} variant="destructive">
-              Delete {selectedForDeletion.length} Formations
+        {deleteMode && (
+          <div className="pt-4">
+            <Button 
+              onClick={showmodel} 
+              variant="destructive"
+              className="w-full justify-center bg-red-600 hover:bg-red-700 transition-colors duration-200"
+            >
+              Delete {selectedForDeletion.length} Formation{selectedForDeletion.length !== 1 ? 's' : ''}
             </Button>
           </div>
         )}
-        </div>
-      </aside>
+      </div>
+    </aside>
 
       <main className="flex-1 p-4 lg:ml-64 flex flex-col">
         
@@ -313,7 +320,7 @@ export default function Formation() {
         </div>
 
         <div className="mt-4">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600 mb-5">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-left text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-600 mb-5">
             Events Available
           </h1>
           <EventDisplay 

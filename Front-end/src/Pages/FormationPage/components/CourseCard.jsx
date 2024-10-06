@@ -24,7 +24,7 @@ const CourseCard = ({ course, deleteMode, isSelected, onSelectForDeletion }) => 
   return (
     <Card className={`w-80 shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col text-sm m-4 ${deleteMode ? 'relative' : ''}`}>
 
-      <CardHeader className={`bg-orange-500 text-white p-2 rounded-t-lg relative`}>
+      <CardHeader className={`bg-gradient-to-br from-orange-500 to-orange-700 text-white p-2 rounded-t-lg relative`}>
         {deleteMode && (
           <div className="absolute top-2 right-2 z-10">
             <Checkbox
