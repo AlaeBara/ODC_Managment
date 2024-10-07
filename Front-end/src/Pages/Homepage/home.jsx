@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, AlertCircle, Search, CheckCircle2, Users, BookOpen } from "lucide-react"
+import { Calendar, Clock, AlertCircle, Search, CheckCircle2, Users, BookOpen,User } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Link } from "react-router-dom"
 
@@ -195,7 +195,7 @@ export default function Homepage() {
         <Card className="overflow-hidden shadow-lg rounded-lg">
           <div className="bg-gradient-to-br from-orange-500 to-orange-700 p-6 text-white">
             <CardTitle className="text-lg font-semibold flex items-center mb-2">
-              <BookOpen className="mr-2" /> Total Present Students
+              <User className="mr-2" /> Total Present Students
             </CardTitle>
             <p className="text-4xl font-bold text-orange-200">{totalPresentstudents}</p>
           </div>

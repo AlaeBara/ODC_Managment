@@ -166,7 +166,7 @@ export default function CourseOverviewDashboard() {
   )
 
   return (
-    <div className="min-h-screen p-4 sm:p-8 bg-gray-50">
+    <div className="min-h-screen p-4 sm:p-8  bg-gradient-to-br from-gray-100 to-gray-200">
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
       <div className="max-w-7xl mx-auto">
         <motion.h1 
