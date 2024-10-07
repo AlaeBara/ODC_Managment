@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, isAdmin = false }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Call the backend API to validate the token. The cookie will be sent automatically.
-        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/validate-token`, { withCredentials: true });
-        // If the token is valid, set isAuthenticated to true
+        const endpoint = isAdmin ? 'verifier_admin' : 'validate-token';
+        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/${endpoint}`, { withCredentials: true });
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
@@ -23,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [isAdmin]);
 
   if (loading) return <div>Loading...</div>;
 

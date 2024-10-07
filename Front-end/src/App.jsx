@@ -11,12 +11,8 @@ import EvaluationDashboard from './Pages/beneficiare/EvaluationDashboard.jsx'
 import Check from './Pages/PresenceCK/Check.jsx';
 import Cloud from './Pages/Cloud/Cloud.jsx';
 
-
-
-
 //admin 
 import Dashboard from './Admin/Dashboard/Dashboard.jsx'
-import ProtectedRoutesAdmin  from './Security/ProtectedRoutesAdmin.jsx'
 
 
 // Lazy load components
@@ -178,9 +174,9 @@ function App() {
           <Route
               path="/Dashboard"
               element={ 
-                <ProtectedRoutesAdmin >
+                <ProtectedRoute isAdmin={true} >
                   <Dashboard/>
-                </ProtectedRoutesAdmin>
+                </ProtectedRoute>
               }
           />
         </Routes>
