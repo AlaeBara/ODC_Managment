@@ -11,6 +11,14 @@ import EvaluationDashboard from './Pages/beneficiare/EvaluationDashboard.jsx'
 import Check from './Pages/PresenceCK/Check.jsx';
 import Cloud from './Pages/Cloud/Cloud.jsx';
 
+
+
+
+//admin 
+import Dashboard from './Admin/Dashboard/Dashboard.jsx'
+import ProtectedRoutesAdmin  from './Security/ProtectedRoutesAdmin.jsx'
+
+
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
 const Home = lazy(() => import('./Pages/Homepage/home'));
@@ -164,6 +172,19 @@ function App() {
             }
           />
         </Routes>
+
+        {/* admin routes */}
+        <Routes>
+          <Route
+              path="/Dashboard"
+              element={ 
+                <ProtectedRoutesAdmin >
+                  <Dashboard/>
+                </ProtectedRoutesAdmin>
+              }
+          />
+        </Routes>
+        
       </Suspense>
     </Router>
   );
