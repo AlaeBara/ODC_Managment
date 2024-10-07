@@ -57,11 +57,17 @@ const Login = () => {
         }
       );
 
-      if (response.status === 200) {
+      if (response.data.role === "Mentor") {
         toast.success(response.data.message);
         setTimeout(() => {
           navigate('/');
         }, 2000);
+      }
+      else if (response.data.role === "Admin") {
+        toast.success(response.data.message);
+        setTimeout(() => {
+          navigate('/Dashboard');
+        }, 2000)
       }
       else{
         toast.success(response.data.message);

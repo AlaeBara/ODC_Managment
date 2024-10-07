@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
-    credentials: true, // Allow credentials (cookies)
+    credentials: true,
   })
 );
 
@@ -52,9 +52,9 @@ const insertTestUser = async () => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
-      email: 'test@test.com',
+      email: 'admin@test.com',
       password: hashedPassword,
-      role: 'Mentor', 
+      role: 'Admin', 
       assignedCourses: [],
   });
 
@@ -68,7 +68,7 @@ const insertTestUser = async () => {
   }
 };
 
-//insertTestUser();
+// insertTestUser();
 
 
 // Start server
