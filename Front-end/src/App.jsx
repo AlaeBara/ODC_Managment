@@ -13,6 +13,7 @@ import Cloud from './Pages/Cloud/Cloud.jsx';
 
 //admin 
 import Dashboard from './Admin/Dashboard/Dashboard.jsx'
+import Notfound from './Pages/Notfound.jsx';
 
 
 // Lazy load components
@@ -167,20 +168,19 @@ function App() {
               </ProtectedRoute>
             }
           />
-        </Routes>
-
-        {/* admin routes */}
-        <Routes>
           <Route
-              path="/Dashboard"
-              element={ 
-                <ProtectedRoute isAdmin={true} >
-                  <Dashboard/>
-                </ProtectedRoute>
-              }
+            path="/Dashboard"
+            element={ 
+              <ProtectedRoute isAdmin={true}>
+                <Dashboard/>
+              </ProtectedRoute>
+            }
           />
-        </Routes>
-        
+          <Route
+            path="*"
+            element={<Notfound/>}
+          />
+        </Routes>  
       </Suspense>
     </Router>
   );

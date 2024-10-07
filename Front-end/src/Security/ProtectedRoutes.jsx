@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children, isAdmin = false }) => {
 
   if (loading) return <div>Loading...</div>;
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticated ? children : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;
