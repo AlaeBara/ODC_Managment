@@ -34,7 +34,7 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
         await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/logout`,{withCredentials:true});
-        navigate('/login'); 
+        navigate('/'); 
         localStorage.clear();
     } catch (error) {
         console.error('Logout failed:', error);
@@ -49,7 +49,7 @@ const NavBar = () => {
   return (
     <header className="z-10 sticky top-0 flex h-16 items-center justify-between border-b bg-background px-4 md:px-6">
       {/* Left side: Logo */}
-      <Link to="/" className="flex items-center gap-2 text-lg font-semibold">
+      <Link to="/Home" className="flex items-center gap-2 text-lg font-semibold">
         <img className="h-15 w-12" src={Logo} alt="Logo" />
       </Link>
 
@@ -57,7 +57,7 @@ const NavBar = () => {
       <div className="flex items-center gap-4">
         {/* Navigation links (hidden on smaller screens) */}
         <nav className="hidden md:flex md:gap-5 lg:gap-6 text-sm font-medium">
-          <Link to="/" className="text-muted-foreground transition-colors hover:text-foreground">Home</Link>
+          <Link to="/Home" className="text-muted-foreground transition-colors hover:text-foreground">Home</Link>
           <Link to="/Formation" className="text-muted-foreground transition-colors hover:text-foreground">Formation</Link>
 
           {/* Beneficiary Dropdown */}
@@ -76,21 +76,21 @@ const NavBar = () => {
           </SheetTrigger>
           <SheetContent side="left">
             <nav className="grid gap-6 text-lg font-medium">
-              <Link to="/" className="flex items-center gap-2 text-lg font-semibold">
+              <Link to="/Home" className="flex items-center gap-2 text-lg font-semibold">
                 <img className="h-15 w-12" src={Logo} alt="Logo" />
               </Link>
-              <Link to="/" className="text-muted-foreground hover:text-foreground">Home</Link>
+              <Link to="/Home" className="text-muted-foreground hover:text-foreground">Home</Link>
               <Link to="/Formation" className="text-muted-foreground hover:text-foreground">Formation</Link>
 
               {/* Beneficiary Dropdown in Mobile Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                    <span>Beneficiary</span>
-                    <ChevronDown className="ml-1 h-4 w-4" />
+                  <Link to="/beneficiary/overview" className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">Beneficiary</Link>
+                    {/* <ChevronDown className="ml-1 h-4 w-4" /> */}
                   </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent side="bottom" align="start">
+                {/* <DropdownMenuContent side="bottom" align="start">
                   <DropdownMenuItem asChild>
                     <Link to="#">Overview</Link>
                   </DropdownMenuItem>
@@ -100,10 +100,10 @@ const NavBar = () => {
                   <DropdownMenuItem asChild>
                     <Link to="#">Reports</Link>
                   </DropdownMenuItem>
-                </DropdownMenuContent>
+                </DropdownMenuContent> */}
               </DropdownMenu>
 
-              <Link to="/" className="text-muted-foreground hover:text-foreground">Evaluation</Link>
+              <Link to="/evaluation" className="text-muted-foreground hover:text-foreground">Evaluation</Link>
             </nav>
           </SheetContent>
         </Sheet>

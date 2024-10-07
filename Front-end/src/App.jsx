@@ -14,7 +14,7 @@ import Cloud from './Pages/Cloud/Cloud.jsx';
 //admin 
 import Dashboard from './Admin/Dashboard/Dashboard.jsx'
 import Notfound from './Pages/Notfound.jsx';
-
+import SideBar from './components/SideBar/SideBar.jsx'
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -43,9 +43,9 @@ function App() {
     <Router>
       <Suspense fallback={<Spinner />}>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route
-            path="/"
+            path="/Home"
             element={
               <ProtectedRoute>
                 <MainLayout>
@@ -168,11 +168,13 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* admin routes */}
           <Route
             path="/Dashboard"
             element={ 
               <ProtectedRoute isAdmin={true}>
-                <Dashboard/>
+                <SideBar/>
               </ProtectedRoute>
             }
           />

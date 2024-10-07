@@ -60,7 +60,7 @@ const Login = () => {
       if (response.data.role === "Mentor") {
         toast.success(response.data.message);
         setTimeout(() => {
-          navigate('/');
+          navigate('/Home');
         }, 2000);
       }
       else if (response.data.role === "Admin") {
