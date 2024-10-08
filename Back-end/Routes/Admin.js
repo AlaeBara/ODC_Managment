@@ -3,11 +3,11 @@ const { Allmentors, Confirmationrate, Totalmentors, GetFormationscount, GetCurre
 const authenticated = require('../Middlewares/Authmiddleware');
 const router = express.Router();
 
-router.get('/totalmentors', Totalmentors)
-router.get('/Totalformations', GetFormationscount)
-router.get('/GetCurrentFormations', GetCurrentFormationscount)
-router.get('GetFormations', GetFormations)
-router.get('/Confirmationrate', Confirmationrate)
-router.get('/allmentors', Allmentors)
+router.get('/totalmentors', authenticated, Totalmentors)
+router.get('/Totalformations', authenticated, GetFormationscount)
+router.get('/GetCurrentFormations', authenticated, GetCurrentFormationscount)
+router.get('/GetFormations', GetFormations)
+router.get('/Confirmationrate', authenticated, Confirmationrate)
+router.get('/allmentors', authenticated, Allmentors)
 
 module.exports = router;

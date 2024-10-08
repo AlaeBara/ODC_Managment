@@ -38,7 +38,7 @@ const GetCurrentFormationscount = async (req, res) => {
 const GetFormations = async (req, res) => {
     try {
         const courses = await Course.find().populate('mentors');  // Use the Course model
-        res.status(200).json(courses);
+        res.status(200).json({ courses: courses });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching courses', error: error.message });
     }
