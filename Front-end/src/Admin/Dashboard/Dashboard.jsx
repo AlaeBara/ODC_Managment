@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
-import { Users, Clipboard, BarChart2,  CheckCircle2 , Clock} from 'lucide-react';
-import CardFormationt from './CardFormationt'; 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Users, Clipboard, BarChart2, CheckCircle2, Clock, Calendar } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import CardFormationt from './CardFormationt';
 
 const Dashboard = () => {
-  const [totalMentors, setTotalMentors] = useState(10);
-  const [currentFormation, setCurrentFormation] = useState(5);
-  const [numberOfFormation, setNumberOfFormation] = useState(6);
+  const [totalMentors, setTotalMentors] = useState(null);
+  const [currentFormation, setCurrentFormation] = useState(null);
+  const [numberOfFormation, setNumberOfFormation] = useState(null);
+  const [allCourses, setAllCourses] = useState([]);
 
-  const currentFormations = [
-    { id: 1, title: 'React Basics', date: '2024-10-01', description: 'Learn the basics of React.', type: 'Workshop', mentors: 'John Doe' },
-    { id: 2, title: 'Node.js Essentials', date: '2024-10-02', description: 'Introduction to Node.js.', type: 'Webinar', mentors: 'Jane Smith' },
-    { id: 3, title: 'MongoDB Mastery', date: '2024-10-03', description: 'Become a MongoDB expert.', type: 'Course', mentors: 'Alice Johnson' },
-  ];
-
-  const upcomingFormations = [
-    { id: 1, title: 'Advanced React', date: '2024-11-01', description: 'Deep dive into advanced React topics.', type: 'Workshop', mentors: 'Chris Lee'},
-    { id: 2, title: 'GraphQL Workshop', date: '2024-11-05', description: 'Learn how to use GraphQL.', type: 'Workshop', mentors: 'Sara Brown' },
-    { id: 3, title: 'Next.js Deep Dive', date: '2024-11-10', description: 'Explore Next.js in-depth.', type: 'Course', mentors: 'Mark Wilson' },
-  ];
-
-
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const mentorsResponse = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/totalmentors`, { withCredentials: true });
+        setTotalMentors(mentorsResponse.data.totalMentors);
   
+        const formationsResponse = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/Totalformations`, { withCredentials: true });
+        setNumberOfFormation(formationsResponse.data.totalCourses);
+  
+        const currentResponse = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/GetCurrentFormations`, { withCredentials: true });
+        setCurrentFormation(currentResponse.data.currentFormations);
+  
+        const allFormation = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/GetFormations`, { withCredentials: true });
+        setAllCourses(allFormation.data.courses);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   return (
     <div className="grid mt-8 gap-6 px-4 sm:px-0">
       {/* First Row: 3 Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-9 bg-white p-6 rounded-lg">
-
         {/* Total Mentors */}
         <div className="p-8 shadow-lg rounded-xl bg-gradient-to-r from-blue-400 to-blue-500 text-white flex items-center transform hover:scale-105 transition-transform duration-300">
           <div className="bg-white p-4 rounded-full mr-4 shadow-lg">
@@ -61,46 +70,88 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Second Row: Tables and Donut Chart */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-        {/* Left Column: Stacked Tables */}
         <div className="space-y-6">
-          {/* Current Formation Table */}
-          <div className="bg-white shadow-lg rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Current Formation</h3>
-            <div className="overflow-y-auto h-48">
-              {currentFormations.map(event => (
-                <CardFormationt 
-                  key={event.id}
-                  icon={<CheckCircle2/>}
-                  title={event.title}
-                  date={event.date}
-                  description={event.description}
-                  type={event.type}
-                  mentors={event.mentors}
-                />
-              ))}
-            </div>
-          </div>
+          <Card className="overflow-hidden shadow-xl rounded-lg">
+            <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
+              <CardTitle className="text-2xl font-bold flex items-center">
+                <Calendar className="mr-2" /> Current Events
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
+              {allCourses && allCourses.length > 0 ? (
+                allCourses.map((course) => (
+                  <div key={course._id} className="py-4 flex items-start space-x-4">
+                    <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
+                      <CheckCircle2 className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
+                      <p className="text-sm text-gray-600 font-medium">
+                        {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">{course.description}</p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Type: <span className="font-medium text-orange-700">{course.type}</span>
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Mentors:{" "}
+                        <span className="font-medium text-orange-700">{course.mentors.map((mentor) => mentor.email).join(", ")}</span>
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                        In Progress
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center py-8 text-gray-500">No current events found.</p>
+              )}
+            </CardContent>
+          </Card>
 
-          {/* Upcoming Formation Table */}
-          <div className="bg-white shadow-lg rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Upcoming Formation</h3>
-            <div className="overflow-y-auto h-48">
-              {upcomingFormations.map(event => (
-                <CardFormationt 
-                  key={event.id}
-                  icon={<Clock/>}
-                  title={event.title}
-                  date={event.date}
-                  description={event.description}
-                  type={event.type}
-                  mentors={event.mentors}
-                />
-              ))}
-            </div>
+              <Card className="overflow-hidden shadow-xl rounded-lg">
+              <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
+                <CardTitle className="text-2xl font-bold flex items-center">
+                  <Calendar className="mr-2" /> Upcoming Events
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
+                {allCourses && allCourses.length > 0 ? (
+                  allCourses.map((course) => (
+                    <div key={course._id} className="py-4 flex items-start space-x-4">
+                      <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
+                        <CheckCircle2 className="w-6 h-6 text-orange-600" />
+                      </div>
+                      <div className="flex-grow">
+                        <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
+                        <p className="text-sm text-gray-600 font-medium">
+                          {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">{course.description}</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Type: <span className="font-medium text-orange-700">{course.type}</span>
+                        </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          Mentors:{" "}
+                          <span className="font-medium text-orange-700">{course.mentors.map((mentor) => mentor.email).join(", ")}</span>
+                        </p>
+                      </div>
+                      <div className="flex-shrink-0">
+                        <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                          In Progress
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-center py-8 text-gray-500">No Upcoming events found.</p>
+                )}
+              </CardContent>
+            </Card>
           </div>
-        </div>
 
         {/* Right Column: Donut Chart Placeholder */}
         <div className="bg-white shadow-lg rounded-lg p-6 flex items-center justify-center">

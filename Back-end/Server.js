@@ -15,6 +15,7 @@ const workFlow = require('./Routes/WorkFlow.js');
 const Presence = require('./Routes/Presence.js')
 const Cloud = require('./Routes/Cloud.js')
 const homeapi = require('./Routes/Homepageapi.js')
+const admin = require('./Routes/Admin.js')
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ app.use('/api/binificary', Binificary)
 app.use('/api/presence', Presence)
 app.use('/api/cloud', Cloud)
 app.use('/api/home', homeapi)
+app.use('/api/admin',admin)
 
 //insert line for test:
 const insertTestUser = async () => {

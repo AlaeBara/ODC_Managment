@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 
 // User model
 const userSchema = new mongoose.Schema({
-    firstName: { type: String },  // Not required
-    lastName: { type: String },   // Not required
+    firstName: { type: String },
+    lastName: { type: String },
     email: { type: String, required: true, unique: true },
-    phoneNumber: { type: String },  // Optional
+    phoneNumber: { type: String },
     password: { type: String, required: true },
     role: { type: String, enum: ['Admin', 'Mentor'], required: true },
     assignedCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
-    profilePic: { type: String }  // Optional
+    profilePic: { type: String }
 });
 
 const User = mongoose.model('User', userSchema);
