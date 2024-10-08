@@ -11,10 +11,13 @@ import EvaluationDashboard from './Pages/beneficiare/EvaluationDashboard.jsx'
 import Check from './Pages/PresenceCK/Check.jsx';
 import Cloud from './Pages/Cloud/Cloud.jsx';
 
-//admin 
-import Dashboard from './Admin/Dashboard/Dashboard.jsx'
+
 import Notfound from './Pages/Notfound.jsx';
-import SideBar from './components/SideBar/SideBar.jsx'
+
+//admin 
+import MainLayoutAdmin from './MainLayoutAdmin.jsx';
+
+
 
 // Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
@@ -24,6 +27,9 @@ const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
 const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
+
+const Dashboard = lazy(() => import('./Admin/Dashboard/Dashboard.jsx'))
+
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -162,9 +168,9 @@ function App() {
             path="/cloud"
             element={
               <ProtectedRoute>
-                <MainLayout>
+                <MainLayoutAdmin>
                   <Cloud/>
-                </MainLayout>
+                </MainLayoutAdmin>
               </ProtectedRoute>
             }
           />
@@ -174,10 +180,17 @@ function App() {
             path="/Dashboard"
             element={ 
               <ProtectedRoute isAdmin={true}>
-                <SideBar/>
+                <MainLayoutAdmin>
+                  <Dashboard/>
+                </MainLayoutAdmin>
               </ProtectedRoute>
             }
           />
+
+
+
+
+
           <Route
             path="*"
             element={<Notfound/>}
