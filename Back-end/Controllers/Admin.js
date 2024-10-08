@@ -64,17 +64,27 @@ const Confirmationrate = async (req, res) => {
 
 const Allmentors = async (req, res) => {
   try {
-    const mentors = User.find({ role: 'Mentor' }).select('-password phoneNumber ');
+    const mentors = await User.find({ role: 'Mentor' }).select('-password'); // Exclude password from response
+
     if (mentors.length === 0) {
       return res.status(404).json({ message: 'No mentors found' });
     }
 
-    res.status(200).json(mentors);
+    const mentorData = mentors.map(mentor => ({
+      _id: mentor._id,
+      firstName: mentor.firstName,
+      lastName: mentor.lastName,
+      profilePic: mentor.profilePic,
+    }));
+
+    res.status(200).json(mentorData);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching mentors', error: error.message });
   }
-
 };
+
+
+
 
 
 
