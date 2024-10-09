@@ -15,7 +15,7 @@ const workFlow = require('./Routes/WorkFlow.js');
 const Presence = require('./Routes/Presence.js')
 const Cloud = require('./Routes/Cloud.js')
 const homeapi = require('./Routes/Homepageapi.js')
-const admin = require('./Routes/Admin.js')
+const admin = require('./Routes/Admin/Admin.js')
 
 dotenv.config();
 

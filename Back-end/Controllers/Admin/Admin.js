@@ -1,6 +1,6 @@
-const { User } = require('../Models/userModel');
-const Course = require('../Models/courseModel');  
-const Candidate = require('../Models/candidateModel');
+const { User } = require('../../Models/userModel');
+const Course = require('../../Models/courseModel');  
+const Candidate = require('../../Models/candidateModel');
 
 
 const Totalmentors = async (req, res) => {
@@ -19,12 +19,15 @@ const GetFormationscount = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: 'Error counting courses', error: error.message });
     }
-  };
+};
+
+
+
 
 const GetCurrentFormationscount = async (req, res) => {
     try {
         const currentDate = new Date();
-                const currentFormationCount = await Course.countDocuments({
+        const currentFormationCount = await Course.countDocuments({
         startDate: { $lte: currentDate },
         endDate: { $gte: currentDate }
         });
@@ -33,16 +36,48 @@ const GetCurrentFormationscount = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Error counting current formations', error: error.message });
     }
-    };
+};
+
 
 const GetFormations = async (req, res) => {
     try {
-        const courses = await Course.find().populate('mentors');  // Use the Course model
+        const courses = await Course.find().populate('mentors');  
         res.status(200).json({ courses: courses });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching courses', error: error.message });
     }
-    };
+};
+
+//current formation
+const GetCurrentFormations = async (req, res) => {
+  try {
+      const currentDate = new Date();
+      const currentFormationCount = await Course.find({
+      startDate: { $lte: currentDate },
+      endDate: { $gte: currentDate }
+      }).populate('mentors');
+
+      res.status(200).json({ currentFormations: currentFormationCount });
+  } catch (error) {
+      res.status(500).json({ message: 'Error counting current formations', error: error.message });
+  }
+};
+
+
+//upcoming formation
+const UpcomingFormations = async (req, res) => {
+  try {
+      const currentDate = new Date();
+      const upcomingFormation = await Course.find({
+      startDate: { $gte: currentDate },
+      }).populate('mentors');
+
+      res.status(200).json({ upcomingFormation: upcomingFormation });
+  } catch (error) {
+      res.status(500).json({ message: 'Error counting upcoming formations', error: error.message });
+  }
+};
+
 
 const Confirmationrate = async (req, res) => {
     try {
@@ -61,6 +96,7 @@ const Confirmationrate = async (req, res) => {
         res.status(500).json({ message: 'Error calculating confirmation rate', error: error.message });
       }
 };
+
 
 const Allmentors = async (req, res) => {
   try {
@@ -88,4 +124,8 @@ const Allmentors = async (req, res) => {
 
 
 
-module.exports = { Totalmentors, GetFormationscount, GetCurrentFormationscount, GetFormations, Confirmationrate, Allmentors };
+
+
+
+
+module.exports = { Totalmentors, GetFormationscount, GetCurrentFormationscount, GetCurrentFormations,UpcomingFormations, GetFormations, Confirmationrate, Allmentors };
