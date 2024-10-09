@@ -3,7 +3,7 @@ import SideBar from './components/SideBar/SideBar';
 
 function MainLayoutAdmin({ children }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300">
+    <div className="min-h-screen bg-slate-100">
       <SideBar />
       <main className="transition-all duration-300 lg:ml-64">
         <div className="p-4 ">
