@@ -29,6 +29,7 @@ const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
 const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
 
 const Dashboard = lazy(() => import('./Admin/Dashboard/Dashboard.jsx'))
+const Mentors = lazy(() => import('./Admin/MentorsPage/Mentors.jsx') )
 
 
 function App() {
@@ -182,6 +183,16 @@ function App() {
               <ProtectedRoute isAdmin={true}>
                 <MainLayoutAdmin>
                   <Dashboard/>
+                </MainLayoutAdmin>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Mentors_Formations"
+            element={ 
+              <ProtectedRoute isAdmin={true}>
+                <MainLayoutAdmin>
+                  <Mentors/>
                 </MainLayoutAdmin>
               </ProtectedRoute>
             }

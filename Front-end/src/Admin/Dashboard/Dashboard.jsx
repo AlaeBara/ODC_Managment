@@ -57,8 +57,8 @@ const Dashboard = () => {
               data.confirmedCandidates,
               data.totalCandidates - data.confirmedCandidates,
             ],
-            backgroundColor: ["#f5b136", "#fff"],
-            hoverBackgroundColor: ["#f5b136", "#fff"],
+            backgroundColor: ["#fffff", "#f5b136"],
+            hoverBackgroundColor: ["#fffff", "#f5b136"],
             borderWidth: 0,
           },
         ],
@@ -248,11 +248,11 @@ const Dashboard = () => {
               <canvas id="confirmationPieChart" />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-4 text-center">
-              <div className="bg-white bg-opacity-25 p-3 rounded-lg">
+              <div className="bg-black bg-opacity-25 p-3 rounded-lg">
                 <p className="text-white font-semibold">Confirmed</p>
                 <p className="text-2xl font-bold text-white">{data.confirmedCandidates}</p>
               </div>
-              <div className="bg-white bg-opacity-25 p-3 rounded-lg">
+              <div className="bg-black bg-opacity-25 p-3 rounded-lg">
                 <p className="text-white font-semibold">Total</p>
                 <p className="text-2xl font-bold text-white">{data.totalCandidates}</p>
               </div>

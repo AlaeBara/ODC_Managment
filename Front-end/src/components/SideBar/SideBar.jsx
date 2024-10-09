@@ -12,15 +12,15 @@ import axios from 'axios'
 
 const menuItems = [
   { id: 1, label: "Dashboard", icon: LayoutDashboard, link: "/Dashboard" },
-  { id: 2, label: "Users", icon: Users, link: "/admin/users" },
-  { id: 3, label: "Settings", icon: Settings, link: "/admin/settings", 
-    submenu: [
-      { id: 'general', label: "General", link: "/admin/settings/general" },
-      { id: 'security', label: "Security", link: "/admin/settings/security" },
-      { id: 'notifications', label: "Notifications", link: "/admin/settings/notifications" },
-    ]
-  },
-  { id: 4, label: "Help", icon: HelpCircle, link: "/admin/help" },
+  { id: 2, label: "Mentors", icon: Users, link: "/Mentors_Formations" },
+  // { id: 3, label: "Settings", icon: Settings, link: "/admin/settings", 
+  //   submenu: [
+  //     { id: 'general', label: "General", link: "/admin/settings/general" },
+  //     { id: 'security', label: "Security", link: "/admin/settings/security" },
+  //     { id: 'notifications', label: "Notifications", link: "/admin/settings/notifications" },
+  //   ]
+  // },
+  // { id: 4, label: "Help", icon: HelpCircle, link: "/admin/help" },
 ];
 
 export default function SideBar() {
