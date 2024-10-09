@@ -9,7 +9,7 @@ router.get('/Totalformations', authenticated, GetFormationscount)
 
 router.get('/GetCurrentFormationsCount', authenticated, GetCurrentFormationscount)
 
-router.get('/GetFormations', GetFormations)
+router.get('/GetFormations', authenticated, GetFormations)
 
 router.get('/Confirmationrate', authenticated, Confirmationrate)
 

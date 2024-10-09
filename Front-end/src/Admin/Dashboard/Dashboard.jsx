@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Users, Clipboard, BarChart2, CheckCircle2, Clock, Calendar } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import CardFormationt from './CardFormationt';
+import { Chart, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
+Chart.register(ArcElement, Tooltip, Legend, DoughnutController);
 
 const Dashboard = () => {
   const [totalMentors, setTotalMentors] = useState(null);
@@ -10,6 +12,11 @@ const Dashboard = () => {
   const [numberOfFormation, setNumberOfFormation] = useState(null);
   const [current, setCurrent] = useState([]);
   const [upcoming, setUpComing] = useState([]);
+  const [data, setData] = useState({
+    totalCandidates: 0,
+    confirmedCandidates: 0,
+    confirmationRate: 0,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,14 +33,99 @@ const Dashboard = () => {
         const currentFormations = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/GetCurrentFormations`, { withCredentials: true });
         setCurrent(currentFormations.data.currentFormations);
 
-        const upcomingformation = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin//UpcomingFormations`, { withCredentials: true });
+        const upcomingformation = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/UpcomingFormations`, { withCredentials: true });
         setUpComing(upcomingformation.data.upcomingFormation);
+
+        const chartData = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/Confirmationrate`, { withCredentials: true });
+        setData(chartData.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const ctx = document.getElementById("confirmationPieChart").getContext("2d");
+
+    const chart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Confirmed Candidates", "Number of Candidates"],
+        datasets: [
+          {
+            data: [
+              data.confirmedCandidates,
+              data.totalCandidates - data.confirmedCandidates,
+            ],
+            backgroundColor: ["#10B981", "#F59E0B"],
+            hoverBackgroundColor: ["#059669", "#D97706"],
+            borderWidth: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: {
+                size: 14,
+              },
+            },
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.formattedValue;
+                return `${label}: ${value}`;
+              }
+            }
+          },
+        },
+      },
+      plugins: [
+        {
+          id: 'centerText',
+          beforeDraw: function (chart) {
+            const width = chart.width;
+            const height = chart.height;
+            const ctx = chart.ctx;
+            ctx.restore();
+            
+            // Calculate font sizes based on chart dimensions
+            const percentageFontSize = Math.min(width, height) / 9;
+            const labelFontSize = Math.min(width, height) / 16;
+            
+            // Percentage text
+            ctx.font = `bold ${percentageFontSize}px sans-serif`;
+            ctx.textBaseline = "center";
+            ctx.textAlign = "center";
+
+            const text = `${data.confirmationRate}%`;
+            const textX = width / 2;
+            const textY = height / 2.4 - labelFontSize / 2;
+
+            ctx.fillStyle = "#374151";
+            ctx.fillText(text, textX, textY);
+            
+            ctx.save();
+          },
+        },
+      ],
+    });
+
+    return () => {
+      chart.destroy();
+    };
+  }, [data]);
 
 
   return (
@@ -154,9 +246,27 @@ const Dashboard = () => {
         </div>
 
         {/* Chart */}
-        <div className="bg-white shadow-lg rounded-lg p-6 flex items-center justify-center">
-          <div className="flex justify-center items-center h-64 w-full">
-          </div>
+        <div className="rounded-lg flex items-center justify-center">
+          <Card className="shadow-lg rounded-lg overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+              <CardTitle className="text-2xl font-bold">Candidate Confirmation</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="h-80 w-full">
+                <canvas id="confirmationPieChart" />
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-4 text-center">
+                <div className="bg-green-100 p-3 rounded-lg">
+                  <p className="text-green-800 font-semibold">Confirmed</p>
+                  <p className="text-2xl font-bold text-green-600">{data.confirmedCandidates}</p>
+                </div>
+                <div className="bg-yellow-100 p-3 rounded-lg">
+                  <p className="text-yellow-800 font-semibold">Total candidates</p>
+                  <p className="text-2xl font-bold text-yellow-600">{data.totalCandidates - data.confirmedCandidates}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
