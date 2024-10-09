@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Users, Clipboard, BarChart2, CheckCircle2, Calendar, PieChart } from 'lucide-react';
+import { Users, Clipboard, BarChart2, CheckCircle2, Calendar, PieChart, Clock } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Chart, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
 Chart.register(ArcElement, Tooltip, Legend, DoughnutController);
@@ -37,7 +37,6 @@ const Dashboard = () => {
 
         const chartData = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/Confirmationrate`, { withCredentials: true });
         setData(chartData.data);
-
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -58,8 +57,8 @@ const Dashboard = () => {
               data.confirmedCandidates,
               data.totalCandidates - data.confirmedCandidates,
             ],
-            backgroundColor: ["#3B82F6", "#93C5FD"],
-            hoverBackgroundColor: ["#2563EB", "#60A5FA"],
+            backgroundColor: ["#f5b136", "#fff"],
+            hoverBackgroundColor: ["#f5b136", "#fff"],
             borderWidth: 0,
           },
         ],
@@ -123,10 +122,8 @@ const Dashboard = () => {
 
   return (
     <div className="grid mt-8 gap-6 px-4 sm:px-0">
-      {/* First Row: 3 Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-9 p-6 rounded-lg">
-        {/* Current Formations */}
-        <div className="bg-gradient-to-r from-orange-400 to-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
           <div className="p-6 text-white relative z-10">
@@ -138,8 +135,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Total Mentors */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
           <div className="absolute top-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mt-12" />
           <div className="absolute bottom-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mb-16" />
           <div className="p-6 text-white relative z-10">
@@ -151,8 +147,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Number of Formations */}
-        <div className="bg-gradient-to-r from-orange-600 to-orange-700 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
           <div className="p-6 text-white relative z-10">
@@ -167,9 +162,8 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
         <div className="space-y-6">
-          {/* Current Events */}
           <Card className="overflow-hidden shadow-xl rounded-lg relative">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4">
+            <CardHeader className="bg-orange-500 text-white py-4">
               <div className="absolute top-0 -left-10 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
               <CardTitle className="text-2xl font-bold flex items-center">
                 <Calendar className="mr-2" /> Current Events
@@ -180,7 +174,7 @@ const Dashboard = () => {
                 current.map((course) => (
                   <div key={course._id} className="py-4 flex items-start space-x-4">
                     <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
-                      <CheckCircle2 className="w-6 h-6 text-orange-600" />
+                      <CheckCircle2 className="w-6 h-6 text-orange-500" />
                     </div>
                     <div className="flex-grow">
                       <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
@@ -188,12 +182,12 @@ const Dashboard = () => {
                         {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        Type: <span className="font-medium text-orange-700">{course.type}</span>
+                        Type: <span className="font-medium text-orange-500">{course.type}</span>
                       </p>
                     </div>
                     <div className="flex-shrink-0">
-                      <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
-                      {course.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}` )}
+                      <span className="inline-block bg-orange-100 text-orange-500 text-xs font-semibold px-2 py-1 rounded-full">
+                        {course.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}`)}
                       </span>
                     </div>
                   </div>
@@ -204,9 +198,8 @@ const Dashboard = () => {
             </CardContent>
           </Card>
             
-          {/* Upcoming Events */}
           <Card className="overflow-hidden shadow-xl rounded-lg">
-            <CardHeader className="bg-gradient-to-br from-orange-600 to-orange-700 text-white py-4">
+            <CardHeader className="bg-orange-500 text-white py-4">
               <CardTitle className="text-2xl font-bold flex items-center">
                 <Calendar className="mr-2" /> Upcoming Events
               </CardTitle>
@@ -216,7 +209,7 @@ const Dashboard = () => {
                 upcoming.map((course) => (
                   <div key={course._id} className="py-4 flex items-start space-x-4">
                     <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
-                      <CheckCircle2 className="w-6 h-6 text-orange-700" />
+                      <Clock className="w-6 h-6 text-orange-500" />
                     </div>
                     <div className="flex-grow">
                       <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
@@ -224,12 +217,12 @@ const Dashboard = () => {
                         {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
-                        Type: <span className="font-medium text-orange-700">{course.type}</span>
+                        Type: <span className="font-medium text-orange-500">{course.type}</span>
                       </p>
                     </div>
                     <div className="flex-shrink-0">
-                      <span className="inline-block bg-orange-100 text-orange-700 text-xs font-semibold px-2 py-1 rounded-full">
-                      {course.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}` )}
+                      <span className="inline-block bg-orange-100 text-orange-500 text-xs font-semibold px-2 py-1 rounded-full">
+                        {course.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}`)}
                       </span>
                     </div>
                   </div>
@@ -241,25 +234,26 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Chart */}
-        <div className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
           <div className="p-6 text-white relative z-10">
             <div className="flex items-center justify-between mb-4">
               <PieChart className="w-10 h-10" />
-              <h2 className="text-2xl font-bold">Candidate Confirmation</h2>
+              <h2 className="lg:text-2xl font-bold md:text-[15px]">
+                Candidate Confirmation
+              </h2>
             </div>
             <div className="h-64 w-full">
               <canvas id="confirmationPieChart" />
             </div>
             <div className="mt-4 grid grid-cols-2 gap-4 text-center">
-              <div className="bg-orange-400 bg-opacity-25 p-3 rounded-lg">
-                <p className="text-orange-100 font-semibold">Confirmed</p>
+              <div className="bg-white bg-opacity-25 p-3 rounded-lg">
+                <p className="text-white font-semibold">Confirmed</p>
                 <p className="text-2xl font-bold text-white">{data.confirmedCandidates}</p>
               </div>
-              <div className="bg-orange-500 bg-opacity-25 p-3 rounded-lg">
-                <p className="text-orange-100 font-semibold">Total</p>
+              <div className="bg-white bg-opacity-25 p-3 rounded-lg">
+                <p className="text-white font-semibold">Total</p>
                 <p className="text-2xl font-bold text-white">{data.totalCandidates}</p>
               </div>
             </div>
