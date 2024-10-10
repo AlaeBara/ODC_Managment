@@ -127,4 +127,16 @@ const Allmentors = async (req, res) => {
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = { Totalmentors, GetFormationscount, GetCurrentFormationscount, GetCurrentFormations,UpcomingFormations, GetFormations, Confirmationrate, Allmentors };
