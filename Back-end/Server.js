@@ -16,6 +16,7 @@ const Presence = require('./Routes/Presence.js')
 const Cloud = require('./Routes/Cloud.js')
 const homeapi = require('./Routes/Homepageapi.js')
 const admin = require('./Routes/Admin/Admin.js')
+const formation = require('./Routes/Admin/Formation.js')
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ app.use('/api/presence', Presence)
 app.use('/api/cloud', Cloud)
 app.use('/api/home', homeapi)
 app.use('/api/admin',admin)
+app.use('/api/admin/formation', formation)
 
 //insert line for test:
 const insertTestUser = async () => {
