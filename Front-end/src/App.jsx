@@ -30,7 +30,7 @@ const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx')
 
 const Dashboard = lazy(() => import('./Admin/Dashboard/Dashboard.jsx'))
 const Mentors = lazy(() => import('./Admin/MentorsPage/Mentors.jsx') )
-
+const Formations =lazy(()=>import('./Admin/Formations/Formations.jsx'))
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -193,6 +193,16 @@ function App() {
               <ProtectedRoute isAdmin={true}>
                 <MainLayoutAdmin>
                   <Mentors/>
+                </MainLayoutAdmin>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Formations"
+            element={ 
+              <ProtectedRoute isAdmin={true}>
+                <MainLayoutAdmin>
+                  <Formations/>
                 </MainLayoutAdmin>
               </ProtectedRoute>
             }
