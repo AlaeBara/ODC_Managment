@@ -23,7 +23,6 @@ const GetFormationscount = async (req, res) => {
 
 
 
-
 const GetCurrentFormationscount = async (req, res) => {
     try {
         const currentDate = new Date();
@@ -106,11 +105,19 @@ const Allmentors = async (req, res) => {
       return res.status(404).json({ message: 'No mentors found' });
     }
 
-    const mentorData = mentors.map(mentor => ({
-      _id: mentor._id,
-      firstName: mentor.firstName,
-      lastName: mentor.lastName,
-      profilePic: mentor.profilePic,
+    // Fetch the count of courses for each mentor
+    const mentorData = await Promise.all(mentors.map(async (mentor) => {
+      const courseCount = await Course.countDocuments({ mentors: mentor._id }); // Count courses where the mentor is included in the mentors array
+
+      return {
+        _id: mentor._id,
+        email: mentor.email,
+        firstName: mentor.firstName,
+        lastName: mentor.lastName,
+        phoneNumber: mentor.phoneNumber,
+        profilePic: mentor.profilePic,
+        courseCount, // Include the count of courses for each mentor
+      };
     }));
 
     res.status(200).json(mentorData);
@@ -118,14 +125,6 @@ const Allmentors = async (req, res) => {
     res.status(500).json({ message: 'Error fetching mentors', error: error.message });
   }
 };
-
-
-
-
-
-
-
-
 
 
 module.exports = { Totalmentors, GetFormationscount, GetCurrentFormationscount, GetCurrentFormations,UpcomingFormations, GetFormations, Confirmationrate, Allmentors };

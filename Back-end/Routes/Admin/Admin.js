@@ -1,5 +1,5 @@
 const express = require('express');
-const { Allmentors, Confirmationrate, Totalmentors, GetFormationscount, GetCurrentFormationscount, GetCurrentFormations ,UpcomingFormations,GetFormations } = require('../../Controllers/Admin/Admin');
+const { Allmentors, Confirmationrate, Totalmentors, GetFormationscount, GetCurrentFormationscount, GetCurrentFormations , UpcomingFormations, GetFormations } = require('../../Controllers/Admin/Admin');
 const authenticated = require('../../Middlewares/Authmiddleware');
 const router = express.Router();
 
