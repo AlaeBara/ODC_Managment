@@ -266,36 +266,6 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold flex items-center">
-            <Users className="mr-2" /> Our Mentors
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {mentorsData.map((mentor) => (
-              <Card key={mentor._id} className="overflow-hidden bg-white shadow-md rounded-lg">
-                <CardContent className="p-0">
-                  <div className="h-16 bg-orange-500"></div>
-                  <div className="px-4 pb-4 -mt-8 flex flex-col items-center">
-                    <Avatar className="w-16 h-16 border-4 border-white mb-2">
-                      <AvatarImage src={mentor.profilePic} alt={`${mentor.firstName} ${mentor.lastName}`} />
-                      <AvatarFallback className="bg-orange-200 text-orange-800">
-                        {mentor.firstName[0]}{mentor.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
-                    <h3 className="text-lg font-semibold text-center text-gray-800">
-                      {mentor.firstName} {mentor.lastName}
-                    </h3>
-                    <p className="text-sm text-gray-500 text-center mt-1">{mentor.email}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
