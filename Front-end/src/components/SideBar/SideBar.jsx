@@ -13,7 +13,7 @@ import axios from 'axios'
 const menuItems = [
   { id: 1, label: "Dashboard", icon: LayoutDashboard, link: "/Dashboard" },
   { id: 2, label: "Mentors", icon: Users, link: "/Mentors_Formations" },
-  { id: 2, label: "Formations", icon: LibraryBig, link: "/Formations" }
+  { id: 3, label: "Formations", icon: LibraryBig, link: "/Formations" }
   // { id: 3, label: "Settings", icon: Settings, link: "/admin/settings", 
   //   submenu: [
   //     { id: 'general', label: "General", link: "/admin/settings/general" },
