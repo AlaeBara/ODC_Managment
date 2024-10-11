@@ -74,6 +74,10 @@ module.exports = {
       fontFamily: {
         'custom': ['"Helvetica Neue"', 'sans-serif'],
         lato: ['Lato', 'sans-serif'],
+        awoseon: ['Awoseon'],
+        nunito: ['Nunito'],
+        opensans: ['Open Sans', 'sans-serif'],
+        merriweather: ['Merriweather', 'serif'],
       },
     },
   },
