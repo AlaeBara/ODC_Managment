@@ -63,8 +63,8 @@ const Dashboard = () => {
               data.confirmedCandidates,
               data.totalCandidates - data.confirmedCandidates,
             ],
-            backgroundColor: ["#fffff", "#f5b136"],
-            hoverBackgroundColor: ["#fffff", "#f5b136"],
+            backgroundColor: ["#f97316", "#c9ccd1"],
+            hoverBackgroundColor: ["#f97316", "#c9ccd1"],
             borderWidth: 0,
           },
         ],
@@ -109,7 +109,7 @@ const Dashboard = () => {
             const textX = width / 2;
             const textY = height / 2;
 
-            ctx.fillStyle = "#FFFFFF";
+            ctx.fillStyle = "#000000";
             ctx.fillText(text, textX, textY);
             
             ctx.font = `${labelFontSize}px sans-serif`;
@@ -127,55 +127,58 @@ const Dashboard = () => {
   }, [data]);
 
   return (
-    <div className="grid mt-8 gap-6 px-4 sm:px-0">
+    <div className="grid mt-4  gap-6 px-4 sm:px-0">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-9 p-6 rounded-lg">
-        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
-          <div className="p-6 text-white relative z-10">
+        {/* Card 1 */}
+        <Card className="bg-white shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+          <div className="p-6">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="flex items-center justify-between">
-              <Clipboard className="w-10 h-10" />
-              <h2 className="text-3xl font-bold">{currentFormation}</h2>
+              <Clipboard className="w-10 h-10 " />
+              <h2 className="text-3xl font-bold text-orange-500">{currentFormation}</h2>
             </div>
             <p className="mt-2 text-lg font-semibold">Current Formations</p>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
-          <div className="absolute top-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mt-12" />
-          <div className="absolute bottom-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mb-16" />
-          <div className="p-6 text-white relative z-10">
+        {/* Card 2 */}
+        <Card className="bg-white shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+          <div className="p-6">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="flex items-center justify-between">
-              <Users className="w-10 h-10" />
-              <h2 className="text-3xl font-bold">{totalMentors}</h2>
+              <Users className="w-10 h-10 " />
+              <h2 className="text-3xl font-bold text-orange-500">{totalMentors}</h2>
             </div>
             <p className="mt-2 text-lg font-semibold">Total Mentors</p>
           </div>
-        </div>
+        </Card>
 
-        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
-          <div className="p-6 text-white relative z-10">
+        {/* Card 3 */}
+        <Card className="bg-white shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 relative">
+          <div className="p-6">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="flex items-center justify-between">
-              <BarChart2 className="w-10 h-10" />
-              <h2 className="text-3xl font-bold">{numberOfFormation}</h2>
+              <BarChart2 className="w-10 h-10 " />
+              <h2 className="text-3xl font-bold text-orange-500">{numberOfFormation}</h2>
             </div>
             <p className="mt-2 text-lg font-semibold">Number of Formations</p>
           </div>
-        </div>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-6">
-          <Card className="overflow-hidden shadow-xl rounded-lg relative">
-            <CardHeader className="bg-orange-500 text-white py-4">
-              <div className="absolute top-0 -left-10 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
+          {/* Current Events Card */}
+          <Card className="bg-white shadow-xl rounded-lg">
+            <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-2xl font-bold flex items-center">
                 <Calendar className="mr-2" /> Current Events
               </CardTitle>
             </CardHeader>
-            <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto bg-white">
+            <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto">
               {current && current.length > 0 ? (
                 current.map((course) => (
                   <div key={course._id} className="py-4 flex items-start space-x-4">
@@ -204,13 +207,14 @@ const Dashboard = () => {
             </CardContent>
           </Card>
             
-          <Card className="overflow-hidden shadow-xl rounded-lg">
-            <CardHeader className="bg-orange-500 text-white py-4">
+          {/* Upcoming Events Card */}
+          <Card className="bg-white shadow-xl rounded-lg">
+            <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-2xl font-bold flex items-center">
                 <Calendar className="mr-2" /> Upcoming Events
               </CardTitle>
             </CardHeader>
-            <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto bg-white">
+            <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto">
               {upcoming && upcoming.length > 0 ? (
                 upcoming.map((course) => (
                   <div key={course._id} className="py-4 flex items-start space-x-4">
@@ -234,37 +238,35 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center py-8 text-gray-500">No Upcoming events found.</p>
+                <p className="text-center py-8 text-gray-500">No upcoming events found.</p>
               )}
             </CardContent>
           </Card>
         </div>
 
-        <div className="bg-orange-500 rounded-xl shadow-lg overflow-hidden transform relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-20 rounded-full -mr-16 -mt-16" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-20 rounded-full -ml-12 -mb-12" />
-          <div className="p-6 text-white relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <PieChart className="w-10 h-10" />
-              <h2 className="lg:text-2xl font-bold md:text-[15px]">
-                Candidate Confirmation
-              </h2>
-            </div>
+        {/* Confirmation Chart Card */}
+        <Card className="bg-white shadow-xl rounded-lg overflow-hidden">
+          <CardHeader className="border-b border-gray-200">
+            <CardTitle className="text-2xl font-bold flex items-center">
+              <PieChart className="mr-2" /> Candidate Confirmation
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
             <div className="h-64 w-full">
               <canvas id="confirmationPieChart" />
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-4 text-center">
-              <div className="bg-black bg-opacity-25 p-3 rounded-lg">
-                <p className="text-white font-semibold">Confirmed</p>
-                <p className="text-2xl font-bold text-white">{data.confirmedCandidates}</p>
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              <div className="bg-orange-50 p-3 rounded-lg">
+                <p className="font-semibold text-center">Confirmed</p>
+                <p className="text-2xl font-bold text-orange-500 text-center">{data.confirmedCandidates}</p>
               </div>
-              <div className="bg-black bg-opacity-25 p-3 rounded-lg">
-                <p className="text-white font-semibold">Total</p>
-                <p className="text-2xl font-bold text-white">{data.totalCandidates}</p>
+              <div className="bg-orange-50 p-3 rounded-lg">
+                <p className="font-semibold text-center">Total</p>
+                <p className="text-2xl font-bold text-orange-500 text-center">{data.totalCandidates}</p>
               </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

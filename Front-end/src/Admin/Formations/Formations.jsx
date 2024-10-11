@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Search, Calendar, User, X ,Clock ,Book} from 'lucide-react'
+import { Search, Calendar, User, X, Clock, Book } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -101,47 +101,42 @@ export default function Formations() {
         <div className="container mx-auto px-4 py-8">
             <div className="w-full bg-white p-4 rounded-lg shadow-sm mb-8">
                 <div className="flex flex-wrap gap-4 items-center">
-
-                    {/* Search Input */}
                     <div className="relative flex-1 min-w-[200px]">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2  h-4 w-4  text-orange-500" />
                         <Input
                             type="text"
                             value={search}
                             placeholder="Search..."
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-10 border-orange-300 w-full"
+                            className="pl-10 border-orange-500 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                         />
                     </div>
 
-                    {/* Start Date */}
                     <div className="relative flex-1 min-w-[200px]">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4  text-orange-500" />
                         <Input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="pl-10 border-orange-300 w-full"
+                            className="pl-[4.25rem] border-orange-500 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                         />
                     </div>
 
-                    {/* End Date */}
                     <div className="relative flex-1 min-w-[200px]">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4  text-orange-500" />
                         <Input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="pl-10 border-orange-300 w-full"
+                            className="pl-[4.25rem] border-orange-500 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                         />
                     </div>
 
-                    {/* Mentor Select */}
                     <div className="flex-1 min-w-[200px]">
                         <Select value={selectedMentor} onValueChange={setSelectedMentor}>
-                            <SelectTrigger className="border-orange-300 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
-                                        <User className="mr-2 h-4 w-4 text-orange-400" />
-                                        <SelectValue placeholder="Select Mentor" />
+                            <SelectTrigger className="border-orange-500 ring-0 ring-transparent focus:outline-none focus:ring-0 focus:ring-transparent">
+                                <User className="mr-2 h-4 w-4 text-orange-500" />
+                                <SelectValue placeholder="Select Mentor" />
                             </SelectTrigger>
                             <SelectContent>
                                 {mentors.map((mentor) => (
@@ -153,8 +148,7 @@ export default function Formations() {
                         </Select>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex justify-center gap-4  ">
+                    <div className="flex justify-center gap-4">
                         <Button onClick={fetchFilteredFormations} className="bg-orange-500 hover:bg-orange-600 text-white">
                             Search
                         </Button>
@@ -165,46 +159,44 @@ export default function Formations() {
                 </div>
             </div>
             
-            
             {message && (
-            <div className="bg-orange-100 border border-orange-400 text-orange-700 px-4 py-3 rounded relative mb-9" role="alert">
+            <div className="bg-orange-50 border border-orange-500 text-orange-700 px-4 py-3 rounded relative mb-9" role="alert">
                 <span className="block sm:inline">{message}</span>
             </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {formations.map((formation, index) => (
-                <Card className="overflow-hidden transition-all duration-300 hover:shadow-2xl bg-white rounded-2xl transform hover:-translate-y-2">
-                    <CardHeader className="bg-gradient-to-r from-orange-400 to-orange-600 text-white p-6">
-                    <CardTitle className="text-xl md:text-2xl font-bold">{formation.title}</CardTitle>
+                <Card key={index} className="overflow-hidden transition-all duration-300 hover:shadow-2xl bg-white rounded-2xl transform hover:-translate-y-2">
+                    <CardHeader className="bg-gradient-to-br from-orange-400 to-orange-500 text-white p-6">
+                        <CardTitle className="text-xl md:text-2xl font-bold">{formation.title}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-6">
-                    <p className="text-gray-600 mb-6">{formation.description}</p>
-                    <div className="flex items-center mb-3">
-                        <Calendar className="mr-2 h-5 w-5 text-orange-600" />
-                        <span> <span className='font-bold'>Starts: </span>{new Date(formation.startDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center mb-3">
-                        <Clock className="mr-2 h-5 w-5 text-orange-600" />
-                        <span><span className='font-bold'>Ends: </span> {new Date(formation.endDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex items-center ">
-                        <User className="mr-2 h-5 w-5 text-orange-600" />
-                        {formation.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}`)}
-                    </div>
+                        {/* <p className="text-gray-600 mb-6">{formation.description}</p> */}
+                        <div className="flex items-center mb-3">
+                            <Calendar className="mr-2 h-5 w-5 text-orange-500" />
+                            <span><span className='font-bold'>Starts: </span>{new Date(formation.startDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center mb-3">
+                            <Clock className="mr-2 h-5 w-5 text-orange-500" />
+                            <span><span className='font-bold'>Ends: </span>{new Date(formation.endDate).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center">
+                            <User className="mr-2 h-5 w-5 text-orange-500" />
+                            {formation.mentors.map((mentor) => `${mentor.firstName} ${mentor.lastName}`)}
+                        </div>
                     </CardContent>
-                    <CardFooter className="bg-orange-50 flex flex-col sm:flex-row justify-between p-6 gap-4">
-                    <Button variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-100 rounded-full px-6 w-full sm:w-auto">
-                        <Book className="mr-2 h-4 w-4" />
-                        Details
-                    </Button>
-                    <Button className="bg-orange-500 text-white hover:bg-orange-600 rounded-full px-6 w-full sm:w-auto">
-                        Enroll Now
-                    </Button>
+                    <CardFooter className="bg-white border-t flex flex-col sm:flex-row justify-between p-6 gap-4">
+                        <Button variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-50 rounded-full px-6 w-full sm:w-auto">
+                            <Book className="mr-2 h-4 w-4" />
+                            Details
+                        </Button>
+                        <Button className="bg-orange-500 text-white hover:bg-orange-600 rounded-full px-6 w-full sm:w-auto">
+                            Enroll Now
+                        </Button>
                     </CardFooter>
                 </Card>
             ))}
-            
             </div>
         </div>
     </div>
