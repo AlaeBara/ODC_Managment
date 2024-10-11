@@ -73,6 +73,7 @@ module.exports = {
       },
       fontFamily: {
         'custom': ['"Helvetica Neue"', 'sans-serif'],
+        lato: ['Lato', 'sans-serif'],
       },
     },
   },
