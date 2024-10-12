@@ -207,9 +207,23 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/formation details/:id"
+            element={
+              <ProtectedRoute isAdmin={true}>
+                  <OneFormation/>
+              </ProtectedRoute>
+            }
+          />
 
-
-
+          <Route
+            path="/evalution statistics/:id"
+            element={
+              <ProtectedRoute isAdmin={true}>
+                  <EvaluationDashboard/>
+              </ProtectedRoute>
+            }
+          />
 
 
           <Route

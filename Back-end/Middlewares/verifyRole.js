@@ -13,4 +13,4 @@ const verifyRole = (allowedRoles) => (req, res, next) => {
     next();
   };
   
-  module.exports = verifyRole;
+module.exports = verifyRole;

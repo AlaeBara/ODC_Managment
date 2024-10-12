@@ -4,6 +4,7 @@ const {AddFormation, GetOneFormations, UpdateFormations, GetFormations, DeleteFo
 const router = express.Router();
 
 
+
 router.post('/Addformation', authenticated, AddFormation);
 
 router.get('/GetFormations', authenticated, GetFormations);

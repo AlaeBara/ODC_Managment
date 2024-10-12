@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { useNavigate } from 'react-router-dom'
 
 export default function Formations() {
   const [formations, setFormations] = useState([])
@@ -14,6 +15,7 @@ export default function Formations() {
   const [mentors, setMentors] = useState([])
   const [selectedMentor, setSelectedMentor] = useState('')
   const [message, setMessage] = useState('')
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchMentors = async () => {
@@ -95,6 +97,18 @@ export default function Formations() {
     setSelectedMentor('')
     setMessage('')
   }
+
+
+  const formationDetails = (id) =>{
+    console.log(id)
+    navigate(`/formation details/${id}`)
+  }
+
+  const evalutionDetails = (id) =>{
+    console.log(id)
+    navigate(`/evalution statistics/${id}`)
+  }
+
 
   return (
     <div className="min-h-screen">
@@ -197,13 +211,15 @@ export default function Formations() {
                 </div>
               </CardContent>
               <CardFooter className="bg-gray-50 border-t flex justify-end p-3 gap-2">
-                <Button variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-50 rounded-full px-4 py-1 text-sm">
+
+                <Button onClick={() => formationDetails(formation._id)} variant="outline" className="border-orange-500 text-orange-500 hover:bg-orange-50 rounded-full px-4 py-1 text-sm">
                   <Book className="mr-1 h-3 w-3" />
-                  Details
+                  Details Formation
                 </Button>
-                <Button className="bg-orange-500 text-white hover:bg-orange-600 rounded-full px-4 py-1 text-sm">
-                  Enroll Now
+                <Button onClick={() =>evalutionDetails(formation._id)} className="bg-orange-500 text-white hover:bg-orange-600 rounded-full px-4 py-1 text-sm">
+                  Evalution
                 </Button>
+
               </CardFooter>
             </Card>
           ))}
