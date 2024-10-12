@@ -116,7 +116,7 @@ export default function SideBar() {
                       ${pathname === item.link ? 'bg-muted border-r-4 border-orange-500' : ''}`}
                   >
                     <item.icon className="h-6 w-6 flex-shrink-0 text-orange-500" />
-                    <span className="ml-3">{item.label}</span>
+                    <span className="ml-3 font-lato">{item.label}</span>
                   </Link>
                 )}
               </li>
@@ -132,12 +132,12 @@ export default function SideBar() {
             className="flex items-center justify-center w-full p-4 text-left hover:bg-muted transition-colors"
           >
             <LogOut className="h-6 w-6 flex-shrink-0 text-orange-500" />
-            <span className="ml-3 font-medium">Logout</span>
+            <span className="ml-3 font-medium font-lato">Logout</span>
           </button>
           
           {/* Copyright */}
           <div className="p-4">
-            <p className="text-sm text-muted-foreground text-center">© 2024 ODC Agadir</p>
+            <p className="text-sm text-muted-foreground text-center font-lato">© 2024 ODC Agadir</p>
           </div>
         </div>
 

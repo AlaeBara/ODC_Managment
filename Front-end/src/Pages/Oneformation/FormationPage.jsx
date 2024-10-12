@@ -17,7 +17,7 @@ export default function FormationPage() {
   const [sortOrder, setSortOrder] = useState("asc")
   const { id } = useParams()
   const [data, setData] = useState([])
-  const [formationInfo, setFormationInfo] = useState(null)
+  const [formationInfo, setFormationInfo] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage, setItemsPerPage] = useState(7)
   const [error, setError] = useState(null)
@@ -158,7 +158,7 @@ export default function FormationPage() {
   }
 
   return (
-<div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <div className="container mx-auto px-4 py-8">
         <motion.div 
           initial={{ opacity: 0 }}
@@ -167,27 +167,27 @@ export default function FormationPage() {
           className="space-y-6"
         >
           <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white overflow-hidden shadow-lg">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-2xl font-bold">Formation Information</CardTitle>
+            <CardHeader className="pb-2 mb-5">
+              <CardTitle className="text-2xl font-bold">Formation {formationInfo.title}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">Program</h3>
-                  <p className="text-center text-sm">Sample Program</p>
+                  <p className="text-center text-sm">{formationInfo.type}</p>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">Start Date</h3>
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    <p className="text-sm">01/01/2024</p>
+                    <p className="text-sm">{new Date(formationInfo.startDate).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center p-2 bg-white bg-opacity-20 rounded-lg backdrop-blur-sm">
                   <h3 className="text-lg font-semibold mb-1">End Date</h3>
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
-                    <p className="text-sm">12/31/2024</p>
+                    <p className="text-sm">{new Date(formationInfo.endDate).toLocaleDateString()}</p>
                   </div>
                 </div>
               </div>

@@ -175,7 +175,7 @@ const Dashboard = () => {
           <Card className="bg-white shadow-xl rounded-lg">
             <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-2xl font-bold flex items-center">
-                <Calendar className="mr-2" /> Current Events
+                <Calendar className="mr-2 font-semibold" /> Current Events
               </CardTitle>
             </CardHeader>
             <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto">
@@ -186,8 +186,8 @@ const Dashboard = () => {
                       <CheckCircle2 className="w-6 h-6 text-orange-500" />
                     </div>
                     <div className="flex-grow">
-                      <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
-                      <p className="text-sm text-gray-600 font-medium">
+                      <h3 className="font-bold text-lg text-gray-800 font-lato">{course.title}</h3>
+                      <p className="text-sm text-gray-600 font-opensans">
                         {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
@@ -211,7 +211,7 @@ const Dashboard = () => {
           <Card className="bg-white shadow-xl rounded-lg">
             <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-2xl font-bold flex items-center">
-                <Calendar className="mr-2" /> Upcoming Events
+                <Calendar className="mr-2 font-semibold" /> Upcoming Events
               </CardTitle>
             </CardHeader>
             <CardContent className="divide-y divide-gray-200 max-h-[250px] overflow-y-auto">
@@ -222,8 +222,8 @@ const Dashboard = () => {
                       <Clock className="w-6 h-6 text-orange-500" />
                     </div>
                     <div className="flex-grow">
-                      <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
-                      <p className="text-sm text-gray-600 font-medium">
+                      <h3 className="font-bold text-lg text-gray-800 font-lato">{course.title}</h3>
+                      <p className="text-sm text-gray-600 font-opensans">
                         {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
                       </p>
                       <p className="text-sm text-gray-500 mt-1">
