@@ -17,9 +17,6 @@ import Notfound from './Pages/Notfound.jsx';
 //admin 
 import MainLayoutAdmin from './MainLayoutAdmin.jsx';
 
-
-
-// Lazy load components
 const Login = lazy(() => import('./Pages/Login/Login'));
 const Home = lazy(() => import('./Pages/Homepage/home'));
 const Formation = lazy(() => import('./Pages/FormationPage/Formation'));
@@ -27,10 +24,12 @@ const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
 const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
-
+const AdminProfile = lazy(() => import('./Admin/profile/adminprofile.jsx'))
 const Dashboard = lazy(() => import('./Admin/Dashboard/Dashboard.jsx'))
 const Mentors = lazy(() => import('./Admin/MentorsPage/Mentors.jsx') )
 const Formations =lazy(()=>import('./Admin/Formations/Formations.jsx'))
+const AdminCalendar = lazy(() => import('./Admin/Calendar/AdminCalendar.jsx'))
+
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -224,7 +223,26 @@ function App() {
               </ProtectedRoute>
             }
           />
-
+          <Route
+            path="/admin/profile"
+            element={
+              <MainLayoutAdmin>
+                <ProtectedRoute isAdmin={true}>
+                    <AdminProfile/>
+                </ProtectedRoute>
+              </MainLayoutAdmin>
+            }
+          />
+          <Route
+            path="/admin/calendar"
+            element={
+              <MainLayoutAdmin>
+                <ProtectedRoute isAdmin={true}>
+                    <AdminCalendar/>
+                </ProtectedRoute>
+              </MainLayoutAdmin>
+            }
+          />
 
           <Route
             path="*"

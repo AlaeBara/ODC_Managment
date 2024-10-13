@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Users, Settings, HelpCircle, Menu, X, LogOut ,ChevronDown,LibraryBig } from 'lucide-react';
+import { LayoutDashboard, Users, User, Menu, X, LogOut ,ChevronDown,LibraryBig } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,7 +13,9 @@ import axios from 'axios'
 const menuItems = [
   { id: 1, label: "Dashboard", icon: LayoutDashboard, link: "/Dashboard" },
   { id: 2, label: "Mentors", icon: Users, link: "/Mentors_Formations" },
-  { id: 3, label: "Formations", icon: LibraryBig, link: "/Formations" }
+  { id: 3, label: "Formations", icon: LibraryBig, link: "/Formations" },
+  { id: 4, label: "Profile", icon: User, link: "/admin/profile" },
+  { id: 5, label: "Calendar", icon: User, link: "/admin/Calendar" }
   // { id: 3, label: "Settings", icon: Settings, link: "/admin/settings", 
   //   submenu: [
   //     { id: 'general', label: "General", link: "/admin/settings/general" },

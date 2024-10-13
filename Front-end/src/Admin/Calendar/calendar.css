@@ -1,0 +1,55 @@
+.rbc-button-link.rbc-show-more {
+    font-size: 0.75rem;    /* Smaller font size for better fit */
+    color: #F97316;        /* Tailwind blue color */
+    padding: 2px 4px;      /* Padding for more clarity */
+    background-color: transparent;  /* Remove any unwanted background */
+    border: none;          /* Remove default borders */
+}
+  
+.rbc-button-link.rbc-show-more:hover {
+    color: #F97316;        /* Slight color change on hover */
+}
+  
+/* Style for alternating row background colors in the agenda view */
+.rbc-agenda-table tr:nth-child(even) {
+    background-color: #f9fafb !important; /* Light grey for even rows */
+}
+  
+.rbc-agenda-table tr:nth-child(odd) {
+    background-color: #ffffff !important; /* White for odd rows */
+}
+  
+/* Ensure the header row has a distinct background */
+  .rbc-agenda-table thead {
+    background-color: #e5e7eb !important;
+}
+  
+/* Add padding to table cells for better readability */
+.rbc-agenda-table td,
+.rbc-agenda-table th {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    color: black !important;
+}
+  
+/* Make sure the agenda event titles have better spacing */
+.rbc-agenda-event-cell {
+    padding-left: 10px;
+    font-weight: 500;
+}
+  
+/* Add hover effect for events to enhance UI feedback */
+  .rbc-agenda-table tr:hover {
+    background-color: #e2e8f0 !important; /* Light blue-grey on hover */
+}
+
+
+@media (max-width: 640px) {
+  .rbc-button-link.rbc-show-more {
+      font-size: 0.6rem;  /* Even smaller on mobile screens */
+      padding: 1px 2px;    /* Less padding for smaller screens */
+  }
+  .rbc-toolbar-label{
+        margin: 30px;
+  }
+}
