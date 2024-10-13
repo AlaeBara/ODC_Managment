@@ -248,7 +248,7 @@ export default function EnhancedUserProfile() {
   return (
     <div className="min-h-screen bg-white-400 flex justify-center p-4">
       <Toaster position="top-right" />
-      <div className="w-full max-w-4xl flex flex-col md:flex-row gap-6">
+      <div className="w-full max-w-6xl flex flex-col md:flex-row gap-6">
         <div className="w-full md:w-1/3 flex flex-col gap-6">
           <Card className="flex-grow-0 border-2">
             <CardContent className="flex flex-col items-center justify-center h-full p-6">
