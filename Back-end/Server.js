@@ -63,6 +63,8 @@ const insertTestUser = async () => {
       password: hashedPassword,
       role: 'Mentor', 
       assignedCourses: [],
+      firstName:"Alae",
+      lastName:"bara"
   });
 
   try {
@@ -75,7 +77,7 @@ const insertTestUser = async () => {
   }
 };
 
-//insertTestUser();
+
 
 
 // Start server

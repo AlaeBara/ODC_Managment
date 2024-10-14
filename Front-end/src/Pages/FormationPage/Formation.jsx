@@ -55,7 +55,7 @@ export default function Formation() {
   const getFormations = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_LINK}/api/courses/GetFormations`,
+        `${import.meta.env.VITE_API_LINK}/api/courses/GetFormationsOfMentor`,
         { withCredentials: true }
       )
       setAllFormations(response.data)
