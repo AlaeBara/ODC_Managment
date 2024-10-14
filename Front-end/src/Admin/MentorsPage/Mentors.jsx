@@ -1,9 +1,7 @@
-'use client'
-
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { Users, ChevronDown, ChevronUp, UserPlus, Mail, Phone, Briefcase, Search, AlertTriangle } from 'lucide-react'
+import { Users, ChevronDown, ChevronUp, UserPlus, Mail, Phone, Briefcase, Search, AlertTriangle ,X, Copy} from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -25,26 +23,28 @@ export default function Component() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [mentorToDelete, setMentorToDelete] = useState(null)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/allmentors`, { 
-          withCredentials: true 
-        })
-        setMentorsData(response.data)
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
+  const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false)
+  const [newMentor, setNewMentor] = useState({ firstName: '', lastName: '', email: '' })
+  const [generatedPassword, setGeneratedPassword] = useState('')
+
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/admin/allmentors`, { 
+        withCredentials: true 
+      })
+      setMentorsData(response.data)
+    } catch (error) {
+      console.error('Error fetching data:', error)
     }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
   const handleMentorClick = (mentorId) => {
     setSelectedMentor(selectedMentor === mentorId ? null : mentorId)
-  }
-
-  const handleAddMentor = () => {
-    console.log("Add mentor button clicked")
   }
 
   const handleEditMentor = (mentorId) => {
@@ -79,6 +79,53 @@ export default function Component() {
   const filteredMentors = mentorsData.filter(mentor => 
     `${mentor.firstName} ${mentor.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+
+  //for add mentor 
+
+  
+  const handleAddMentor = () => {
+    setIsAddMentorModalOpen(true)
+  }
+
+  const generatePassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*'
+    let password = ''
+    for (let i = 0; i < 12; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    setGeneratedPassword(password)
+  }
+
+  const copyPassword = () => {
+    navigator.clipboard.writeText(generatedPassword)
+  }
+
+  const closeAddMentor = () => {
+    setIsAddMentorModalOpen(false)
+    setNewMentor({ firstName: '', lastName: '', email: '' })
+    setGeneratedPassword('')
+  }
+
+
+  const handleSubmitNewMentor = async (e) => {
+    e.preventDefault()
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_LINK}/api/admin/addmentor`, {
+        ...newMentor,
+        password: generatedPassword
+      }, { withCredentials: true })
+      if (response.status === 200) {
+        console.log('Mentor added successfully')
+        setIsAddMentorModalOpen(false)
+        fetchData()
+        setNewMentor({ firstName: '', lastName: '', email: '' })
+        setGeneratedPassword('')
+      }
+    } catch (error) {
+      console.error('Error adding mentor:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -268,6 +315,74 @@ export default function Component() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+
+      {/* Add Mentor Modal */}
+      <Dialog open={isAddMentorModalOpen} onOpenChange={closeAddMentor}>
+        <DialogContent className="sm:max-w-[500px] w-[90vw]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between mb-5">
+              <span>Add New Mentor</span>
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmitNewMentor}>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <Input
+                placeholder="First Name"
+                value={newMentor.firstName}
+                onChange={(e) => setNewMentor({...newMentor, firstName: e.target.value})}
+                className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                required
+              />
+              <Input
+                placeholder="Last Name"
+                value={newMentor.lastName}
+                onChange={(e) => setNewMentor({...newMentor, lastName: e.target.value})}
+                className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                required
+              />
+            </div>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={newMentor.email}
+              onChange={(e) => setNewMentor({...newMentor, email: e.target.value})}
+              className="mb-4 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+              required
+            />
+            <div className="flex items-center space-x-2 mb-4">
+              <Input
+                type="text"
+                value={generatedPassword}
+                placeholder="Generated Password"
+                readOnly
+                className="flex-grow ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+              />
+              <Button type="button" onClick={generatePassword}>
+                Generate
+              </Button>
+              <Button type="button" onClick={copyPassword} disabled={!generatedPassword}>
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="bg-orange-500 hover:bg-orange-600" disabled={!newMentor.firstName || !newMentor.lastName || !newMentor.email || !generatedPassword}>
+                Add Mentor
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+
+
+
+
+
+
+
+
+
     </div>
   )
 }
