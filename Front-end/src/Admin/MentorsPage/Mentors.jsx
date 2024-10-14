@@ -1,17 +1,29 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
-import { Users, ChevronDown, ChevronUp, UserPlus, Mail, Phone, Briefcase, Search, ChevronRight } from 'lucide-react'
+import { Users, ChevronDown, ChevronUp, UserPlus, Mail, Phone, Briefcase, Search, AlertTriangle } from 'lucide-react'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 export default function Component() {
   const [mentorsData, setMentorsData] = useState([])
   const [selectedMentor, setSelectedMentor] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [mentorToDelete, setMentorToDelete] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +47,35 @@ export default function Component() {
     console.log("Add mentor button clicked")
   }
 
+  const handleEditMentor = (mentorId) => {
+    console.log(`Edited mentor (${mentorId})`)
+  }
+
+  const handleDeleteClick = (mentor) => {
+    setMentorToDelete(mentor)
+    setIsDeleteModalOpen(true)
+  }
+
+  const handleDeleteConfirm = async () => {
+    if (mentorToDelete) {
+      try {
+        const response = await axios.delete(`${import.meta.env.VITE_API_LINK}/api/admin/mentors/${mentorToDelete._id}`, { 
+          withCredentials: true 
+        });
+    
+        if (response.status === 200) {
+          console.log('Mentor deleted successfully');
+          setMentorsData(prevData => prevData.filter(mentor => mentor._id !== mentorToDelete._id));
+          setSelectedMentor(null);
+        }
+      } catch (error) {
+        console.error('Error deleting mentor:', error);
+      }
+    }
+    setIsDeleteModalOpen(false)
+    setMentorToDelete(null)
+  }
+
   const filteredMentors = mentorsData.filter(mentor => 
     `${mentor.firstName} ${mentor.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
   )
@@ -45,14 +86,14 @@ export default function Component() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Mentors List - Left Side */}
           <div className="lg:col-span-7">
-            <Card className="bg-white shadow-xl max-h-[600px] overflow-hidden">
+            <Card className="bg-white shadow-xl overflow-hidden" style={{ minHeight: `${Math.min(filteredMentors.length * 100, 600)}px` }}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <CardTitle className="text-2xl font-bold text-orange-500 flex items-center">
                   <Users className="mr-2 h-6 w-6" /> Mentors List
                 </CardTitle>
                 <Button
                   onClick={handleAddMentor}
-                  className="bg-green-400 hover:bg-green-500 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"
+                  className="bg-green-500 hover:bg-green-700 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
                   Add Mentor
@@ -68,7 +109,7 @@ export default function Component() {
                     className="pl-10 border-orange-500 w-full ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
                   />
                 </div>
-                <ScrollArea className={`h-[${Math.min(filteredMentors.length * 100, 400)}px]`}>
+                <ScrollArea className="h-[calc(100%-80px)]">
                   <div className="space-y-4">
                     {filteredMentors.map((mentor) => (
                       <Card 
@@ -158,7 +199,7 @@ export default function Component() {
                             <p className="text-gray-700">{mentor.courseCount} Courses</p>
                           </div>
                         </div>
-                        
+
                         <Separator className="my-4" />
                         
                         <div>
@@ -177,15 +218,56 @@ export default function Component() {
                   </div>
                 )}
               </CardContent>
-              <CardFooter className="bg-gray-50 border-t flex justify-end p-3 gap-2">
-                <Button className="bg-red-500 text-white hover:bg-red-600 rounded-full px-4 py-1 text-sm">
-                  Delete mentor
-                </Button>
-              </CardFooter>
+              {selectedMentor && (
+                <CardFooter className="bg-gray-50 border-t flex justify-end p-3 gap-2">
+                  <Button 
+                    className="bg-red-500 text-white hover:bg-red-600 rounded-full px-4 py-1 text-sm"
+                    onClick={() => handleDeleteClick(mentorsData.find(m => m._id === selectedMentor))}
+                  >
+                    Delete Mentor
+                  </Button>
+                  <Button 
+                  onClick={() => handleEditMentor(selectedMentor)}
+                  className="bg-blue-500 text-white hover:bg-blue-600 rounded-full px-4 py-1 text-sm">
+                    Edit Mentor
+                  </Button>
+                </CardFooter>
+              )}
             </Card>
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[500px] w-[90vw]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-6 w-6 text-red-500" />
+              Delete Mentor
+            </DialogTitle>
+            <DialogDescription>
+              You are going to delete {mentorToDelete ? `${mentorToDelete.firstName} ${mentorToDelete.lastName}` : 'this mentor'}. Are you sure?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setIsDeleteModalOpen(false)}
+            >
+              No, Keep It
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+            >
+              Yes, Delete!
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

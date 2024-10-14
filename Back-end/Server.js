@@ -17,6 +17,7 @@ const Cloud = require('./Routes/Cloud.js')
 const homeapi = require('./Routes/Homepageapi.js')
 const admin = require('./Routes/Admin/Admin.js')
 const formation = require('./Routes/Admin/Formation.js')
+const mentorchanges = require('./Routes/Admin/Mentorchanges.js')
 
 dotenv.config();
 
@@ -49,6 +50,8 @@ app.use('/api/cloud', Cloud)
 app.use('/api/home', homeapi)
 app.use('/api/admin',admin)
 app.use('/api/admin/formation', formation)
+app.use('/api/admin', mentorchanges)
+
 
 //insert line for test:
 const insertTestUser = async () => {
@@ -56,9 +59,9 @@ const insertTestUser = async () => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = new User({
-      email: 'admin@test.com',
+      email: 'delete@test.com',
       password: hashedPassword,
-      role: 'Admin', 
+      role: 'Mentor', 
       assignedCourses: [],
   });
 
@@ -72,7 +75,7 @@ const insertTestUser = async () => {
   }
 };
 
-// insertTestUser();
+//insertTestUser();
 
 
 // Start server
