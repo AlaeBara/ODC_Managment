@@ -168,9 +168,9 @@ function App() {
             path="/cloud"
             element={
               <ProtectedRoute>
-                <MainLayoutAdmin>
+                <MainLayout>
                   <Cloud/>
-                </MainLayoutAdmin>
+                </MainLayout>
               </ProtectedRoute>
             }
           />
