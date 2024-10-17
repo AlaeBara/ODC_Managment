@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Pencil, Save, X, User, Mail, Phone, Lock } from 'lucide-react'
 import { Toaster, toast } from 'react-hot-toast'
-import defaultProfilePic from '../../../public/images/profile.png';
+import defaultProfilePic from '../../../public/images/profile.jpg';
 
 
 export default function EnhancedUserProfile() {

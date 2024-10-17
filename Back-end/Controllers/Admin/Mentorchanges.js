@@ -41,5 +41,32 @@ const DeleteMentor = async (req, res) => {
     res.status(500).json({ message: 'Error deleting mentor' });
   }
 };
-  
- module.exports = { DeleteMentor , AddMentor };
+
+
+const ResetMentorPassword = async (req, res) => {
+  const { mentorId } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    // Find the user by ID and role
+    const user = await User.findOne({ _id: mentorId, role: 'Mentor' });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Mentor not found' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error resetting password' });
+  }
+};
+
+ module.exports = { DeleteMentor , AddMentor , ResetMentorPassword  };

@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function Component() {
   const [mentorsData, setMentorsData] = useState([])
@@ -26,6 +27,13 @@ export default function Component() {
   const [isAddMentorModalOpen, setIsAddMentorModalOpen] = useState(false)
   const [newMentor, setNewMentor] = useState({ firstName: '', lastName: '', email: '' })
   const [generatedPassword, setGeneratedPassword] = useState('')
+
+   //for update password 
+   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false)
+   const [newPassword, setNewPassword] = useState('')
+   const [confirmPassword, setConfirmPassword] = useState('')
+   const [passwordResetError, setPasswordResetError] = useState('')
+   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false)
 
 
   const fetchData = async () => {
@@ -48,8 +56,45 @@ export default function Component() {
   }
 
   const handleEditMentor = (mentorId) => {
-    console.log(`Edited mentor (${mentorId})`)
+    setSelectedMentor(mentorId)
+    setIsResetPasswordModalOpen(true)
   }
+  const handleResetPassword = async () => {
+    // Reset previous error and success states
+    setPasswordResetError('')
+    setPasswordResetSuccess(false)
+
+    
+    if (newPassword.length < 6) {
+      setPasswordResetError("Password must be at least 6 characters long")
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordResetError("Passwords don't match")
+      return
+    }
+
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_API_LINK}/api/admin/mentors/${selectedMentor}`, 
+        { newPassword },
+        { withCredentials: true }
+      )
+
+      if (response.status === 200) {
+        setPasswordResetSuccess(true)
+        setTimeout(() => {
+          setIsResetPasswordModalOpen(false)
+          setNewPassword('')
+          setConfirmPassword('')
+          setPasswordResetSuccess(false)
+        }, 2000)
+      }
+    } catch (error) {
+      setPasswordResetError('Failed to reset password. Please try again.')
+    }
+  }
+
 
   const handleDeleteClick = (mentor) => {
     setMentorToDelete(mentor)
@@ -364,6 +409,48 @@ export default function Component() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+
+      {/* Password Reset Modal */}
+      <Dialog open={isResetPasswordModalOpen} onOpenChange={setIsResetPasswordModalOpen}>
+        <DialogContent className="sm:max-w-[500px] w-[90vw]">
+          <DialogHeader>
+            <DialogTitle>Reset Mentor Password</DialogTitle>
+            <DialogDescription>
+              Enter a new password for the mentor.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              type="password"
+              placeholder="New Password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder="Confirm New Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            {passwordResetError && (
+              <Alert variant="destructive">
+                <AlertDescription>{passwordResetError}</AlertDescription>
+              </Alert>
+            )}
+            {passwordResetSuccess && (
+              <Alert>
+                <AlertDescription>Password reset successfully</AlertDescription>
+              </Alert>
+            )}
+          </div>
+          <DialogFooter>
+            <Button onClick={handleResetPassword} className="bg-blue-500 text-white hover:bg-blue-600">
+              Reset Password
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
