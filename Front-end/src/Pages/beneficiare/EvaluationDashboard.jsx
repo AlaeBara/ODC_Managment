@@ -60,17 +60,29 @@ export default function EvaluationDashboard() {
   }, [id])
 
   const calculateAverages = () => {
-    return evaluationFields.reduce((averages, field) => {
-      const validEvaluations = evaluations.filter(evaluationItem => !isNaN(Number(evaluationItem[field.name])) && evaluationItem[field.name] !== '')
+    let totalSum = 0
+    let totalValidEvaluations = 0
+
+    const fieldAverages = evaluationFields.reduce((averages, field) => {
+      const validEvaluations = evaluations.filter(evaluationItem => 
+        !isNaN(Number(evaluationItem[field.name])) && evaluationItem[field.name] !== ''
+      )
 
       const sum = validEvaluations.reduce((acc, evaluationItem) => {
         const value = Number(evaluationItem[field.name])
         return acc + value
       }, 0)
-  
-      averages[field.name] = validEvaluations.length > 0 ? sum / validEvaluations.length : 0
+
+      totalSum += sum
+      totalValidEvaluations += validEvaluations.length
+
+      averages[field.name] = validEvaluations.length > 0 ? sum / validEvaluations.length : null
       return averages
     }, {})
+
+    const overallAverage = totalValidEvaluations > 0 ? totalSum / totalValidEvaluations : 0
+
+    return { fieldAverages, overallAverage }
   }
   
   if (loading) {
@@ -99,8 +111,7 @@ export default function EvaluationDashboard() {
     )
   }
 
-  const averages = calculateAverages()
-  const overallAverage = Object.values(averages).reduce((sum, value) => sum + value, 0) / evaluationFields.length
+  const { fieldAverages, overallAverage } = calculateAverages()
   const recommendationPercentage = (evaluations.filter(item => item.recommendation === 'OUI').length * 100 / evaluations.length)
   
   return (
@@ -111,7 +122,7 @@ export default function EvaluationDashboard() {
         </h1>
         
         <Card className="mb-8 overflow-hidden">
-          <CardHeader className="bg-primary text-primary-foreground bg-orange-500	">
+          <CardHeader className="bg-primary text-primary-foreground bg-orange-500">
             <CardTitle className="text-2xl">Résumé de l'évaluation</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -148,11 +159,17 @@ export default function EvaluationDashboard() {
                 <CardTitle className="text-sm">{field.label}</CardTitle>
               </CardHeader>
               <CardContent className="pt-4">
-                <div className="text-3xl font-bold text-primary flex items-center">
-                  <Star className="w-6 h-6 mr-2 text-yellow-400 fill-current" />
-                  {averages[field.name].toFixed(2)}
-                </div>
-                <Progress value={averages[field.name] * 20} className="mt-2" />
+                {fieldAverages[field.name] !== null ? (
+                  <>
+                    <div className="text-3xl font-bold text-primary flex items-center">
+                      <Star className="w-6 h-6 mr-2 text-yellow-400 fill-current" />
+                      {fieldAverages[field.name].toFixed(2)}
+                    </div>
+                    <Progress value={fieldAverages[field.name] * 20} className="mt-2" />
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Pas de données</p>
+                )}
               </CardContent>
             </Card>
           ))}
