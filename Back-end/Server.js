@@ -53,32 +53,6 @@ app.use('/api/admin/formation', formation)
 app.use('/api/admin', mentorchanges)
 
 
-//insert line for test:
-const insertTestUser = async () => {
-  const password = '1234567';
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = new User({
-      email: 'delete@test.com',
-      password: hashedPassword,
-      role: 'Mentor', 
-      assignedCourses: [],
-      firstName:"Alae",
-      lastName:"bara"
-  });
-
-  try {
-      await user.save();
-      console.log('Test user inserted successfully');
-  } catch (error) {
-      console.error('Error inserting test user:', error);
-  } finally {
-      mongoose.connection.close();
-  }
-};
-
-
-
 
 // Start server
 app.listen(PORT, () => {

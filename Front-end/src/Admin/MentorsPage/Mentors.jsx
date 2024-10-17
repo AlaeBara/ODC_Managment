@@ -134,13 +134,13 @@ export default function Component() {
           {/* Mentors List - Left Side */}
           <div className="lg:col-span-7">
             <Card className="bg-white shadow-xl overflow-hidden" style={{ minHeight: `${Math.min(filteredMentors.length * 100, 600)}px` }}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-4">
                 <CardTitle className="text-2xl font-bold text-orange-500 flex items-center">
                   <Users className="mr-2 h-6 w-6" /> Mentors List
                 </CardTitle>
                 <Button
                   onClick={handleAddMentor}
-                  className="bg-green-500 hover:bg-green-700 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"
+                  className="bg-green-500 hover:bg-green-700 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-auto"
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
                   Add Mentor
@@ -165,7 +165,7 @@ export default function Component() {
                           ${selectedMentor === mentor._id ? 'bg-orange-20' : ''}`}
                       >
                         <CardContent className="p-4">
-                          <div className="flex items-center space-x-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             <Avatar className="w-16 h-16 border-2 border-orange-200">
                               <AvatarImage 
                                 src={mentor.profilePic} 
@@ -183,7 +183,7 @@ export default function Component() {
                             </div>
                             <Button
                               onClick={() => handleMentorClick(mentor._id)}
-                              className="bg-orange-500 hover:bg-orange-600 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105"
+                              className="bg-orange-500 hover:bg-orange-600 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-auto"
                             >
                               {selectedMentor === mentor._id ? 'Hide Details' : 'View Details'}
                               {selectedMentor === mentor._id ? (
@@ -204,7 +204,7 @@ export default function Component() {
 
           {/* Mentor Details - Right Side */}
           <div className="lg:col-span-5">
-            <Card className="bg-white sticky top-4 overflow-hidden shadow-xl">
+            <Card className="bg-white lg:sticky lg:top-4 overflow-hidden shadow-xl">
               <CardHeader className="bg-gradient-to-br from-orange-400 to-orange-500 text-white">
                 <CardTitle className="text-2xl font-bold">Mentor Details</CardTitle>
               </CardHeader>
@@ -214,7 +214,7 @@ export default function Component() {
                     const mentor = mentorsData.find(m => m._id === selectedMentor)
                     return (
                       <div className="space-y-6">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
                           <Avatar className="w-24 h-24 border-4 border-orange-200">
                             <AvatarImage 
                               src={mentor.profilePic} 
@@ -224,8 +224,9 @@ export default function Component() {
                               {mentor.firstName[0]}{mentor.lastName[0]}
                             </AvatarFallback>
                           </Avatar>
-                          <div>
+                          <div className="text-center sm:text-left">
                             <h2 className="text-2xl font-bold text-orange-800">{mentor.firstName} {mentor.lastName}</h2>
+                            <p className="text-sm text-gray-500">Mentor ID: {mentor._id}</p>
                           </div>
                         </div>
                         
@@ -234,7 +235,7 @@ export default function Component() {
                         <div className="space-y-4">
                           <div className="flex items-center space-x-3">
                             <Mail className="h-5 w-5 text-orange-500" />
-                            <p className="text-gray-700">{mentor.email}</p>
+                            <p className="text-gray-700 break-all">{mentor.email}</p>
                           </div>
                           <div className="flex items-center space-x-3">
                             <Phone className="h-5 w-5 text-orange-500" />
@@ -244,8 +245,15 @@ export default function Component() {
                             <Briefcase className="h-5 w-5 text-orange-500" />
                             <p className="text-gray-700">{mentor.courseCount} Courses</p>
                           </div>
-                        </div>                        
+                        </div>
+
+                        <Separator className="my-4" />
+                        
                         <div>
+                          <h3 className="text-lg font-semibold text-orange-800 mb-2">Additional Information</h3>
+                          <p className="text-gray-600">
+                            {mentor.bio || "No additional information available."}
+                          </p>
                         </div>
                       </div>
                     )
@@ -258,16 +266,16 @@ export default function Component() {
                 )}
               </CardContent>
               {selectedMentor && (
-                <CardFooter className="bg-gray-50 border-t flex justify-end p-3 gap-2">
+                <CardFooter className="bg-gray-50 border-t flex flex-col sm:flex-row justify-end p-3 gap-2">
                   <Button 
-                    className="bg-red-500 text-white hover:bg-red-600 rounded-full px-4 py-1 text-sm"
+                    className="bg-red-500 text-white hover:bg-red-600 rounded-full px-4 py-1 text-sm w-full sm:w-auto"
                     onClick={() => handleDeleteClick(mentorsData.find(m => m._id === selectedMentor))}
                   >
                     Delete Mentor
                   </Button>
                   <Button 
                   onClick={() => handleEditMentor(selectedMentor)}
-                  className="bg-blue-500 text-white hover:bg-blue-600 rounded-full px-4 py-1 text-sm">
+                  className="bg-blue-500 text-white hover:bg-blue-600 rounded-full px-4 py-1 text-sm w-full sm:w-auto">
                     Edit Mentor
                   </Button>
                 </CardFooter>
@@ -289,11 +297,12 @@ export default function Component() {
               You are going to delete {mentorToDelete ? `${mentorToDelete.firstName} ${mentorToDelete.lastName}` : 'this mentor'}. Are you sure?
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="sm:justify-start">
+          <DialogFooter className="flex-col sm:flex-row sm:justify-start">
             <Button
               type="button"
               variant="secondary"
               onClick={() => setIsDeleteModalOpen(false)}
+              className="w-full sm:w-auto mb-2 sm:mb-0"
             >
               No, Keep It
             </Button>
@@ -301,13 +310,13 @@ export default function Component() {
               type="button"
               variant="destructive"
               onClick={handleDeleteConfirm}
+              className="w-full sm:w-auto"
             >
               Yes, Delete!
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
 
       {/* Add Mentor Modal */}
       <Dialog open={isAddMentorModalOpen} onOpenChange={closeAddMentor}>
@@ -318,7 +327,7 @@ export default function Component() {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmitNewMentor}>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <Input
                 placeholder="First Name"
                 value={newMentor.firstName}
@@ -342,39 +351,31 @@ export default function Component() {
               className="mb-4 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
               required
             />
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
               <Input
                 type="text"
                 value={generatedPassword}
                 placeholder="Generated Password"
                 readOnly
-                className="flex-grow ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
+                className="w-full sm:flex-grow ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
               />
-              <Button type="button" onClick={generatePassword}>
-                Generate
-              </Button>
-              <Button type="button" onClick={copyPassword} disabled={!generatedPassword}>
-                <Copy className="h-4 w-4" />
-              </Button>
+              <div className="flex space-x-2 w-full sm:w-auto">
+                <Button type="button" onClick={generatePassword} className="flex-grow sm:flex-grow-0">
+                  Generate
+                </Button>
+                <Button type="button" onClick={copyPassword} disabled={!generatedPassword} className="flex-grow sm:flex-grow-0">
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             <DialogFooter>
-              <Button type="submit" className="bg-orange-500 hover:bg-orange-600" disabled={!newMentor.firstName || !newMentor.lastName || !newMentor.email || !generatedPassword}>
+              <Button type="submit" className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto" disabled={!newMentor.firstName || !newMentor.lastName || !newMentor.email || !generatedPassword}>
                 Add Mentor
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
-
-
-
-
-
-
-
-
-
-
     </div>
   )
 }
