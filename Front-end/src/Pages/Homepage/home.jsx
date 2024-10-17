@@ -90,26 +90,40 @@ export default function Homepage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 space-y-4 md:space-y-0">
           <h1 className="text-4xl font-bold text-gray-800">
             Welcome back, {userName} <span className="wave">👋</span>
           </h1>
-          <div className="relative w-64">
-            <Input
-              type="text"
-              placeholder="Search courses..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border-2 border-orange-300 focus:border-orange-500 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 rounded-full text-gray-800 placeholder-gray-500"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500" size={20} />
+          <div className="flex w-full md:w-auto space-x-4">
+            <div className="relative flex-grow md:flex-grow-0 md:w-64">
+              <Input
+                type="text"
+                placeholder="Search courses..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border-2 border-orange-300 focus:border-orange-500 ring-0 focus-visible:ring-offset-0 focus-visible:ring-0 rounded-full text-gray-800 placeholder-gray-500"
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500" size={20} />
+            </div>
+            <Link to="/workflow" className="flex-shrink-0">
+              <Button
+                className="w-full text-lg font-semibold bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-orange-400"
+                size="lg"
+              >
+                <WorkflowIcon />
+                <span className="ml-2">WorkFlow</span>
+              </Button>
+            </Link>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white shadow-lg overflow-hidden">
+
+          <Card className="bg-white shadow-lg overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <BookOpen className="w-10 h-10 text-orange-500" />
@@ -119,7 +133,9 @@ export default function Homepage() {
             </div>
           </Card>
 
-          <Card className="bg-white shadow-lg overflow-hidden">
+          <Card className="bg-white shadow-lg overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <Users className="w-10 h-10 text-orange-500" />
@@ -129,7 +145,9 @@ export default function Homepage() {
             </div>
           </Card>
 
-          <Card className="bg-white shadow-lg overflow-hidden">
+          <Card className="bg-white shadow-lg overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-400 opacity-20 rounded-full -mr-10 -mt-16" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-400 opacity-20 rounded-full -ml-5 -mb-12" />
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <User className="w-10 h-10 text-orange-500" />
@@ -140,22 +158,58 @@ export default function Homepage() {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
-            <Card className="overflow-hidden shadow-xl rounded-lg">
-              <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
-                <CardTitle className="text-2xl font-bold flex items-center">
-                  <Calendar className="mr-2" /> Current Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
-                {currentCourses.length > 0 ? (
-                  currentCourses.map((course) => (
-                    <div key={course._id} className="py-4 flex items-start space-x-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="overflow-hidden shadow-xl rounded-lg">
+            <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
+              <CardTitle className="text-2xl font-bold flex items-center">
+                <Calendar className="mr-2" /> Current Events
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
+              {currentCourses.length > 0 ? (
+                currentCourses.map((course) => (
+                  <div key={course._id} className="py-4 flex items-start space-x-4">
+                    <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
+                      <CheckCircle2 className="w-6 h-6 text-orange-600" />
+                    </div>
+                    <div className="flex-grow">
+                      <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
+                      <p className="text-sm text-gray-600 font-medium">
+                        {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">{course.description}</p>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Type: <span className="font-medium text-orange-700">{course.type}</span>
+                      </p>
+                    </div>
+                    <div className="flex-shrink-0">
+                      <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
+                        In Progress
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center py-8 text-gray-500">No current events found.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card className="overflow-hidden shadow-xl rounded-lg">
+            <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
+              <CardTitle className="text-2xl font-bold flex items-center">
+                <Clock className="mr-2" /> Upcoming Events
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
+              {upcomingCourses.length > 0 ? (
+                upcomingCourses.map((course) => (
+                  <div key={course._id} className="py-4 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
                       <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
-                        <CheckCircle2 className="w-6 h-6 text-orange-600" />
+                        <Clock className="w-6 h-6 text-orange-600" />
                       </div>
-                      <div className="flex-grow">
+                      <div>
                         <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
                         <p className="text-sm text-gray-600 font-medium">
                           {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
@@ -165,68 +219,18 @@ export default function Homepage() {
                           Type: <span className="font-medium text-orange-700">{course.type}</span>
                         </p>
                       </div>
-                      <div className="flex-shrink-0">
-                        <span className="inline-block bg-orange-100 text-orange-800 text-xs font-semibold px-2 py-1 rounded-full">
-                          In Progress
-                        </span>
-                      </div>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-center py-8 text-gray-500">No current events found.</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="overflow-hidden shadow-xl rounded-lg">
-              <CardHeader className="bg-gradient-to-br from-gray-800 to-black text-white py-4">
-                <CardTitle className="text-2xl font-bold flex items-center">
-                  <Clock className="mr-2" /> Upcoming Events
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="divide-y divide-gray-200 max-h-[300px] overflow-y-auto bg-white">
-                {upcomingCourses.length > 0 ? (
-                  upcomingCourses.map((course) => (
-                    <div key={course._id} className="py-4 flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="bg-orange-100 rounded-full p-2 flex-shrink-0">
-                          <Clock className="w-6 h-6 text-orange-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-lg text-gray-800">{course.title}</h3>
-                          <p className="text-sm text-gray-600 font-medium">
-                            {`${new Date(course.startDate).toLocaleDateString()} - ${new Date(course.endDate).toLocaleDateString()}`}
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">{course.description}</p>
-                          <p className="text-sm text-gray-500 mt-1">
-                            Type: <span className="font-medium text-orange-700">{course.type}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full shadow-md">
-                        <AlertCircle className="w-5 h-5" />
-                        <span className="text-sm font-bold text-center">Coming Soon</span>
-                      </div>
+                    <div className="flex items-center space-x-2 bg-orange-100 text-orange-800 px-3 py-1 rounded-full shadow-md">
+                      <AlertCircle className="w-5 h-5" />
+                      <span className="text-sm font-bold text-center">Coming Soon</span>
                     </div>
-                  ))
-                ) : (
-                  <p className="text-center py-8 text-gray-500">No upcoming events found.</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="space-y-6">
-            <Link to="/workflow">
-              <Button
-                className="w-full text-lg font-semibold bg-gradient-to-br from-orange-500 to-orange-700 text-white shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:bg-orange-400"
-                size="lg"
-              >
-                <WorkflowIcon />
-                <span className="ml-2">WorkFlow</span>
-              </Button>
-            </Link>
-          </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center py-8 text-gray-500">No upcoming events found.</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -428,12 +428,14 @@ export default function Component() {
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
             />
             <Input
               type="password"
               placeholder="Confirm New Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              className="ring-0 focus-visible:ring-offset-0 focus-visible:ring-0"
             />
             {passwordResetError && (
               <Alert variant="destructive">
