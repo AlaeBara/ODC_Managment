@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Pencil, Save, X, User, Mail, Phone, Lock } from 'lucide-react'
 import { Toaster, toast } from 'react-hot-toast'
+import defaultProfilePic from '../../../public/images/profile.png';
+
 
 export default function EnhancedUserProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -266,7 +268,7 @@ export default function EnhancedUserProfile() {
             <CardContent className="flex flex-col items-center justify-center h-full p-6">
               <div className="relative mb-4">
                 <img
-                  src={profile.profilePic || '/placeholder.svg?height=128&width=128'}
+                  src={profile.profilePic || defaultProfilePic}
                   alt="Profile"
                   className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-lg"
                 />
