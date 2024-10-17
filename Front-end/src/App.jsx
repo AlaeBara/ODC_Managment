@@ -24,7 +24,7 @@ const Profile = lazy(() => import('./Pages/Profile/Profile.jsx'));
 const Calendar = lazy(() => import('./Pages/calendar/calendar.jsx'));
 const Workflow = lazy(() => import('./Pages/Workflow/Workflow.jsx'));
 const OneFormation = lazy(() => import('./Pages/Oneformation/FormationPage.jsx'));
-const AdminProfile = lazy(() => import('./Admin/profile/adminprofile.jsx'))
+const AdminProfile = lazy(() => import('./Admin/profile/Adminprofile.jsx'))
 const Dashboard = lazy(() => import('./Admin/Dashboard/Dashboard.jsx'))
 const Mentors = lazy(() => import('./Admin/MentorsPage/Mentors.jsx') )
 const Formations =lazy(()=>import('./Admin/Formations/Formations.jsx'))
