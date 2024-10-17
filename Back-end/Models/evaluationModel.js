@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const evaluationSchema = new mongoose.Schema({
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true },
-  mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to Mentor
+  mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   date: { type: Date, default: Date.now },
   contentQuality: { type: Number, min: 1, max: 5 }, // Quality of training content
   acquiredSkillsQuality: { type: Number, min: 1, max: 5 }, // Quality of acquired skills

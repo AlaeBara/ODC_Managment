@@ -5,7 +5,7 @@ const CourseSchema = new mongoose.Schema({
   description: { type: String },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
-  type: { type: String, required: true },  // Added type field
+  type: { type: String, required: true },
   mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   tags: [{ type: String }],
 });
