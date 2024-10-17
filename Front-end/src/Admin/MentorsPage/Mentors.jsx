@@ -226,7 +226,6 @@ export default function Component() {
                           </Avatar>
                           <div>
                             <h2 className="text-2xl font-bold text-orange-800">{mentor.firstName} {mentor.lastName}</h2>
-                            <p className="text-sm text-gray-500">Mentor ID: {mentor._id}</p>
                           </div>
                         </div>
                         
@@ -245,15 +244,8 @@ export default function Component() {
                             <Briefcase className="h-5 w-5 text-orange-500" />
                             <p className="text-gray-700">{mentor.courseCount} Courses</p>
                           </div>
-                        </div>
-
-                        <Separator className="my-4" />
-                        
+                        </div>                        
                         <div>
-                          <h3 className="text-lg font-semibold text-orange-800 mb-2">Additional Information</h3>
-                          <p className="text-gray-600">
-                            {mentor.bio || "No additional information available."}
-                          </p>
                         </div>
                       </div>
                     )
