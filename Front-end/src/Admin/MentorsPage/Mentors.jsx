@@ -136,7 +136,7 @@ export default function Component() {
             <Card className="bg-white shadow-xl overflow-hidden" style={{ minHeight: `${Math.min(filteredMentors.length * 100, 600)}px` }}>
               <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0 pb-4">
                 <CardTitle className="text-2xl font-bold text-orange-500 flex items-center">
-                  <Users className="mr-2 h-6 w-6" /> Mentors List
+                  <Users className="mr-2 h-6 w-6 font-lato" /> Mentors List
                 </CardTitle>
                 <Button
                   onClick={handleAddMentor}
@@ -176,14 +176,14 @@ export default function Component() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-grow">
-                              <h3 className="text-lg font-semibold text-orange-800">
+                              <h3 className="text-lg font-semibold text-orange-600">
                                 {mentor.firstName} {mentor.lastName}
                               </h3>
                               <p className="text-sm text-gray-500">{mentor.email}</p>
                             </div>
                             <Button
                               onClick={() => handleMentorClick(mentor._id)}
-                              className="bg-orange-500 hover:bg-orange-600 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-auto"
+                              className="bg-orange-600 hover:bg-orange-700 text-white shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 w-full sm:w-auto"
                             >
                               {selectedMentor === mentor._id ? 'Hide Details' : 'View Details'}
                               {selectedMentor === mentor._id ? (
@@ -205,7 +205,7 @@ export default function Component() {
           {/* Mentor Details - Right Side */}
           <div className="lg:col-span-5">
             <Card className="bg-white lg:sticky lg:top-4 overflow-hidden shadow-xl">
-              <CardHeader className="bg-gradient-to-br from-orange-400 to-orange-500 text-white">
+              <CardHeader className="bg-gradient-to-br from-orange-500 to-orange-600 text-white">
                 <CardTitle className="text-2xl font-bold">Mentor Details</CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
@@ -225,8 +225,7 @@ export default function Component() {
                             </AvatarFallback>
                           </Avatar>
                           <div className="text-center sm:text-left">
-                            <h2 className="text-2xl font-bold text-orange-800">{mentor.firstName} {mentor.lastName}</h2>
-                            <p className="text-sm text-gray-500">Mentor ID: {mentor._id}</p>
+                            <h2 className="text-2xl font-bold text-orange-600">{mentor.firstName} {mentor.lastName}</h2>
                           </div>
                         </div>
                         
@@ -239,21 +238,12 @@ export default function Component() {
                           </div>
                           <div className="flex items-center space-x-3">
                             <Phone className="h-5 w-5 text-orange-500" />
-                            <p className="text-gray-700">{mentor.phoneNumber}</p>
+                            <p className="text-gray-700">{mentor.phoneNumber ? mentor.phoneNumber : 'No phone number added yet'}</p>
                           </div>
                           <div className="flex items-center space-x-3">
                             <Briefcase className="h-5 w-5 text-orange-500" />
                             <p className="text-gray-700">{mentor.courseCount} Courses</p>
                           </div>
-                        </div>
-
-                        <Separator className="my-4" />
-                        
-                        <div>
-                          <h3 className="text-lg font-semibold text-orange-800 mb-2">Additional Information</h3>
-                          <p className="text-gray-600">
-                            {mentor.bio || "No additional information available."}
-                          </p>
                         </div>
                       </div>
                     )

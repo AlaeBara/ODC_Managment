@@ -24,7 +24,7 @@ const ProtectedRoute = ({ children, isAdmin = false }) => {
     checkAuth();
   }, [isAdmin]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div></div>;
 
   return isAuthenticated ? children : <Navigate to="/" />;
 };
