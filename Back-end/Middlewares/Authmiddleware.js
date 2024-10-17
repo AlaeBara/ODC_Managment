@@ -11,10 +11,8 @@ const authenticated = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        // Check if the user still exists in the database
         const user = await User.findById(decoded.userId);
         if (!user) {
-            // If the user doesn't exist, clear the cookie and return an error
             res.clearCookie('token');
             return res.status(401).json({ message: 'User no longer exists' });
         }

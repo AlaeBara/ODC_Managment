@@ -18,8 +18,8 @@ const CandidateSchema = new mongoose.Schema({
   sessions:  [
     {
       sessionDate: { type: Date, required: true },
-      morningStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' }, // 9 AM - 1 PM
-      afternoonStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' } // 2 PM - 4 PM
+      morningStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' },
+      afternoonStatus: { type: String, enum: ['Present', 'Absent'], default: 'Absent' }
     }
   ]
 });
