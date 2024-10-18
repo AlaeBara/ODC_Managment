@@ -179,7 +179,7 @@ function App() {
           <Route
             path="/Dashboard"
             element={ 
-              <ProtectedRoute isAdmin={true}>
+              <ProtectedRoute>
                 <MainLayoutAdmin>
                   <Dashboard/>
                 </MainLayoutAdmin>
@@ -189,7 +189,7 @@ function App() {
           <Route
             path="/Mentors_Formations"
             element={ 
-              <ProtectedRoute isAdmin={true}>
+              <ProtectedRoute>
                 <MainLayoutAdmin>
                   <Mentors/>
                 </MainLayoutAdmin>
@@ -199,7 +199,7 @@ function App() {
           <Route
             path="/Formations"
             element={ 
-              <ProtectedRoute isAdmin={true}>
+              <ProtectedRoute>
                 <MainLayoutAdmin>
                   <Formations/>
                 </MainLayoutAdmin>
@@ -209,7 +209,7 @@ function App() {
           <Route
             path="/formation details/:id"
             element={
-              <ProtectedRoute isAdmin={true}>
+              <ProtectedRoute>
                   <OneFormation/>
               </ProtectedRoute>
             }
@@ -218,7 +218,7 @@ function App() {
           <Route
             path="/evalution statistics/:id"
             element={
-              <ProtectedRoute isAdmin={true}>
+              <ProtectedRoute>
                   <EvaluationDashboard/>
               </ProtectedRoute>
             }
@@ -227,7 +227,7 @@ function App() {
             path="/admin/profile"
             element={
               <MainLayoutAdmin>
-                <ProtectedRoute isAdmin={true}>
+                <ProtectedRoute>
                     <AdminProfile/>
                 </ProtectedRoute>
               </MainLayoutAdmin>
@@ -237,7 +237,7 @@ function App() {
             path="/admin/calendar"
             element={
               <MainLayoutAdmin>
-                <ProtectedRoute isAdmin={true}>
+                <ProtectedRoute>
                     <AdminCalendar/>
                 </ProtectedRoute>
               </MainLayoutAdmin>
