@@ -10,7 +10,10 @@ const ProtectedRoute = ({ children, isAdmin = false }) => {
     const checkAuth = async () => {
       try {
         const endpoint = isAdmin ? 'verifier_admin' : 'validate-token';
-        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/${endpoint}`, { withCredentials: true });
+        const response = await axios.get(`${import.meta.env.VITE_API_LINK}/api/auth/${endpoint}`, {
+          withCredentials: true, // Ensures cookies are sent
+        });
+
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
@@ -24,8 +27,8 @@ const ProtectedRoute = ({ children, isAdmin = false }) => {
     checkAuth();
   }, [isAdmin]);
 
-  if (loading) return <div></div>;
-
+  if (loading) return <div>Loading...</div>;
+  
   return isAuthenticated ? children : <Navigate to="/" />;
 };
 
