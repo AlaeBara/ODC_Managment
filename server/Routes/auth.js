@@ -6,11 +6,11 @@ const router = express.Router();
 
 router.post('/signIn', Login);
 
-router.get('/validate-token', authenticated, verifyRole(['Mentor']), (req, res) => {
+router.get('/validate-token', authenticated, (req, res) => {
     res.status(200).json({ message: 'Token is valid.', user: req.user });
 });
 
-router.get('/verifier_admin', authenticated, verifyRole(['Admin']), (req, res) => {
+router.get('/verifier_admin', authenticated, (req, res) => {
   res.status(200).json({ message: 'Welcome to the admin dashboard' , user: req.user });
 });
 
