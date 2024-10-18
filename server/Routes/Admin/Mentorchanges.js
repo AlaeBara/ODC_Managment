@@ -4,10 +4,10 @@ const authenticated = require('../../Middlewares/Authmiddleware');
 const verifyRole = require('../../Middlewares/verifyRole');
 const router = express.Router();
 
-router.post('/addmentor',authenticated, verifyRole(['Admin']), AddMentor)
+router.post('/addmentor',authenticated, AddMentor)
 
-router.delete('/mentors/:mentorId', authenticated, verifyRole(['Admin']), DeleteMentor);
+router.delete('/mentors/:mentorId', authenticated, DeleteMentor);
 
-router.put('/mentors/:mentorId', authenticated, verifyRole(['Admin']), ResetMentorPassword );
+router.put('/mentors/:mentorId', authenticated, ResetMentorPassword );
 
 module.exports = router;
